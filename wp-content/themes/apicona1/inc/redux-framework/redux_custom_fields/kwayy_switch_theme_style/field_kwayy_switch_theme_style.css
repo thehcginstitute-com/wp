@@ -1,0 +1,127 @@
+#thememount-style-switcher-box {
+	border: 1px solid rgb(238, 238, 238);
+	margin-top: 10px;
+	padding: 35px;
+	min-height: 45px;
+	background: white no-repeat 15px 15px;
+}
+ul.thememount-normal-list{
+	list-style: disc;
+	list-style-type: disc;
+	padding-left: 30px;
+	padding-bottom: 10px;
+}
+.thememount-style-swicher-notice {
+    border: 1px solid #ffa3a3;
+    padding: 8px 11px;
+    background: #fdf0f0;
+}
+.tm-style-switcher-new-tag {
+    position: absolute;
+    top: -20px;
+    right: -22px;
+}
+p#install-demo-data-started {
+	font-weight: bold;
+	padding-bottom: 10px;
+}
+span.tm-active-icon {
+	background: #00a2e3;
+	width: 54px;
+	height: 48px;
+	text-align: center;
+}
+span.tm-active-icon > img {
+    padding-top: 10px;
+}
+div#tm-style-switcher-results {
+	border: 1px solid #cacaca;
+	padding: 15px 25px;
+	margin-top: 25px;
+	background: #f7f7f7;
+	background: url(import-loader.gif) no-repeat 10px 18px;
+	min-height: 36px;
+	padding-left: 55px;
+}
+
+/*****************/
+
+#merge-theme-page-results .switch-theme-data-text{
+	padding: 10px 10px 10px 66px;
+	background: white url('import-alert.jpg') no-repeat 15px 15px;
+}
+
+
+#merge-theme-page-results.thememount-merge-theme-page-progress{
+	background-image: url('import-loader.gif');
+	padding: 11px 18px 18px 65px;
+}
+#merge-theme-page-results.thememount-merge-theme-page-progress.thememount-switch-theme-success{
+	background-image: url('import-success.jpg');
+}
+
+.thememount-one-click-demo-content-wrapper{
+	padding: 10px 0;
+}
+
+
+.switch-theme-data-layout{
+	margin-bottom:25px;
+}
+.switch-theme-thumb{
+	position: relative;
+	display: inline-block;
+	margin-right: 35px;
+}
+.switch-theme-imgwrapper,
+.switch-theme-imgwrapper img{
+	display: block;
+	transition: all 0.2s ease;
+}
+.switch-theme-thumb .switch-theme-overlay > span{
+	display: block;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	opacity: 0;
+	transition: all 0.2s ease;
+}
+.switch-theme-thumb:hover .switch-theme-imgwrapper > img{
+	opacity: 0.8;
+}
+.switch-theme-thumb.switch-theme-thumb-active .switch-theme-overlay > span{
+	opacity: 1;
+}
+#thememount_save_theme_options{
+	display: none;
+}
+
+.switch-theme-thumb .switch-theme-overlay{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 3px solid #000;
+	margin: -3px;
+	display: block;
+}
+.thememount-demo-link-title{
+	text-align: right;
+    float: right;
+    background: #000;
+    color: white;
+    padding-left: 10px;
+    padding-top: 6px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding-right: 5px;
+    padding-bottom: 3px;
+}
+
+.switch-theme-thumb {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}

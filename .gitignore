@@ -1,0 +1,58 @@
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# http://stackoverflow.com/questions/987142
+# http://stackoverflow.com/questions/9162919
+# http://stackoverflow.com/questions/8024924#comment15884195_8025106
+*
+!*/
+!/.editorconfig
+!/.gitignore
+!/.htaccess
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/index.php
+!/index.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/license.txt
+!/license.txt
+!/readme.md
+!/sitemap.xml
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-activate.php
+!/wp-activate.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-blog-header.php
+!/wp-blog-header.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-comments-post.php
+!/wp-comments-post.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-cron.php
+!/wp-cron.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-links-opml.php
+!/wp-links-opml.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-load.php
+!/wp-load.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-login.php
+!/wp-login.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-mail.php
+!/wp-mail.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-settings.php
+!/wp-settings.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-signup.php
+!/wp-signup.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/wp-trackback.php
+!/wp-trackback.php
+# 2023-12-04 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/WordPress/WordPress/blob/5.8.3/xmlrpc.php
+!/xmlrpc.php
+!/wp-admin/**/*
+!/wp-content/**/*
+/wp-content/cache
+/wp-content/uploads
+!/wp-includes/**/*

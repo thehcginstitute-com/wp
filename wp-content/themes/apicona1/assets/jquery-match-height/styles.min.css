@@ -1,0 +1,18 @@
+.equal-height-columns>.wpb_column>.wpb_wrapper, [data-equal-height-columns=yes]>.wpb_column>.wpb_wrapper {
+overflow:hidden;
+height:100%
+}
+.equal-height-columns>.wpb_column>.wpb_wrapper>div:first-child:last-child {
+	min-height: 100%
+}
+.content-vertical-align.wpb_column>.wpb_wrapper {
+	height: auto;
+	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%)
+}
+.background-clip-content {
+	background-clip: content-box
+}
