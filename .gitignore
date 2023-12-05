@@ -53,6 +53,7 @@
 !/xmlrpc.php
 !/wp-admin/**/*
 !/wp-content/**/*
+/wp-content/advanced-cache.php
 /wp-content/cache
 /wp-content/uploads
 !/wp-includes/**/*
