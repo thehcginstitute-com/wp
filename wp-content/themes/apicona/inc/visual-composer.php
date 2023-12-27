@@ -25,6 +25,14 @@ if( function_exists('vc_remove_param') ){
  */
 global $kwayy_iconsArray;
 $allIcons = array();
+# 2023-12-27 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# 1) "«Invalid argument supplied for foreach() in wp-content/themes/apicona/inc/visual-composer.php on line 28»
+# on `wp rocket clean`": https://github.com/thehcginstitute-com/wp/issues/13
+# 2) "How did I fix «Invalid argument supplied for foreach() in wp-content/themes/apicona/inc/visual-composer.php on line 28»
+# on `wp rocket clean`?": https://df.tips/t/2090
+if (!isset($kwayy_iconsArray)) {
+	$kwayy_iconsArray = [];
+}
 foreach($kwayy_iconsArray as $icon ){
 	$allIcons[ucwords(str_replace('-',' ',$icon))] = $icon;
 }
