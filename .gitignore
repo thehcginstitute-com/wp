@@ -56,7 +56,7 @@
 /wp-content/advanced-cache.php
 # 2023-12-27 Dmitrii Fediuk https://upwork.com/fl/mage2pro
 # The file is regenerated on `wp rocket clean` and it contains global (not portable) filesystem paths.
-/wp-content\autoptimize_404_handler.php
+/wp-content/autoptimize_404_handler.php
 /wp-content/cache
 /wp-content/uploads
 !/wp-includes/**/*
