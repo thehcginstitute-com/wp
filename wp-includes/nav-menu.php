@@ -928,6 +928,10 @@ function wp_setup_nav_menu_item( $menu_item ) {
 							: 'https://localhost.com:2248'
 						; /** @var string $mPrefixCurrent */
 						$u = str_replace($mPrefixProduction, $mPrefixCurrent, $u);
+						# 2023-12-29 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+						# "The «HOME» menu item link address should not be hardcoded":
+						# https://github.com/thehcginstitute-com/wp/issues/10
+						$u = str_replace($wpPrefixProduction, $wpPrefixCurrent, $u);
 					}
 					$menu_item->url = $u;
 				}
