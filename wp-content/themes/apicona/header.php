@@ -528,6 +528,11 @@ if( isset($apicona['customhtml_bodystart']) && trim($apicona['customhtml_bodysta
 
 
 
-<div id="main" class="site-main">
+<div id="main checkmate" class="site-main"> 
+	
+<?php 
 
-<?php } ?>
+if(shortcode_exists( 'product_cta_section' ) ){
+	echo do_shortcode('[product_cta_section]'); 
+}
+ } ?>

@@ -1299,7 +1299,8 @@ function kwayy_header_titlebar(){
 						echo '</div><!-- .breadcrumb-wrapper -->';
 						
 						?>
-				
+						<?php echo thiCustomAuthorSection();?>
+
 					<?php } // if($hidebreadcrumb!='on')  ?>
 				</div><!-- .kwayy-titlebar-main -->
 			</div><!-- .kwayy-titlebar-inner-wrapper -->
@@ -1310,12 +1311,426 @@ function kwayy_header_titlebar(){
 	}
 }
 }
+
+if( !function_exists('thiCustomAuthorSection') ){
+	function thiCustomAuthorSection() {
+		if (is_singular('post') || is_singular('page')) {
+			$post_id = get_the_ID();
+			if($post_id){
+				
+				$img_src = 'https://www.thehcginstitute.com/wp-content/uploads/2024/01/dark-green-checkmark.png';
+				// (Author 1) | Medically Reviewed By (Author 2) | Updated (Date)
+				$enable_author = get_field('enable_author', $post_id);
+				$select_author = get_field('select_author', $post_id);
+				$author_link = get_field('author_link', $post_id);
+				$author_label = get_field('author_label', $post_id);
+
+
+				$reviewer_label = get_field('reviewer_label', $post_id);
+				$enable_reviewer = get_field('enable_reviewer', $post_id);
+				$select_reviewer = get_field('select_reviewer', $post_id);
+				$reviewer_link = get_field('reviewer_link', $post_id);
+				// $display_date = get_the_date();
+				$display_date = get_post_modified_time('F j, Y', false, $post_id, true); 
+				$sep = '<i class="thi-sep">|</i>';
+
+				echo '<div class="thi-custom-author-section">';
+					if ($enable_author && $select_author) {echo '<span>'.$author_label.' <a href="' . (!empty($author_link) ? $author_link : 'javascript:;') . '">' . $select_author['display_name'] . '</a> </span>';}
+					if ($enable_reviewer && $select_reviewer) {if ($enable_author && $select_author) {echo $sep; } echo '<span><img src="'.$img_src.'" alt="checked-checkbox">'.$reviewer_label.' <a href="' . (!empty($reviewer_link) ? $reviewer_link : 'javascript:;') . '">' . $select_reviewer['display_name'] . '</a></span>';}
+					if ($display_date) { if ($enable_reviewer && $select_reviewer) {echo $sep; } echo '<span>Updated: '.$display_date.'</span>'; }
+				echo '</div>';
+				echo '
+				<style>
+
+				.thi-custom-author-section span {color: #fff;font-size: 13px;}
+				.thi-sep {margin: 0 10px;font-style: normal;color: #fff;}
+				.thi-custom-author-section a {color: #fff;font-weight: 600;}
+				.thi-custom-author-section a:hover,.thi-custom-author-section a:active,.thi-custom-author-section a:focus{color: #ccc;}
+				body.single-post .breadcrumb-wrapper span .current-item,
+				body.single-post .breadcrumb-wrapper > span:nth-last-child(1), 
+				body.single-post .breadcrumb-wrapper > span:nth-last-child(2),
+				body.single-post .breadcrumb-wrapper{display: none !important;}
+				.thi-custom-author-section {margin-top: 5px;}
+				.thi-custom-author-section span img {width: 24px;height: 24px;margin: -2px 4px 0 0;}
+				body.page .breadcrumb-wrapper {display: none !important;}
+
+				@media (max-width: 480px){
+					.thi-custom-author-section {margin-top: 5px;display: flex;align-content: center;align-items: center;flex-direction: column;margin-bottom: 10px;}
+					.thi-custom-author-section span {font-size: 14px;}
+					.thi-custom-author-section .thi-sep {display:none;}
+				}
+				</style>
+				';
+			}
+		}
+	}
+}
+/***********************************************************************/
+// Syed Custom Development Start
 /***********************************************************************/
 
+if(false){
+	/********************  THI Custom Author Section ***********************/
+	// if( !function_exists('thiCustomAuthorSection') ){
+	// 	function thiCustomAuthorSection() {
+	// 		if (is_singular('post') || is_singular('page')) {
+	// 			$post_id = get_the_ID();
+	// 			if($post_id){
+					
+	// 				$img_src = 'https://www.thehcginstitute.com/wp-content/uploads/2024/01/dark-green-checkmark.png';
+	// 				// (Author 1) | Medically Reviewed By (Author 2) | Updated (Date)
+	// 				$enable_author = get_field('enable_author', $post_id);
+	// 				$select_author = get_field('select_author', $post_id);
+	// 				$author_link = get_field('author_link', $post_id);
+	// 				$author_label = get_field('author_label', $post_id);
 
 
+	// 				$reviewer_label = get_field('reviewer_label', $post_id);
+	// 				$enable_reviewer = get_field('enable_reviewer', $post_id);
+	// 				$select_reviewer = get_field('select_reviewer', $post_id);
+	// 				$reviewer_link = get_field('reviewer_link', $post_id);
+	// 				// $display_date = get_the_date();
+	// 				$display_date = get_post_modified_time('F j, Y', false, $post_id, true); 
+	// 				$sep = '<i class="thi-sep">|</i>';
+
+	// 				echo '<div class="thi-custom-author-section">';
+	// 					if ($enable_author && $select_author) {echo '<span>'.$author_label.' <a href="' . (!empty($author_link) ? $author_link : 'javascript:;') . '">' . $select_author['display_name'] . '</a> </span>';}
+	// 					if ($enable_reviewer && $select_reviewer) {if ($enable_author && $select_author) {echo $sep; } echo '<span><img src="'.$img_src.'" alt="checked-checkbox">'.$reviewer_label.' <a href="' . (!empty($reviewer_link) ? $reviewer_link : 'javascript:;') . '">' . $select_reviewer['display_name'] . '</a></span>';}
+	// 					if ($display_date) { if ($enable_reviewer && $select_reviewer) {echo $sep; } echo '<span>Updated: '.$display_date.'</span>'; }
+	// 				echo '</div>';
+	// 				echo '
+	// 				<style>
+
+	// 				.thi-custom-author-section span {color: #fff;font-size: 13px;}
+	// 				.thi-sep {margin: 0 10px;font-style: normal;color: #fff;}
+	// 				.thi-custom-author-section a {color: #fff;font-weight: 600;}
+	// 				.thi-custom-author-section a:hover,.thi-custom-author-section a:active,.thi-custom-author-section a:focus{color: #ccc;}
+	// 				body.single-post .breadcrumb-wrapper span .current-item,
+	// 				body.single-post .breadcrumb-wrapper > span:nth-last-child(1), 
+	// 				body.single-post .breadcrumb-wrapper > span:nth-last-child(2),
+	// 				body.single-post .breadcrumb-wrapper{display: none !important;}
+	// 				.thi-custom-author-section {margin-top: 5px;}
+	// 				.thi-custom-author-section span img {width: 24px;height: 24px;margin: -2px 4px 0 0;}
+	// 				body.page .breadcrumb-wrapper {display: none !important;}
+
+	// 				@media (max-width: 480px){
+	// 					.thi-custom-author-section {margin-top: 5px;display: flex;align-content: center;align-items: center;flex-direction: column;margin-bottom: 10px;}
+	// 					.thi-custom-author-section span {font-size: 14px;}
+	// 					.thi-custom-author-section .thi-sep {display:none;}
+	// 				}
+	// 				</style>
+	// 				';
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	/********************  THI Add new columns to the post listing ***********************/
+
+	if (!function_exists('add_custom_columns_to_posts')) {
+		function add_custom_columns_to_posts($columns) {
+			$columns['thi_author'] = 'THI Author';
+			$columns['medically_reviewed_by'] = 'MD_RB';
+			return $columns;
+		}
+		add_filter('manage_posts_columns', 'add_custom_columns_to_posts');
+		add_filter('manage_pages_columns', 'add_custom_columns_to_posts');
+	}
+
+	/********************  THI Populate the new columns with data ***********************/
+	if (!function_exists('custom_columns_content')) {
+		function custom_columns_content($column_name, $post_id) {
+			switch ($column_name) {
+				case 'thi_author':
+					// Get the THC author field
+					$thi_author = get_field('select_author', $post_id);
+					if (isset($thi_author) && isset($thi_author['ID'])) {
+						$author_url = esc_url(get_edit_user_link($thi_author['ID']));
+						echo '<a href="' . $author_url . '">' . esc_html($thi_author['display_name']) . '</a>';
+					} else {
+						echo '';
+					}
+					break;
+
+				case 'medically_reviewed_by':
+					// Get the medically reviewed by field
+					$medically_reviewed_by = get_field('select_reviewer', $post_id);
+					if (isset($medically_reviewed_by) && isset($medically_reviewed_by['ID'])) {
+						$reviewer_url = esc_url(get_edit_user_link($medically_reviewed_by['ID']));
+						echo '<a href="' . $reviewer_url . '">' . esc_html($medically_reviewed_by['display_name']) . '</a>';
+					} else {
+						echo '';
+					}
+					break;
+			}
+		}
+		add_action('manage_posts_custom_column', 'custom_columns_content', 10, 2);
+		add_action('manage_pages_custom_column', 'custom_columns_content', 10, 2);
+	}
+
+	/********************  CUSTOM THI CODE ***********************/
+
+	function custom_THI_scripts() {
+		?>
+		<style>
+			#ez-toc-container > label {display: none;}
+			#ez-toc-container{border:none !important;}
+			.THI-FAQS h3, .THI-FAQS h2{color: #fff;}
+			.THI-FAQS h2{font-size: 22px;margin: 20px 0 30px;}
+			.THI-FAQS{background: #2a4e24;color: #fff;padding: 20px 30px;margin: 30px 0;border-radius: 8px;}
+			.THI-FAQS h2{font-size: 22px;margin: 20px 0 30px;}
+			.faq-item{margin-bottom: 30px;}
+			.THI-FAQS h3{font-size: 18px;font-weight: 600;}
+		</style>
+		<?php
+	}
+	add_action('wp_footer', 'custom_THI_scripts');
+
+	/********************  CUSTOM FAQ ***********************/
+	function THI_FAQ_shortcode_callback() {
+		// Start output buffering
+		ob_start();
+		// Check if the ACF plugin is active
+		if( !function_exists('get_field') ) return 'ACF plugin is not active';
+			// Global post variable
+			global $post;
+			if($post->ID){
+					// Get the ACF fields
+					$heading = get_field('heading', $post->ID);
+					$faqs = get_field('faq', $post->ID);
+
+					
+
+					// Check if the fields are not empty
+					if ($faqs) {
+						echo '<div class="THI-FAQS">';
+
+								// Display the heading
+								echo '<h2>' . esc_html($heading) . '</h2>';
+
+								// Start the FAQ section
+								echo '<div class="my-faq-container">';
+
+								// Loop through each FAQ
+								foreach ($faqs as $faq) {
+									echo '<div class="faq-item">';
+									echo '<h3>' . esc_html($faq['question']) . '</h3>';
+									echo '<div>' . wpautop($faq['answer']) . '</div>';
+									echo '</div>';
+								}
+
+								// Close the FAQ section
+								echo '</div>';
+						echo '</div>'; // Close THI-FAQS
+
+					}
+			}
+
+		// Return the buffered content
+		return ob_get_clean();
+	}
+	add_shortcode('THI_FAQ', 'THI_FAQ_shortcode_callback');
+
+	/********************  CUSTOM FAQ ***********************/
 
 
+	/********************  CUSTOM POST TYPE AUTHOR ***********************/
+
+	function create_author_custom_post_type() {
+		$labels = array(
+			'name'                  => _x('Authors', 'Post Type General Name', 'textdomain'),
+			'singular_name'         => _x('Author', 'Post Type Singular Name', 'textdomain'),
+			'menu_name'             => __('Authors', 'textdomain'),
+			'name_admin_bar'        => __('Author', 'textdomain'),
+			'archives'              => __('Author Archives', 'textdomain'),
+			'attributes'            => __('Author Attributes', 'textdomain'),
+			'parent_item_colon'     => __('Parent Author:', 'textdomain'),
+			'all_items'             => __('All Authors', 'textdomain'),
+			'add_new_item'          => __('Add New Author', 'textdomain'),
+			'add_new'               => __('Add New', 'textdomain'),
+			'new_item'              => __('New Author', 'textdomain'),
+			'edit_item'             => __('Edit Author', 'textdomain'),
+			'update_item'           => __('Update Author', 'textdomain'),
+			'view_item'             => __('View Author', 'textdomain'),
+			'view_items'            => __('View Authors', 'textdomain'),
+			'search_items'          => __('Search Author', 'textdomain'),
+			'not_found'             => __('Not found', 'textdomain'),
+			'not_found_in_trash'    => __('Not found in Trash', 'textdomain'),
+			'featured_image'        => __('Featured Image', 'textdomain'),
+			'set_featured_image'    => __('Set featured image', 'textdomain'),
+			'remove_featured_image' => __('Remove featured image', 'textdomain'),
+			'use_featured_image'    => __('Use as featured image', 'textdomain'),
+			'insert_into_item'      => __('Insert into author', 'textdomain'),
+			'uploaded_to_this_item' => __('Uploaded to this author', 'textdomain'),
+			'items_list'            => __('Authors list', 'textdomain'),
+			'items_list_navigation' => __('Authors list navigation', 'textdomain'),
+			'filter_items_list'     => __('Filter authors list', 'textdomain'),
+		);
+		
+		$args = array(
+			'label'                 => __('Author', 'textdomain'),
+			'description'           => __('Post Type Description', 'textdomain'),
+			'labels'                => $labels,
+			'supports'              => array('title', 'editor', 'thumbnail'),
+			'taxonomies'            => array(),
+			'hierarchical'          => false,
+			'public'                => true,
+			'show_ui'               => true,
+			'show_in_menu'          => true,
+			'menu_position'         => 5,
+			'show_in_admin_bar'     => true,
+			'show_in_nav_menus'     => true,
+			'can_export'            => true,
+			'has_archive'           => true,
+			'exclude_from_search'   => false,
+			'publicly_queryable'    => true,
+			'rewrite'               => array('slug' => 'author'),
+			'capability_type'       => 'post',
+			'menu_icon'           => 'dashicons-admin-users',
+		);
+
+		register_post_type('author', $args);
+	}
+	// add_action('init', 'create_author_custom_post_type', 0);
+
+	/********************  CUSTOM POST TYPE AUTHOR ***********************/
+
+	/********************  CUSTOM CTA BOX SHORTCODE START ***********************/	
+	function cta_box_shortcode(){
+		ob_start();
+		if( !function_exists('get_field') ) return 'ACF plugin is not active';
+
+		global $post;
+
+		if($post->ID){
+			$image_url = esc_url(get_field('cta_image', $post->ID));
+			$heading = esc_html(get_field('cta_title', $post->ID));
+			$description = esc_html(get_field('cta_desc', $post->ID));
+			$button_text = esc_html(get_field('cta_button_text', $post->ID));
+			$button_link = esc_url(get_field('cta_button_url', $post->ID));
+
+			?>
+			<style>
+				.cta-box {
+					background-color: #fafafa;
+					padding: 10px;
+					border: 1px solid #737373;
+					border-radius: 8px;
+					transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s;
+					margin: 20px 0;
+				}
+
+				.cta-box-row {
+					display: flex;
+					flex-wrap: wrap;
+				}
+
+				.cta-box-col:first-child {
+					flex: 1 0 48%;
+				}
+
+				.cta-box-col:last-child {
+					flex: 1 0 52%;
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					align-content: flex-start;
+				}
+
+				.cta-box-col {
+					padding: 10px;
+				}
+
+				.cta-box-image-wrapper {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					flex-wrap: wrap;
+					align-content: center;
+				}
+
+				.cta-box-image-wrapper img {
+					width: 100%;
+				}
+
+				.cta-box-heading {
+					font-size: 22px;
+				}
+
+				.cta-box-content-wrapper {
+					display: flex;
+					flex-wrap: wrap;
+					flex-direction: row;
+					height: 100%;
+					align-content: space-between;
+				}
+				.cta-box-btn-wrapper {
+					flex: 1 0 100%;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					flex-wrap: wrap;
+					align-content: center;
+				}
+
+				.cta-box-btn {
+					padding: 8px 20px;
+					width: 100%;
+					display: block;
+					text-align: center;
+					background-color: #2a4e24;
+					border: 1px solid #2a4e24;
+					color: #fff !important;
+					font-weight: 600;
+				}
+
+				.cta-box-btn:hover {background-color: #ffffff00;border-color: #2a4e24;color: #2a4e24 !important;}
+
+				/* RESPONSIVE */
+				@media screen and (max-width: 480px) {
+					.cta-box-col {
+						flex: 1 0 100% !important;
+					}	
+				}
+			</style>
+			<div class="cta-box">
+				<div class="cta-box-row">
+					<div class="cta-box-col">
+						<div class="cta-box-image-wrapper">
+							<img src="<?php echo $image_url; ?>" alt="" />
+						</div>
+					</div>
+					<div class="cta-box-col">
+						<div class="cta-box-content-wrapper">
+							<div class="cta-box-text-wrapper">
+								<h2 class="cta-box-heading"><?php echo $heading; ?></h2>
+								<p class="cta-box-desc"><?php echo $description; ?></p>
+							</div>
+							<?php if ($button_link) : ?>
+							<div class="cta-box-btn-wrapper">
+							<a href="<?php echo $button_link; ?>" class="cta-box-btn"><?php echo $button_text; ?></a>
+							</div>
+							<?php endif; ?>
+						</div>
+					</div>
+				</div>
+			</div>
+    	<?php
+
+    	}
+
+		return ob_get_clean();
+	}
+
+	add_shortcode('cta_box', 'cta_box_shortcode');
+	/********************  CUSTOM CTA BOX SHORTCODE END ***********************/
+
+
+}
+
+/***********************************************************************/
+// Syed Custom Development End
+/**********************************************************************/
 
 
 

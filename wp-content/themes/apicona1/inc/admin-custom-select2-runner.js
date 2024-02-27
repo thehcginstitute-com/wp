@@ -1,1 +1,0 @@
-jQuery(".kwayy-icon-selector").custom_select2(); 
