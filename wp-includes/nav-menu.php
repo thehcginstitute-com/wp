@@ -936,7 +936,35 @@ function wp_setup_nav_menu_item( $menu_item ) {
 			} else {
 				$menu_item->type_label = __( 'Custom Link' );
 				$menu_item->title      = $menu_item->post_title;
-				$menu_item->url        = ! isset( $menu_item->url ) ? get_post_meta( $menu_item->ID, '_menu_item_url', true ) : $menu_item->url;
+				# 2023-12-29 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+				# 1) "The «PRODUCTS» menu item link address should not be hardcoded":
+				# https://github.com/thehcginstitute-com/wp/issues/8
+				# 2) The original code:
+				#	$menu_item->url = !isset($menu_item->url)
+				# 		? get_post_meta($menu_item->ID, '_menu_item_url', true)
+				# 		: $menu_item->url
+				#	;
+				# https://github.com/WordPress/WordPress/blob/5.8.3/wp-includes/nav-menu.php#L909
+				if (!isset($menu_item->url)) {
+					$u = get_post_meta($menu_item->ID, '_menu_item_url', true); /** @var string $u */
+					$wpPrefixProduction = 'https://www.thehcginstitute.com'; /** @var string $wpPrefixProduction */
+					$mPrefixProduction = "$wpPrefixProduction/store"; /** @var string $mPrefixProduction */
+					# 2023-12-29 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+					# `get_site_url()` and `get_option('siteurl')` return the same value.
+					$wpPrefixCurrent = get_site_url(); /** @var string $wpPrefixCurrent */
+					if ($wpPrefixCurrent !== $mPrefixProduction) {
+						$mPrefixCurrent = false === strpos($wpPrefixCurrent, 'localhost')
+							? "$wpPrefixCurrent/store"
+							: 'https://localhost.com:2248'
+						; /** @var string $mPrefixCurrent */
+						$u = str_replace($mPrefixProduction, $mPrefixCurrent, $u);
+						# 2023-12-29 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+						# "The «HOME» menu item link address should not be hardcoded":
+						# https://github.com/thehcginstitute-com/wp/issues/10
+						$u = str_replace($wpPrefixProduction, $wpPrefixCurrent, $u);
+					}
+					$menu_item->url = $u;
+				}
 			}
 
 			$menu_item->target = ! isset( $menu_item->target ) ? get_post_meta( $menu_item->ID, '_menu_item_target', true ) : $menu_item->target;
