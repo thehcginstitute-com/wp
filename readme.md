@@ -1,1 +1,1 @@
-[thehcginstitute.com](https://thehcginstitute.com) (WordPress 5.8.3).
+[thehcginstitute.com](https://thehcginstitute.com) (WordPress 6.4.3).
