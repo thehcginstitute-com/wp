@@ -61,4 +61,5 @@
 /wp-content/autoptimize_404_handler.php
 /wp-content/cache
 /wp-content/uploads
+/wp-content/wp-rocket-config
 !/wp-includes/**/*
