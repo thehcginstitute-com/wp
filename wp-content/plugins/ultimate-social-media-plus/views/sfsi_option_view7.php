@@ -129,6 +129,18 @@
                 <span class="sfsi_Cdisplay" id="sfsi_plus_instagram_countsDisplay">12k</span>
             </div>
         </li>
+        <li class="sfsiplus_ria_section">
+            <div>
+                <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/ria.png" alt="RateItAll" />
+                <span class="sfsi_Cdisplay" id="sfsi_plus_instagram_countsDisplay">12k</span>
+            </div>
+        </li>
+        <li class="sfsiplus_inha_section">
+            <div>
+                <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/inha.png" alt="IncreasingHappiness" />
+                <span class="sfsi_Cdisplay" id="sfsi_plus_inha_countsDisplay">12k</span>
+            </div>
+        </li>
         <li class="sfsiplus_houzz_section">
         	<div>
             	<img src="<?php echo SFSI_PLUS_PLUGURL ?>images/houzz.png" alt="Houzz" />

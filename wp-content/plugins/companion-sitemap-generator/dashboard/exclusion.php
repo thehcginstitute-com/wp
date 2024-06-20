@@ -29,18 +29,14 @@ echo "</ul>";
 echo "<br /><br /><hr />";
 	
 // Show page content
-if( !isset( $_GET['subtabt'] ) ) { 
-	$requestedPage 	= 'posttypes';
-} else {
-	$requestedPage 	= $_GET['subtabt'];
-}
+$requestedPage = !isset( $_GET['subtabt'] ) ? 'posttypes' : sanitize_key( $_GET['subtabt'] );
 
 if( array_key_exists( $requestedPage, $allowedPages ) ) {
 
 	echo "<h2>".$allowedPages[$requestedPage]."</h2>";
 	echo "<p>".sprintf( esc_html__( 'Here you can select %s that you do not want to include in your sitemap.', 'companion-sitemap-generator' ), strtolower( $allowedPages[$requestedPage] ) )."</p>";
 
-	require_once( plugin_dir_path( __FILE__ ) . 'exclusion-'.$requestedPage.'.php' );
+	require_once plugin_dir_path( __FILE__ ) . 'exclusion-'.$requestedPage.'.php';
 
 	echo "<script>jQuery('.".$requestedPage."-sub a').addClass('current');</script>";
 

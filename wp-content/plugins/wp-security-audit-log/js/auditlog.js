@@ -2,43 +2,50 @@ var WsalData;
 
 window['WsalAuditLogRefreshed'] = function () {
 	// fix pagination links causing form params to get lost
-	jQuery('span.pagination-links a').click(function (ev) {
-		ev.preventDefault();
-		var deparam = function (url) {
-			var obj = {};
-			var pairs = url.split('&');
-			for (var i in pairs) {
-				var split = pairs[i].split('=');
-				obj[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
-			}
-			return obj;
-		};
-		const viewer = jQuery('#audit-log-viewer');
-		const url_params = deparam(this.href);
-		const param_keys = [ 'paged', 'orderby', 'order' ];
-		for ( let index in param_keys ) {
-			const param_name = param_keys[ index ];
-			let param_value = url_params[param_name];
-			if (typeof param_value === 'undefined' && param_name === 'paged') {
-				param_value = 1;
-			}
-			const input_elm = viewer.find('input[name="' + param_name + '"]');
-			if ( input_elm.length === 0 ) {
-				viewer.append('<input type="hidden" name="' + param_name + '" value="' + param_value + '"/>');
-			} else {
-				input_elm.val( param_value );
-			}
+	// jQuery('span.pagination-links a').click(function (ev) {
+	// 	ev.preventDefault();
+	// 	var deparam = function (url) {
+	// 		var obj = {};
+	// 		var pairs = url.split('&');
+	// 		for (var i in pairs) {
+	// 			var split = pairs[i].split('=');
+	// 			obj[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
+	// 		}
+	// 		return obj;
+	// 	};
+	// 	const viewer = jQuery('#audit-log-viewer');
+	// 	const url_params = deparam(this.href);
+	// 	const param_keys = [ 'paged', 'orderby', 'order' ];
+	// 	for ( let index in param_keys ) {
+	// 		const param_name = param_keys[ index ];
+	// 		let param_value = url_params[param_name];
+	// 		if (typeof param_value === 'undefined' && param_name === 'paged') {
+	// 			param_value = 1;
+	// 		}
+	// 		const input_elm = viewer.find('input[name="' + param_name + '"]');
+	// 		if ( input_elm.length === 0 ) {
+	// 			viewer.append('<input type="hidden" name="' + param_name + '" value="' + param_value + '"/>');
+	// 		} else {
+	// 			input_elm.val( param_value );
+	// 		}
 
-		}
+	// 	}
 
-		viewer.submit();
-	});
+	// 	viewer.submit();
+	// });
 
 	var modification_alerts = ['1002', '1003', '6007', '6023'];
 
 	jQuery('.log-disable').each(function () {
 		if (-1 == modification_alerts.indexOf(this.innerText)) {
 			// Tooltip Confirm disable alert.
+			if (jQuery(this).attr('data-disabled')) {
+				jQuery(this).darkTooltip({
+					animation: 'fadeIn',
+					size: 'small',
+					gravity: 'west',
+				});
+			} else
 			jQuery(this).darkTooltip({
 				animation: 'fadeIn',
 				size: 'small',
@@ -46,8 +53,28 @@ window['WsalAuditLogRefreshed'] = function () {
 				confirm: true,
 				yes: 'Disable',
 				no: '',
-				onYes: function (elem) {
-					WsalDisableByCode(elem.attr('data-alert-id'), elem.data('disable-alert-nonce'))
+				onYes: function (elem, tooltip) {
+					WsalDisableByCode(elem.attr('data-alert-id'), elem.data('disable-alert-nonce'));
+					elem.attr('data-disabled', 'disabled');
+
+					jQuery('#darktooltip-'+elem.attr('id')+' .confirm').remove();
+					var { __ } = wp.i18n;
+					jQuery('#darktooltip-'+elem.attr('id')+' strong').text(__( 'This event is disabled.', 'wp-security-audit-log' ),);
+
+					// delete jQuery(elem)['tooltip'];
+
+					//console.log(jQuery(elem).darkTooltip());
+
+					//elem.removeAttribute('data-disabled', 'disabled');
+
+					// delete elem['darkTooltip'];
+
+					// jQuery(elem).darkTooltip({
+					// 	animation: 'fadeIn',
+					// 	size: 'small',
+					// 	gravity: 'west',
+					// 	confirm: false,
+					// });
 				}
 			});
 		} else {
@@ -73,7 +100,11 @@ window['WsalAuditLogRefreshed'] = function () {
 	jQuery('.tooltip').darkTooltip({
 		animation: 'fadeIn',
 		gravity: 'west',
-		size: 'medium'
+		size: 'medium',
+	});
+
+	jQuery('.tooltip').on('click', function(e) {
+		e.preventDefault();
 	});
 
 	// Data inspector tooltip.
@@ -85,57 +116,47 @@ window['WsalAuditLogRefreshed'] = function () {
 };
 
 function WsalAuditLogInit(_WsalData) {
-	WsalData = _WsalData;
-	var WsalTkn = WsalData.autorefresh.token;
+	// WsalData = _WsalData;
+	// var WsalTkn = WsalData.autorefresh.token;
 
-	// List refresher.
-	var WsalAjx = null;
+	// // List refresher.
+	// var WsalAjx = null;
 
-	/**
-	 * Check & Load New Alerts.
-	 */
-	var WsalChk = function () {
-		if (WsalAjx) WsalAjx.abort();
-		WsalAjx = jQuery.post(WsalData.ajaxurl, {
-			action: 'AjaxRefresh',
-			logcount: WsalTkn
-		}, function (data) {
-			data = data.toString();
-			data = data.trim();
-			WsalAjx = null;
-			if (data && data !== 'false') {
-				WsalTkn = data;
-				jQuery('#audit-log-viewer').load(
-					location.href + ' #audit-log-viewer-content',
-					window['WsalAuditLogRefreshed']
-				);
-			}
-		});
-	};
+	// /**
+	//  * Check & Load New Alerts.
+	//  */
+	// var WsalChk = function () {
+	// 	if (WsalAjx) WsalAjx.abort();
+	// 	WsalAjx = jQuery.post(WsalData.ajaxurl, {
+	// 		action: 'AjaxRefresh',
+	// 		logcount: WsalTkn
+	// 	}, function (data) {
+	// 		data = data.toString();
+	// 		data = data.trim();
+	// 		WsalAjx = null;
+	// 		if (data && data !== 'false') {
+	// 			WsalTkn = data;
+	// 			jQuery('#audit-log-viewer').load(
+	// 				location.href + ' #audit-log-viewer-content',
+	// 				window['WsalAuditLogRefreshed']
+	// 			);
+	// 		}
+	// 	});
+	// };
 
 	// If audit log auto refresh is enabled.
-	if ( WsalData.autorefresh.enabled ) {
-		// Check for new alerts every 30 secs.
-		setInterval( WsalChk, 30000 );
-	}
+	// if ( WsalData.autorefresh.enabled ) {
+	// 	// Check for new alerts every 30 secs.
+	// 	setInterval( WsalChk, 30000 );
+	// }
 
-	WsalSsasInit();
+	// WsalSsasInit();
 }
 
 var WsalIppsPrev;
 
 function WsalIppsFocus(value) {
 	WsalIppsPrev = value;
-}
-
-function WsalIppsChange(value) {
-	jQuery('select.wsal-ipps').attr('disabled', true);
-	jQuery.post(WsalData.ajaxurl, {
-		action: 'AjaxSetIpp',
-		count: value
-	}, function () {
-		location.reload();
-	});
 }
 
 function WsalSsasInit() {
@@ -201,13 +222,18 @@ function WsalSsasChange(value) {
 }
 
 function WsalDisableCustom(link, meta_key) {
-	var nonce = jQuery(link).data('disable-custom-nonce');
-	jQuery(link).hide();
+	var linkElm = jQuery(link);
+	linkElm.hide();
 	jQuery.ajax({
 		type: 'POST',
 		url: ajaxurl,
 		async: false,
-		data: { action: 'AjaxDisableCustomField', notice: meta_key, disable_nonce: nonce },
+		data: {
+			action: 'AjaxDisableCustomField',
+			notice: meta_key,
+			disable_nonce: linkElm.data('disable-custom-nonce'),
+			object_type: linkElm.data('object-type')
+		},
 		success: function (data) {
 			var notice = jQuery('<div class="updated" data-notice-name="notifications-extension"></div>').html(data);
 			jQuery("h2:first").after(notice);
@@ -215,13 +241,14 @@ function WsalDisableCustom(link, meta_key) {
 	});
 }
 
-function WsalDBChange(value) {
+function WsalDBChange(value, nonce) {
 	jQuery.ajax({
 		type: 'POST',
 		url: ajaxurl,
 		async: true,
 		data: {
 			action: 'AjaxSwitchDB',
+			nonce: nonce,
 			selected_db: value
 		},
 		success: function () {
@@ -377,96 +404,7 @@ function wsal_dismiss_setup_modal() {
 	} );
 }
 
-/**
- * Load Events for Infinite Scroll.
- *
- * @since 3.3.1.1
- *
- * @param {integer} pageNumber - Log viewer page number.
- */
-function wsalLoadEvents( pageNumber ) {
-	jQuery( '#wsal-event-loader' ).show( 'fast' );
-	/*
-	 * Gets the view type. Defaults to 'list' but could be 'grid'. Only those 2
-	 * types are supported. Validation handled server side.
-	 */
-	var view = wsalAuditLogArgs.userView;
-	if ( null === view || view.length < 1 ) {
-		view = 'list';
-	}
-	jQuery.ajax( {
-		type:'POST',
-		url: ajaxurl,
-		data: {
-			action: 'wsal_infinite_scroll_events',
-			wsal_viewer_security: wsalAuditLogArgs.viewerNonce,
-			page_number: pageNumber,
-			page : wsalAuditLogArgs.page,
-			'wsal-cbid' : wsalAuditLogArgs.siteId,
-			orderby : wsalAuditLogArgs.orderBy,
-			order : wsalAuditLogArgs.order,
-			s : wsalAuditLogArgs.searchTerm,
-			filters : wsalAuditLogArgs.searchFilters,
-			view: view,
-		},
-		success: function( html ) {
-			jQuery( '#wsal-event-loader' ).hide( '1000' );
-
-			if ( html ) {
-				wsalLoadEventsResponse = true;
-				jQuery( '#audit-log-viewer #the-list' ).append( html ); // This will be the div where our content will be loaded.
-			} else {
-				wsalLoadEventsResponse = false;
-				jQuery( '#wsal-auditlog-end' ).show( 'fast' );
-			}
-
-			// need to bind a click handler to this button if any more have been added.
-			jQuery( '.wsal-addon-install-trigger' ).unbind( 'click' );
-			jQuery( '.wsal-addon-install-trigger' ).click(
-				function( e ) {
-					wsal_addon_installer_ajax( this );
-				}
-			);
-		},
-		error: function( xhr, textStatus, error ) {
-			console.log( xhr.statusText );
-			console.log( textStatus );
-			console.log( error );
-		}
-	});
-
-	if ( wsalLoadEventsResponse ) {
-		return pageNumber + 1;
-	}
-
-	return 0;
-}
-var wsalLoadEventsResponse = true; // Global variable to check events loading response.
-
 jQuery( document ).ready( function() {
-
-	/**
-	 * Dismiss DB disconnect issue notice.
-	 */
-	jQuery( '#wsal-notice-connect-issue' ).click( function() {
-		jQuery.ajax({
-			type: 'POST',
-			url: ajaxurl,
-			async: true,
-			data: {
-				action: 'wsal_dismiss_notice_disconnect',
-				nonce: jQuery( '#wsal-dismiss-notice-disconnect' ).val()
-			},
-			success: function( data ) {
-				console.log( data );
-			},
-			error: function( xhr, textStatus, error ) {
-				console.log( xhr.statusText );
-				console.log( textStatus );
-				console.log( error );
-			}
-		});
-	});
 
 	/**
 	 * Dismiss addon-available notice.
@@ -516,23 +454,6 @@ jQuery( document ).ready( function() {
 			jQuery( button ).after( spinner );
 		}
 	);
-
-	/**
-	 * Load events for Infinite Scroll.
-	 *
-	 * @since 3.3.1.1
-	 */
-	if ( wsalAuditLogArgs.infiniteScroll ) {
-		var count = 2;
-		jQuery( window ).scroll( function() {
-			var scrollToTop = Math.round( jQuery( window ).scrollTop() );
-			if ( scrollToTop === ( jQuery( document ).height() - jQuery( window ).height() ) ) {
-				if ( 0 !== count ) {
-					count = wsalLoadEvents( count );
-				}
-			}
-		});
-	}
 });
 
 function wsal_addon_installer_ajax( button ) {
@@ -570,3 +491,49 @@ function wsal_addon_installer_ajax( button ) {
 		}
 	);
 }
+
+jQuery( document ).ready( function() {
+
+    jQuery( document ).on( 'click', '[data-shortened-text]', function(event) {
+        event.preventDefault();
+		var elm = jQuery( this );
+		var full_text = elm.data( 'shortened-text' );
+		elm.parent().find( 'span' ).text( full_text );
+		elm.remove();
+	} );
+
+	// Data inspector WSAL 4.6+
+	jQuery( document ).on( 'click', '.data-event-inspector-link:not(.inspector-active)', function(event) {
+        event.preventDefault();
+		let count = jQuery( '.event-data-panel' ).length;
+		var origText = jQuery( this ).text();
+		jQuery( this ).attr( 'data-orig-text', origText );
+		jQuery( this ).attr( 'data-panel-number', count );
+		jQuery( this ).closest( 'tr' ).after( '<div class="event-data-panel panel-'+ count +'"></div><div class="panel-'+ count +'-fill"></div>' );
+
+		jQuery( jQuery( '.panel-'+ count ) ).load( jQuery( this ).attr( 'href' ), function() {
+			jQuery( '.panel-'+ count + ' .event-content-wrapper' ).slideDown( 300 );
+		});
+
+		jQuery( this ).attr( 'data-' );
+		jQuery( this ).addClass( 'inspector-active' ).text( wsalAuditLogArgs.closeInspectorString );
+		return true;
+	} );
+
+	jQuery( document ).on( 'click', '.data-event-inspector-link.inspector-active', function(event) {
+        event.preventDefault();
+		var targetPanel = '.panel-' + jQuery( this ).attr( 'data-panel-number');
+		var origText =  jQuery( this ).attr( 'data-orig-text' );		
+		jQuery( '.panel-'+ jQuery( this ).attr( 'data-panel-number') + ' .event-content-wrapper' ).slideUp( 200 );
+
+		setTimeout(function() { 
+			jQuery( targetPanel ).remove();
+			jQuery( targetPanel + '-fill').remove();
+		}, 300);
+
+		jQuery( this ).removeClass( 'inspector-active' ).text( origText );
+		return true;
+	} );
+
+	
+});

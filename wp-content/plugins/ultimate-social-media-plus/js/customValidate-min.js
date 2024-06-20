@@ -25,6 +25,14 @@ function sfsi_plus_validationStep2() {
     if (SFSI(".tab2 > .sfsiplus_instagram_section").css("display") === "block") {
         if (sfsi_validator(SFSI('input[name="sfsi_plus_instagram_display"]'), "checked") && !sfsi_validator(SFSI('input[name="sfsi_plus_instagram_pageUrl"]'), "blank")) return sfsiplus_showErrorSuc("error", "Error : Invalid Instagram url ", 2), SFSI('input[name="sfsi_plus_instagram_pageUrl"]').addClass("inputError"), !1;
     }
+    
+    if (SFSI(".tab2 > .sfsiplus_ria_section").css("display") === "block") {
+        if (sfsi_validator(SFSI('input[name="sfsi_plus_ria_display"]'), "checked") && !sfsi_validator(SFSI('input[name="sfsi_plus_ria_pageUrl"]'), "blank")) return sfsiplus_showErrorSuc("error", "Error : Invalid RateItAll url ", 2), SFSI('input[name="sfsi_plus_ria_pageUrl"]').addClass("inputError"), !1;
+    }
+    
+    if (SFSI(".tab2 > .sfsiplus_inha_section").css("display") === "block") {
+        if (sfsi_validator(SFSI('input[name="sfsi_plus_inha_display"]'), "checked") && !sfsi_validator(SFSI('input[name="sfsi_plus_inha_pageUrl"]'), "blank")) return sfsiplus_showErrorSuc("error", "Error : Invalid IncreasingHappiness url ", 2), SFSI('input[name="sfsi_plus_inha_pageUrl"]').addClass("inputError"), !1;
+    }
 
     if (SFSI(".tab2 > .sfsiplus_houzz_section").css("display") === "block") {
         if (sfsi_validator(SFSI('input[name="sfsi_plus_houzz_display"]'), "checked") && !sfsi_validator(SFSI('input[name="sfsi_plus_houzz_pageUrl"]'), "blank")) return sfsiplus_showErrorSuc("error", "Error : Invalid Houzz url ", 2), SFSI('input[name="sfsi_plus_houzz_pageUrl"]').addClass("inputError"), !1;
@@ -59,6 +67,14 @@ function sfsi_plus_validationStep2() {
 
     if (SFSI(".tab2 > .sfsiplus_mastodon_section").css("display") === "block") {
         if (sfsi_validator(SFSI('input[name="sfsi_plus_mastodon_display"]'), "checked") && (sfsi_validator(SFSI('input[name="sfsi_plus_mastodonVisit_option"]'), "checked") && !sfsi_validator(SFSI('input[name="sfsi_plus_mastodon_pageUrl"]'), "blank"))) return sfsiplus_showErrorSuc("error", "Error : Invalid mastodon url ", 2), SFSI('input[name="sfsi_plus_mastodon_pageUrl"]').addClass("inputError"), !1;
+    }
+
+    if (SFSI(".tab2 > .sfsiplus_ria_section").css("display") === "block") {
+        if (sfsi_validator(SFSI('input[name="sfsi_plus_ria_display"]'), "checked") && (sfsi_validator(SFSI('input[name="sfsi_plus_riaVisit_option"]'), "checked") && !sfsi_validator(SFSI('input[name="sfsi_plus_ria_pageUrl"]'), "blank"))) return sfsiplus_showErrorSuc("error", "Error : Invalid ria url ", 2), SFSI('input[name="sfsi_plus_ria_pageUrl"]').addClass("inputError"), !1;
+    }
+
+    if (SFSI(".tab2 > .sfsiplus_inha_section").css("display") === "block") {
+        if (sfsi_validator(SFSI('input[name="sfsi_plus_inha_display"]'), "checked") && (sfsi_validator(SFSI('input[name="sfsi_plus_inhaVisit_option"]'), "checked") && !sfsi_validator(SFSI('input[name="sfsi_plus_inha_pageUrl"]'), "blank"))) return sfsiplus_showErrorSuc("error", "Error : Invalid inha url ", 2), SFSI('input[name="sfsi_plus_inha_pageUrl"]').addClass("inputError"), !1;
     }
 
     var s = 0;
@@ -119,11 +135,14 @@ function sfsi_validator(s, r) {
     var i = new RegExp("^(http|https|ftp)://([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]).(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0).(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0).(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9-]+.)*[a-zA-Z0-9-]+.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(/($|[a-zA-Z0-9.,@?'\\+&%$#=~_-]+))*$");
     switch (r) {
         case "blank":
+            console.log(s);
+
             return s.val().trim() ? !0 : !1;
         case "url":
             return i.test(s.val().trim()) ? !0 : !1;
         case "checked":
-            return !s.attr("checked") == !0 ? !1 : !0;
+            console.log(s);
+            return (!s.attr("checked") == !0 ? !1 : !0) || (!s.is(':checked') == !0 ? !1 : !0) ;
         case "activte":
             return s.attr("disabled") ? !1 : !0;
         case "int":

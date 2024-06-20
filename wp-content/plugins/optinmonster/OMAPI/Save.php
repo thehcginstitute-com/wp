@@ -420,7 +420,7 @@ class OMAPI_Save {
 	 *
 	 * @since 2.2.0
 	 *
-	 * @param  mixed $shortcodes Convert shorcodes array to a concatenated string.
+	 * @param  mixed $shortcodes Convert shortcodes array to a concatenated string.
 	 *
 	 * @return string
 	 */

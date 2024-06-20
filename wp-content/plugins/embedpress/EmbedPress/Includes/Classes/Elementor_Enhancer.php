@@ -194,7 +194,7 @@ class Elementor_Enhancer {
 		preg_match( '/src=\"(.+?)\"/', $embed->embed, $match );
 		$url_full = $match[1];
 		$params   = [
-			'color'    => str_replace( '#', '', $setting['embedpress_pro_vimeo_color'] ),
+			'color' => str_replace('#', '', isset($setting['embedpress_pro_vimeo_color']) ? $setting['embedpress_pro_vimeo_color'] : ''),
 			'title'    => $setting['embedpress_pro_vimeo_display_title'] === 'yes' ? 1 : 0,
 			'byline'   => $setting['embedpress_pro_vimeo_display_author'] === 'yes' ? 1 : 0,
 			'portrait' => $setting['embedpress_pro_vimeo_avatar'] === 'yes' ? 1 : 0,
@@ -247,7 +247,9 @@ class Elementor_Enhancer {
 		$query = parse_url( $embed->url, PHP_URL_QUERY );
 		$url   = str_replace( '?' . $query, '', $url_full );
 
-		parse_str( $query, $params );
+		if ($query !== null) {
+			parse_str($query, $params);
+		}
 
 		// Set the class in the attributes
 		$embed->attributes->class = str_replace( '{provider_alias}', 'wistia', $embed->attributes->class );
@@ -498,7 +500,8 @@ class Elementor_Enhancer {
 			$time = $h . $m . $s;
 		}
 		$muted = ( 'yes' === $settings['embedpress_pro_twitch_mute'] ) ? 'true' : 'false';
-		$theme = ! empty( $settings['embedpress_pro_twitch_theme'] ) ? $settings['embedpress_pro_twitch_theme'] : 'dark';
+		$theme = !empty($settings['embedpress_pro_twitch_theme']) ? esc_attr($settings['embedpress_pro_twitch_theme']) : 'dark';
+		
 		if ( is_embedpress_pro_active() ) {
 
 			$layout = ( 'yes' === $settings['embedpress_pro_twitch_chat'] ) ? 'video-with-chat' : 'video';

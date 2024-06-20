@@ -3,6 +3,7 @@ namespace SiteGround_Optimizer\Cli;
 
 use SiteGround_Optimizer\Ssl\Ssl;
 use SiteGround_Optimizer\Options\Options;
+use SiteGround_Optimizer\Message_Service\Message_Service;
 /**
  * WP-CLI: wp sg memcached enable/disable.
  *
@@ -39,20 +40,20 @@ class Cli_Https {
 			case 'enable':
 				$result = $this->ssl->enable();
 				true === $result ? Options::enable_option( 'siteground_optimizer_ssl_enabled' ) : '';
-				$type = true;
+				$type = 1;
 				break;
 
 			case 'disable':
 				$result = $this->ssl->disable();
 				true === $result ? Options::disable_option( 'siteground_optimizer_ssl_enabled' ) : '';
-				$type = false;
+				$type = 0;
 				break;
 			default:
 				\WP_CLI::error( 'Please specify action' );
 				break;
 		}
 
-		$message = $this->option_service->get_response_message( $result, 'siteground_optimizer_ssl_enabled', $type );
+		$message = Message_Service::get_response_message( $result, 'ssl', $type );
 
 		return true === $result ? \WP_CLI::success( $message ) : \WP_CLI::error( $message );
 	}

@@ -1,8 +1,11 @@
 <?php
 namespace SiteGround_Optimizer\Front_End_Optimization;
 
-use SiteGround_Optimizer\Helper\Helper;
 use SiteGround_Optimizer\Supercacher\Supercacher;
+use SiteGround_Optimizer\File_Cacher\File_Cacher;
+use SiteGround_Helper\Helper_Service;
+use SiteGround_Optimizer\Helper\Helper;
+
 /**
  * SG Front_End_Optimization main plugin class
  */
@@ -52,7 +55,20 @@ class Front_End_Optimization {
 		'wp-hooks',
 		'houzez-google-map-api',
 		'wpascript',
+		'wc-square',
 	);
+
+	/**
+	 * Array containing all script handle regex' that should be excluded.
+	 *
+	 * @since 7.1.0
+	 *
+	 * @var   array Array containing all script handle regex' that should be excluded.
+	 */
+	private $blacklisted_async_regex = array(
+		'sv-wc-payment-gateway-payment-form-v', // Authorize.NET payment gateway payment form script.
+	);
+
 
 	/**
 	 * The singleton instance.
@@ -105,7 +121,7 @@ class Front_End_Optimization {
 			return;
 		}
 
-		$uploads_dir = Helper::get_uploads_dir();
+		$uploads_dir = Helper_Service::get_uploads_dir();
 
 		// Build the assets dir name.
 		$directory = $uploads_dir . '/siteground-optimizer-assets';
@@ -153,7 +169,7 @@ class Front_End_Optimization {
 	 * @return string           Original filepath.
 	 */
 	public static function get_original_filepath( $original ) {
-		$home_url = Helper::get_site_url();
+		$home_url = Helper_Service::get_site_url();
 		// Get the home_url from database. Some plugins like qtranslate for example,
 		// modify the home_url, which result to wrong replacement with ABSPATH for resources loaded via link.
 		// Very ugly way to handle resources without protocol.
@@ -202,6 +218,11 @@ class Front_End_Optimization {
 
 		$excluded_scripts = apply_filters( 'sgo_js_async_exclude', $this->blacklisted_async_scripts );
 
+		// Remove excluded script handles using regex.
+		foreach( $this->blacklisted_async_regex as $regex ) {
+			$excluded_scripts = array_merge( $excluded_scripts, Helper::get_script_handle_regex( $regex, $scripts->to_do ) );
+		}
+
 		// Get groups of handles.
 		foreach ( $scripts->to_do as $handle ) {
 			// We don't want to load footer scripts asynchronous.
@@ -227,25 +248,40 @@ class Front_End_Optimization {
 	 * @param string $src    Script src.
 	 */
 	public function add_async_attribute( $tag, $handle, $src ) {
-		if ( @strpos( $src, 'siteground-async=1' ) !== false ) {
-			$new_src = remove_query_arg( 'siteground-async', $src );
-			// return the tag with the async attribute.
-			return str_replace(
-				array(
-					'<script ',
-					'-siteground-async',
-					$src,
-					'?#038;',
-				),
-				array(
-					'<script defer ',
-					'',
-					$new_src,
-					'?',
-				),
-				$tag
-			);
+		// Bail if we do not find the argument.
+		if ( @strpos( $src, 'siteground-async=1' ) === false ) {
+			return $tag;
 		}
+
+		// Add the async attribute and replace the & and ? with their proper representation.
+		$tag = str_replace(
+			array(
+				'<script ',
+				'-siteground-async',
+				$src,
+				'?#038;',
+				'#038;',
+				'&amp;',
+			),
+			array(
+				'<script defer ',
+				'',
+				remove_query_arg( 'siteground-async', $src ),
+				'?',
+				'&',
+				'&',
+			),
+			$tag
+		);
+
+		// Match the async argument and replace it with the proper symbol, depending of the position of the argument.
+		$tag = preg_replace_callback(
+			'/([\?&])siteground-async=1(&|$|\b)/',
+			function( $matches ) {
+				return empty( $matches[2] ) ? '' : $matches[1];
+			},
+			$tag
+		);
 
 		return $tag;
 	}
@@ -269,7 +305,7 @@ class Front_End_Optimization {
 		}
 
 		// Skip all external sources.
-		if ( @strpos( Helper::get_home_url(), $host ) === false ) {
+		if ( @strpos( Helper_Service::get_home_url(), $host ) === false ) {
 			return $src;
 		}
 
@@ -309,10 +345,19 @@ class Front_End_Optimization {
 		global $wp;
 		global $wp_styles;
 		global $wp_scripts;
+
+		// Pre-load Woocommerce functionality, if needed.
+		if ( function_exists( '\WC' ) && defined( '\WC_ABSPATH' ) ) {
+			include_once \WC_ABSPATH . 'includes/wc-cart-functions.php';
+			include_once \WC_ABSPATH . 'includes/class-wc-cart.php';
+
+			if ( is_null( WC()->cart ) ) {
+				wc_load_cart();
+			}
+		}
+
 		// Remove the jet popup action to prevent fatal errros.
 		remove_all_actions( 'elementor/editor/after_enqueue_styles', 10 );
-
-		$wp_scripts->queue[] = 'wc-jilt';
 
 		ob_start();
 		// Call the action to load the assets.
@@ -320,9 +365,6 @@ class Front_End_Optimization {
 		do_action( 'wp_enqueue_scripts' );
 		do_action( 'elementor/editor/after_enqueue_styles' );
 		ob_get_clean();
-
-		unset( $wp_scripts->queue['wc-jilt'] );
-
 
 		// Build the assets data.
 		return array(
@@ -459,6 +501,7 @@ class Front_End_Optimization {
 		Supercacher::delete_assets();
 		Supercacher::purge_cache();
 		Supercacher::flush_memcache();
+		File_Cacher::purge_everything();
 	}
 
 	/**

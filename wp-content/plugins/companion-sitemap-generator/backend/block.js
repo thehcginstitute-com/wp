@@ -3,9 +3,10 @@ var __                  = wp.i18n.__;
 
 // Set up basic block info
 var el                  = wp.element.createElement;
-var ic                  = wp.editor.InspectorControls;
+var ic                  = wp.blockEditor.InspectorControls;
 var sc                  = wp.components.SelectControl;
-var ssr                 = wp.components.ServerSideRender;
+var tc                  = wp.components.TextControl;
+var ssr                 = wp.serverSideRender;
 var pb                  = wp.components.PanelBody;
 var registerBlockType   = wp.blocks.registerBlockType;
 
@@ -28,6 +29,9 @@ registerBlockType( 'sitemap/block', {
         },
         sort: {
             default: 'asc'
+        },
+        limit: {
+            default: '-1'
         }
     },
 
@@ -46,6 +50,9 @@ registerBlockType( 'sitemap/block', {
         }
         function changeSort( sort ) {
             setAttributes( {sort} );
+        }
+        function changeLimit( limit ) {
+            setAttributes( {limit} );
         }
 
         // Display block preview and UI
@@ -93,6 +100,13 @@ registerBlockType( 'sitemap/block', {
                                 {value: 'ASC', label: __( 'Ascending', 'companion-sitemap-generator' )+' (A-Z / 1-9)' },
                                 {value: 'DESC', label: __( 'Descending', 'companion-sitemap-generator' )+' (Z-A / 9-1)' },
                             ]
+                        }),
+
+                        el( tc, {
+                            value: attributes.limit,
+                            label: __( 'Post limit', 'companion-sitemap-generator' ),
+                            onChange: changeLimit,
+                            help: __( 'How many posts to show per block? -1 to show all.', 'companion-sitemap-generator' ),
                         })
                     ]
                 )

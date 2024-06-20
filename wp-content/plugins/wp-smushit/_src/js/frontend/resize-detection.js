@@ -1,3 +1,5 @@
+import '../../scss/resize-detection.scss';
+
 /**
  * Image resize detection (IRD).
  *
@@ -146,7 +148,7 @@
 		/**
 		 * Generate markup.
 		 *
-		 * @param {string} type  Accepts: 'bigger' or 'smaller'.
+		 * @param {string} type Accepts: 'bigger' or 'smaller'.
 		 */
 		generateMarkup( type ) {
 			this.images[ type ].forEach( ( image, index ) => {
@@ -166,13 +168,9 @@
 				item.innerHTML = `
 					<div class="smush-image-info">
 						<span>${ index + 1 }</span>
-						<span class="smush-tag">${ image.props.computed_width } x ${
-					image.props.computed_height
-				}px</span>
+						<span class="smush-tag">${ image.props.computed_width } x ${ image.props.computed_height }px</span>
 						<i class="smush-front-icons smush-front-icon-arrows-in" aria-hidden="true">&nbsp;</i>
-						<span class="smush-tag smush-tag-success">${ image.props.real_width } × ${
-					image.props.real_height
-				}px</span>					
+						<span class="smush-tag smush-tag-success">${ image.props.real_width } × ${ image.props.real_height }px</span>					
 					</div>
 					<div class="smush-image-description">${ tooltip }</div>
 				`;
@@ -361,4 +359,4 @@
 	 */
 	window.addEventListener( 'DOMContentLoaded', () => SmushIRS.init() );
 	window.addEventListener( 'lazyloaded', () => SmushIRS.refresh() );
-} )();
+}() );

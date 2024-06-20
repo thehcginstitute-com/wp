@@ -25,6 +25,7 @@ if ( ! class_exists( 'Mega_Menu_Nav_Menus' ) ) :
 				'disable_link'            => 'false',
 				'hide_on_mobile'          => 'false',
 				'hide_on_desktop'         => 'false',
+				'close_after_click'       => 'false',
 				'hide_sub_menu_on_mobile' => 'false',
 				'hide_arrow'              => 'false',
 				'item_align'              => 'left',
@@ -136,6 +137,12 @@ if ( ! class_exists( 'Mega_Menu_Nav_Menus' ) ) :
 		public function register_nav_meta_box() {
 			global $pagenow;
 
+			$capability = apply_filters( 'megamenu_options_capability', 'edit_theme_options' );
+
+			if ( ! current_user_can( $capability ) ) {
+				return;
+			}
+
 			if ( 'nav-menus.php' === $pagenow ) {
 				add_meta_box(
 					'mega_menu_meta_box',
@@ -156,6 +163,12 @@ if ( ! class_exists( 'Mega_Menu_Nav_Menus' ) ) :
 		 */
 		public function enqueue_menu_page_scripts( $hook ) {
 			if ( ! in_array( $hook, array( 'nav-menus.php' ) ) ) {
+				return;
+			}
+
+			$capability = apply_filters( 'megamenu_options_capability', 'edit_theme_options' );
+
+			if ( ! current_user_can( $capability ) ) {
 				return;
 			}
 
@@ -256,6 +269,12 @@ if ( ! class_exists( 'Mega_Menu_Nav_Menus' ) ) :
 		public function save() {
 			check_ajax_referer( 'megamenu_edit', 'nonce' );
 
+			$capability = apply_filters( 'megamenu_options_capability', 'edit_theme_options' );
+
+			if ( ! current_user_can( $capability ) ) {
+				return;
+			}
+
 			if ( isset( $_POST['menu'] ) && $_POST['menu'] > 0 && is_nav_menu( $_POST['menu'] ) && isset( $_POST['megamenu_meta'] ) ) {
 				$raw_submitted_settings    = $_POST['megamenu_meta'];
 				$parsed_submitted_settings = json_decode( stripslashes( $raw_submitted_settings ), true );
@@ -317,9 +336,9 @@ if ( ! class_exists( 'Mega_Menu_Nav_Menus' ) ) :
 			if ( ! count( $theme_locations ) ) {
 				echo "<div style='padding: 15px;'>";
 				$link = '<a href="https://www.megamenu.com/documentation/widget/?utm_source=free&amp;utm_medium=link&amp;utm_campaign=pro" target="_blank">' . __( 'here', 'megamenu' ) . '</a>';
-				echo '<p>' . esc_html__( 'This theme does not register any menu locations.', 'megamenu' ) . '</p>';
-				echo '<p>' . esc_html__( 'You will need to create a new menu location and use the Max Mega Menu widget or shortcode to display the menu on your site.', 'megamenu' ) . '</p>';
-				echo '<p>' . str_replace( '{link}', $link, esc_html__( 'Click {link} for instructions.', 'megamenu' ) ) . '</p>';
+				echo '<p>' . esc_html__( 'There are currently no menu locations registered by your theme.', 'megamenu' ) . '</p>';
+				echo '<p>' . esc_html__( 'Go to Mega Menu > Menu Locations to create a new menu location.', 'megamenu' ) . '</p>';
+				echo '<p>' . esc_html__( 'Then use the Max Mega Menu block, widget or shortcode to output the menu location on your site.', 'megamenu' ) . '</p>';
 				echo "</div>";
 			} elseif ( ! count( $tagged_menu_locations ) ) {
 				echo "<div style='padding: 15px;'>";

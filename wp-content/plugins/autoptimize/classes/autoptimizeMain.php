@@ -28,6 +28,13 @@ class autoptimizeMain
     protected $filepath = null;
 
     /**
+     * Critical CSS base object
+     *
+     * @var object
+     */
+    protected $_criticalcss = null;
+
+    /**
      * Constructor.
      *
      * @param string $version Version.
@@ -59,8 +66,9 @@ class autoptimizeMain
 
         add_action( 'autoptimize_setup_done', array( $this, 'version_upgrades_check' ) );
         add_action( 'autoptimize_setup_done', array( $this, 'check_cache_and_run' ) );
+        add_action( 'autoptimize_setup_done', array( $this, 'maybe_run_ao_compat' ), 10 );
         add_action( 'autoptimize_setup_done', array( $this, 'maybe_run_ao_extra' ), 15 );
-        add_action( 'autoptimize_setup_done', array( $this, 'maybe_run_partners_tab' ), 20 );
+        add_action( 'autoptimize_setup_done', array( $this, 'maybe_run_admin_only_trinkets' ), 20 );
         add_action( 'autoptimize_setup_done', array( $this, 'maybe_run_criticalcss' ), 11 );
         add_action( 'autoptimize_setup_done', array( $this, 'maybe_run_notfound_fallback' ), 10 );
 
@@ -183,9 +191,17 @@ class autoptimizeMain
                 }
 
                 // And disable Jetpack's site accelerator if JS or CSS opt. are active.
-                if ( class_exists( 'Jetpack' ) && apply_filters( 'autoptimize_filter_main_disable_jetpack_cdn', true ) && ( $conf->get( 'autoptimize_js' ) || $conf->get( 'autoptimize_css' ) ) ) {
-                    add_filter( 'jetpack_force_disable_site_accelerator', '__return_true' );
+                if ( class_exists( 'Jetpack' ) && apply_filters( 'autoptimize_filter_main_disable_jetpack_cdn', true ) && ( $conf->get( 'autoptimize_js' ) || $conf->get( 'autoptimize_css' ) || autoptimizeImages::imgopt_active() ) ) {
+                    add_filter( 'jetpack_force_disable_site_accelerator', '__return_true' ); // this does not seemt to work any more?
+                    if ( true === autoptimizeImages::imgopt_active() ) {
+                        // only disable photon if AO is optimizing images.
+                        add_filter( 'jetpack_photon_skip_for_url', '__return_true' );
+                    }
                 }
+
+                // Add "no cache found" notice.
+                add_action( 'admin_notices', 'autoptimizeMain::notice_nopagecache', 99 );
+                add_action( 'admin_notices', 'autoptimizeMain::notice_potential_conflict', 99 );
             }
         } else {
             add_action( 'admin_notices', 'autoptimizeMain::notice_cache_unavailable' );
@@ -202,22 +218,36 @@ class autoptimizeMain
 
             // And show the imgopt notice.
             add_action( 'admin_notices', 'autoptimizeMain::notice_plug_imgopt' );
+            add_action( 'admin_notices', 'autoptimizeMain::notice_imgopt_issue' );
         }
     }
 
-    public function maybe_run_partners_tab()
+    public function maybe_run_admin_only_trinkets()
     {
-        // Loads partners tab code if in admin (and not in admin-ajax.php)!
+        // Loads partners tab and exit survey code if in admin (and not in admin-ajax.php)!
         if ( autoptimizeConfig::is_admin_and_not_ajax() ) {
             new autoptimizePartners();
+            new autoptimizeExitSurvey();
+            new autoptimizeProTab();
+        }
+    }
+
+    public function criticalcss()
+    {
+        if ( apply_filters( 'autoptimize_filter_criticalcss_active', true ) && ! autoptimizeUtils::is_plugin_active( 'autoptimize-criticalcss/ao_criticss_aas.php' ) ) {
+            return $this->_criticalcss;
+        } else {
+            return false;
         }
     }
 
     public function maybe_run_criticalcss()
     {
-        // Loads criticalcss if the power-up is not active and if the filter returns true.
+        // Loads criticalcss if the filter returns true & old power-up is not active.
         if ( apply_filters( 'autoptimize_filter_criticalcss_active', true ) && ! autoptimizeUtils::is_plugin_active( 'autoptimize-criticalcss/ao_criticss_aas.php' ) ) {
-            new autoptimizeCriticalCSSBase();
+            $this->_criticalcss = new autoptimizeCriticalCSSBase();
+            $this->_criticalcss->setup();
+            $this->_criticalcss->load_requires();
         }
     }
 
@@ -225,6 +255,25 @@ class autoptimizeMain
     {
         if ( autoptimizeCache::do_fallback() ) {
             add_action( 'template_redirect', array( 'autoptimizeCache', 'wordpress_notfound_fallback' ) );
+        }
+    }
+
+    public function maybe_run_ao_compat()
+    {
+        $conf = autoptimizeConfig::instance();
+
+        // Condtionally loads the compatibility-class to ensure more out-of-the-box compatibility with big players.
+        $_run_compat = true;
+
+        if ( 'on' === $conf->get( 'autoptimize_installed_before_compatibility' ) ) {
+            // If AO was already running before Compatibility logic was added, don't run compat by default
+            // because it can be assumed everything works and we want to avoid (perf) regressions that
+            // could occur due to compatibility code.
+            $_run_compat = false;
+        }
+
+        if ( apply_filters( 'autoptimize_filter_init_compatibility', $_run_compat ) ) {
+             new autoptimizeCompatibility();
         }
     }
 
@@ -349,11 +398,18 @@ class autoptimizeMain
                 }
             }
 
-            // And make sure pagebuilder previews don't get optimized HTML/ JS/ CSS/ ...
+            // Misc. querystring paramaters that will stop AO from doing optimizations (pagebuilders +
+            // 2 generic parameters that could/ should become standard between optimization plugins?).
             if ( false === $ao_noptimize ) {
-                $_qs_pagebuilders = array( 'tve', 'elementor-preview', 'fl_builder', 'vc_action', 'et_fb', 'bt-beaverbuildertheme', 'ct_builder', 'fb-edit', 'siteorigin_panels_live_editor' );
-                foreach ( $_qs_pagebuilders as $_pagebuilder ) {
-                    if ( array_key_exists( $_pagebuilder, $_GET ) ) {
+                $_qs_showstoppers = array( 'no_cache', 'no_optimize', 'tve', 'elementor-preview', 'fl_builder', 'vc_action', 'et_fb', 'bt-beaverbuildertheme', 'ct_builder', 'fb-edit', 'siteorigin_panels_live_editor', 'preview', 'td_action' );
+
+                // doing Jonathan a quick favor to allow correct unused CSS generation ;-) .
+                if ( apply_filters( 'autoptimize_filter_main_showstoppers_do_wp_rocket_a_favor', true ) ) {
+                    $_qs_showstoppers[] = 'nowprocket';
+                }
+
+                foreach ( $_qs_showstoppers as $_showstopper ) {
+                    if ( array_key_exists( $_showstopper, $_GET ) ) {
                         $ao_noptimize = true;
                         break;
                     }
@@ -366,6 +422,11 @@ class autoptimizeMain
                 $ao_noptimize = true;
             }
 
+            // If page/ post check post_meta to see if optimize is off.
+            if ( false === autoptimizeConfig::get_post_meta_ao_settings( 'ao_post_optimize' ) ) {
+                $ao_noptimize = true;
+            }
+
             // And finally allows blocking of autoptimization on your own terms regardless of above decisions.
             $ao_noptimize = (bool) apply_filters( 'autoptimize_filter_noptimize', $ao_noptimize );
 
@@ -373,6 +434,12 @@ class autoptimizeMain
             $is_customize_preview = false;
             if ( function_exists( 'is_customize_preview' ) && is_customize_preview() ) {
                 $is_customize_preview = is_customize_preview();
+            }
+            
+            // explicitly disable when is_login exists and is true but don't use it direclty because older versions of WordPress don't have that yet.
+            $is_login = false;
+            if ( function_exists( 'is_login' ) && true === is_login() ) {
+                $is_login = true;
             }
 
             /**
@@ -382,7 +449,7 @@ class autoptimizeMain
              * while the main query hasn't been ran yet. Thats why we use
              * AUTOPTIMIZE_INIT_EARLIER in tests.
              */
-            $do_buffering = ( ! is_admin() && ! is_feed() && ! is_embed() && ! $ao_noptimize && ! $is_customize_preview );
+            $do_buffering = ( ! is_admin() && ! is_feed() && ! is_embed() && ! $is_login && ! $is_customize_preview && ! $ao_noptimize );
         }
 
         return $do_buffering;
@@ -488,6 +555,7 @@ class autoptimizeMain
             'autoptimizeScripts' => array(
                 'aggregate'           => $conf->get( 'autoptimize_js_aggregate' ),
                 'defer_not_aggregate' => $conf->get( 'autoptimize_js_defer_not_aggregate' ),
+                'defer_inline'        => $conf->get( 'autoptimize_js_defer_inline' ),
                 'justhead'            => $conf->get( 'autoptimize_js_justhead' ),
                 'forcehead'           => $conf->get( 'autoptimize_js_forcehead' ),
                 'trycatch'            => $conf->get( 'autoptimize_js_trycatch' ),
@@ -510,7 +578,8 @@ class autoptimizeMain
                 'minify_excluded' => $conf->get( 'autoptimize_minify_excluded' ),
             ),
             'autoptimizeHTML'    => array(
-                'keepcomments' => $conf->get( 'autoptimize_html_keepcomments' ),
+                'keepcomments'  => $conf->get( 'autoptimize_html_keepcomments' ),
+                'minify_inline' => $conf->get( 'autoptimize_html_minify_inline' ),
             ),
         );
 
@@ -548,8 +617,15 @@ class autoptimizeMain
 
     public static function on_uninstall()
     {
+        // clear the cache.
         autoptimizeCache::clearall();
 
+        // remove postmeta if active.
+        if ( autoptimizeConfig::is_ao_meta_settings_active() ) {
+            delete_post_meta_by_key( 'ao_post_optimize' );
+        }
+
+        // remove all options.
         $delete_options = array(
             'autoptimize_cache_clean',
             'autoptimize_cache_nogzip',
@@ -563,10 +639,13 @@ class autoptimizeMain
             'autoptimize_css_exclude',
             'autoptimize_html',
             'autoptimize_html_keepcomments',
+            'autoptimize_html_minify_inline',
             'autoptimize_enable_site_config',
+            'autoptimize_enable_meta_ao_settings',
             'autoptimize_js',
             'autoptimize_js_aggregate',
             'autoptimize_js_defer_not_aggregate',
+            'autoptimize_js_defer_inline',
             'autoptimize_js_exclude',
             'autoptimize_js_forcehead',
             'autoptimize_js_justhead',
@@ -603,6 +682,7 @@ class autoptimizeMain
             'autoptimize_ccss_deferjquery',
             'autoptimize_ccss_domain',
             'autoptimize_ccss_unloadccss',
+            'autoptimize_installed_before_compatibility',
         );
 
         if ( ! is_multisite() ) {
@@ -626,10 +706,17 @@ class autoptimizeMain
 
         // Remove AO CCSS cached files and directory.
         $ao_ccss_dir = WP_CONTENT_DIR . '/uploads/ao_ccss/';
-        if ( file_exists( $ao_ccss_dir ) && is_dir( $ao_ccss_dir ) ) {
+        if ( file_exists( $ao_ccss_dir ) && is_dir( $ao_ccss_dir ) && defined( 'GLOB_BRACE' ) ) {
             // fixme: should check for subdirs when in multisite and remove contents of those as well.
+            // fixme: if GLOB_BRACE is not avaible we need to remove AO_CCSS_DIR differently?
             array_map( 'unlink', glob( $ao_ccss_dir . '*.{css,html,json,log,zip,lock}', GLOB_BRACE ) );
             rmdir( $ao_ccss_dir );
+        }
+
+        // Remove 404-handler (although that should have been removed in clearall already).
+        $_fallback_php = trailingslashit( WP_CONTENT_DIR ) . 'autoptimize_404_handler.php';
+        if ( file_exists( $_fallback_php ) ) {
+            unlink( $_fallback_php );
         }
     }
 
@@ -652,7 +739,7 @@ class autoptimizeMain
 
     public static function remove_cronjobs() {
         // Remove scheduled events.
-        foreach ( array( 'ao_cachechecker', 'ao_ccss_queue', 'ao_ccss_maintenance' ) as $_event ) {
+        foreach ( array( 'ao_cachechecker', 'ao_ccss_queue', 'ao_ccss_maintenance', 'ao_ccss_keychecker' ) as $_event ) {
             if ( wp_get_schedule( $_event ) ) {
                 wp_clear_scheduled_hook( $_event );
             }
@@ -663,37 +750,106 @@ class autoptimizeMain
     {
         echo '<div class="error"><p>';
         // Translators: %s is the cache directory location.
-        printf( __( 'Autoptimize cannot write to the cache directory (%s), please fix to enable CSS/ JS optimization!', 'autoptimize' ), AUTOPTIMIZE_CACHE_DIR );
+        printf( esc_html__( 'Autoptimize cannot write to the cache directory (%s), please fix to enable CSS/ JS optimization!', 'autoptimize' ), AUTOPTIMIZE_CACHE_DIR );
         echo '</p></div>';
     }
 
     public static function notice_installed()
     {
         echo '<div class="updated"><p>';
-        _e( 'Thank you for installing and activating Autoptimize. Please configure it under "Settings" -> "Autoptimize" to start improving your site\'s performance.', 'autoptimize' );
+        // translators: the variables contain opening and closing <a> tags to link to the settings page.
+        printf( esc_html__( 'Thank you for installing and activating Autoptimize. Your site is being optimized immediately, please test the frontend to ensure everything still works as expected. If needed you can change JavaScript or CSS optimization settings under %1$sSettings -> Autoptimize%2$s .', 'autoptimize' ), '<a href="options-general.php?page=autoptimize">', '</a>' );
         echo '</p></div>';
     }
 
     public static function notice_updated()
     {
         echo '<div class="updated"><p>';
-        _e( 'Autoptimize has just been updated. Please <strong>test your site now</strong> and adapt Autoptimize config if needed.', 'autoptimize' );
+        printf( esc_html_e( 'Autoptimize has just been updated. Please %1$stest your site now%2$s and adapt Autoptimize config if needed.', 'autoptimize' ), '<strong>', '</strong>' );
         echo '</p></div>';
     }
 
     public static function notice_plug_imgopt()
     {
         // Translators: the URL added points to the Autopmize Extra settings.
-        $_ao_imgopt_plug_notice      = sprintf( __( 'Did you know Autoptimize includes on-the-fly image optimization (with support for WebP) and CDN via ShortPixel? Check out the %1$sAutoptimize Image settings%2$s to activate this option.', 'autoptimize' ), '<a href="options-general.php?page=autoptimize_imgopt">', '</a>' );
+        $_ao_imgopt_plug_notice      = sprintf( esc_html__( 'Did you know that Autoptimize offers on-the-fly image optimization (with support for WebP and AVIF) and CDN via ShortPixel? Check out the %1$sAutoptimize Image settings%2$s to enable this option.', 'autoptimize' ), '<a href="options-general.php?page=autoptimize_imgopt">', '</a>' );
         $_ao_imgopt_plug_notice      = apply_filters( 'autoptimize_filter_main_imgopt_plug_notice', $_ao_imgopt_plug_notice );
         $_ao_imgopt_launch_ok        = autoptimizeImages::launch_ok_wrapper();
         $_ao_imgopt_plug_dismissible = 'ao-img-opt-plug-123';
         $_ao_imgopt_active           = autoptimizeImages::imgopt_active();
+        $_is_ao_settings_page        = autoptimizeUtils::is_ao_settings();
 
-        if ( current_user_can( 'manage_options' ) && '' !== $_ao_imgopt_plug_notice && ! $_ao_imgopt_active && $_ao_imgopt_launch_ok && PAnD::is_admin_notice_active( $_ao_imgopt_plug_dismissible ) ) {
+        if ( current_user_can( 'manage_options' ) && ! defined( 'AO_PRO_VERSION' ) && $_is_ao_settings_page && '' !== $_ao_imgopt_plug_notice && ! $_ao_imgopt_active && $_ao_imgopt_launch_ok && PAnD::is_admin_notice_active( $_ao_imgopt_plug_dismissible ) ) {
             echo '<div class="notice notice-info is-dismissible" data-dismissible="' . $_ao_imgopt_plug_dismissible . '"><p>';
             echo $_ao_imgopt_plug_notice;
             echo '</p></div>';
+        }
+    }
+
+    public static function notice_imgopt_issue()
+    {
+        // Translators: the URL added points to the Autopmize Extra settings.
+        $_ao_imgopt_issue_notice      = sprintf( esc_html__( 'Shortpixel reports it cannot always reach your site, which might mean some images are not optimized. You can %1$sread more about why this happens and how you can fix that problem here%2$s.', 'autoptimize' ), '<a href="https://shortpixel.com/knowledge-base/article/469-i-received-an-e-mail-that-says-some-of-my-images-are-not-accessible-what-should-i-do#fullarticle" target="_blank">', '</a>' );
+        $_ao_imgopt_issue_notice      = apply_filters( 'autoptimize_filter_main_imgopt_issue_notice', $_ao_imgopt_issue_notice );
+        $_ao_imgopt_issue_dismissible = 'ao-img-opt-issue-14';
+        $_ao_imgopt_active            = autoptimizeImages::imgopt_active();
+        $_ao_imgopt_status            = autoptimizeOptionWrapper::get_option( 'autoptimize_imgopt_provider_stat', '' );
+
+        if ( is_array( $_ao_imgopt_status ) && array_key_exists( 'TemporaryRedirectOrigin', $_ao_imgopt_status ) && ( $_ao_imgopt_status['TemporaryRedirectOrigin'] === "true" || $_ao_imgopt_status['TemporaryRedirectOrigin'] === true ) ) {
+            $_ao_imgopt_status_redirect_warning = true;            
+        } else {
+            $_ao_imgopt_status_redirect_warning = false;
+        }
+
+        if ( current_user_can( 'manage_options' ) && $_ao_imgopt_active && $_ao_imgopt_status_redirect_warning && '' !== $_ao_imgopt_issue_notice && PAnD::is_admin_notice_active( $_ao_imgopt_issue_dismissible ) ) {
+            echo '<div class="notice notice-info is-dismissible" data-dismissible="' . $_ao_imgopt_issue_dismissible . '"><p>';
+            echo $_ao_imgopt_issue_notice;
+            echo '</p></div>';
+        }
+    }
+
+
+    public static function notice_nopagecache()
+    {
+        /*
+         * Autoptimize does not do page caching (yet) but not everyone knows, so below logic tries to find out if page caching is available and if not show a notice on the AO Settings pages.
+         *
+         * uses helper function in autoptimizeUtils.php
+         */
+        // translators: strong tags and a break.
+        $_ao_nopagecache_notice      = sprintf( esc_html__( 'It looks like your site might not have %1$spage caching%2$s which is a %1$smust-have for performance%2$s. If you are sure you have a page cache, you can close this notice.%3$sWhen in doubt check with your host if they offer this or install a free page caching plugin like for example KeyCDN Cache Enabler', 'autoptimize' ), '<strong>', '</strong>', '<br />' );
+        // translators: strong tags.
+        $_ao_nopagecache_notice     .= ' ' . esc_html__('or consider ', 'autoptimize') . '<strong><a href="https://autoptimize.com/pro/">Autoptimize Pro</a></strong>' . sprintf( esc_html__( ' which not only has page caching but also image optimization, critical CSS and advanced booster options %1$sto make your site significantly faster%2$s!', 'autoptimize' ), '<strong>', '</strong>' );
+        $_ao_nopagecache_dismissible = 'ao-nopagecache-forever'; // the notice is only shown once and will not re-appear when dismissed.
+        $_is_ao_settings_page        = autoptimizeUtils::is_ao_settings();
+
+        if ( current_user_can( 'manage_options' ) && $_is_ao_settings_page && PAnD::is_admin_notice_active( $_ao_nopagecache_dismissible ) && true === apply_filters( 'autoptimize_filter_main_show_pagecache_notice', true ) ) {
+            if ( false === autoptimizeUtils::find_pagecache() ) {
+                echo '<div class="notice notice-info is-dismissible" data-dismissible="' . $_ao_nopagecache_dismissible . '"><p>';
+                echo $_ao_nopagecache_notice;
+                echo '</p></div>';
+            }
+        }
+    }
+
+    public static function notice_potential_conflict()
+    {
+        /*
+         * Using other plugins to do CSS/ JS optimization can cause unexpected and hard to troubleshoot issues, warn users who seem to be in that situation.
+         */
+        // Translators: some strong tags + the sentence will be finished with the name of the offending plugin and a final stop.
+        $_ao_potential_conflict_notice      = sprintf( esc_html__( 'It looks like you have %1$sanother plugin also doing CSS and/ or JS optimization%2$s, which can result in hard to troubleshoot %1$sconflicts%2$s. For this reason it is recommended to disable this functionality in', 'autoptimize' ), '<strong>', '</strong>' ) . ' ';
+        $_ao_potential_conflict_dismissible = 'ao-potential-conflict-forever'; // the notice is only shown once and will not re-appear when dismissed.
+        $_is_ao_settings_page               = autoptimizeUtils::is_ao_settings();
+
+        if ( current_user_can( 'manage_options' ) && $_is_ao_settings_page && PAnD::is_admin_notice_active( $_ao_potential_conflict_dismissible ) && true === apply_filters( 'autoptimize_filter_main_show_potential_conclict_notice', true ) ) {
+            $_potential_conflicts = autoptimizeUtils::find_potential_conflicts();
+            if ( false !== $_potential_conflicts ) {
+                $_ao_potential_conflict_notice .= '<strong>' . $_potential_conflicts . '</strong>.';
+                echo '<div class="notice notice-info is-dismissible" data-dismissible="' . $_ao_potential_conflict_dismissible . '"><p>';
+                echo $_ao_potential_conflict_notice;
+                echo '</p></div>';
+            }
         }
     }
 }

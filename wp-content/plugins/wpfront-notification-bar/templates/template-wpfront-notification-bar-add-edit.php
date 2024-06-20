@@ -871,9 +871,9 @@ if (!class_exists('\WPFront\Notification_Bar\WPFront_Notification_Bar_Add_Edit_V
                         foreach ($objects as $key => $value) {
                         ?>
                             <div class="page-div">
-                                <label>
+                                <label title="<?php echo esc_attr($value); ?>">
                                     <input type="checkbox" value="<?php echo $key; ?>" v-model="selectedPosts" />
-                                    <?php echo $value; ?>
+                                    <?php echo esc_html($value); ?>
                                 </label>
                             </div>
                         <?php

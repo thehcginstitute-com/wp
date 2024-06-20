@@ -248,7 +248,7 @@ abstract class Abstract_Images_Optimizer {
 	 * @param  array $data          Array of updated attachment meta data.
 	 */
 	public function maybe_update_total_unoptimized_images( $data ) {
-		if ( 1 === get_option( $this->options_map['status'], 0 ) ) {
+		if ( Options::is_enabled( $this->options_map['status'] ) ) {
 			return $data;
 		}
 
@@ -275,6 +275,7 @@ abstract class Abstract_Images_Optimizer {
 				WHERE `meta_key` = '" . $this->batch_skipped . "'
 				OR `meta_key` = '" . $this->process_map['attempts'] . "'
 				OR `meta_key` = '" . $this->process_map['failed'] . "'
+				OR `meta_key` = 'siteground_optimizer_original_filesize'
 			"
 		);
 	}

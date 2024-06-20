@@ -1,92 +1,62 @@
 <?php
 
-// Get all exisiting post types
-$post_types = get_post_types( array( 'public' => true ), 'names', 'and' ); 
-
+// Submit
 if( isset( $_POST['submit'] ) ) {
 
 	check_admin_referer( 'csg_save_select' );
 
 	global $wpdb;
-	$table_name = $wpdb->prefix . "csg_sitemap";
-
-	$excludeposts 	= '';
-	$excludeCounter = 0;
+	$table_name 		= $wpdb->prefix."csg_sitemap";
+	$excludeposts 		= array();
+	$exclude_counter 	= 0;
 
 	if( !empty( $_POST['post'] ) ) {
 
-		foreach ( $_POST['post'] as $key ) {
-			$excludeposts .= sanitize_text_field( $key ).', ';
-			$excludeCounter++;
-		}
-
-		$wpdb->query( $wpdb->prepare( "UPDATE $table_name SET onoroff = %s WHERE name = 'exclude'", $excludeposts ) );
+		foreach ( $_POST['post'] as $key ) array_push( $excludeposts, sanitize_text_field( $key ) );
+		$exclude_these 		= implode( ", ", $excludeposts );
+		$exclude_counter 	= count( $excludeposts );
+		$wpdb->query( $wpdb->prepare( "UPDATE {$table_name} SET onoroff = %s WHERE name = 'exclude'", $exclude_these ) );
 
 	} else {
 
-		$wpdb->query( $wpdb->prepare( "UPDATE $table_name SET onoroff = %s WHERE name = 'exclude'", '' ) );
+		$wpdb->query( $wpdb->prepare( "UPDATE {$table_name} SET onoroff = %s WHERE name = 'exclude'", '' ) );
 
 	}
 
+	csg_select_succes( $exclude_counter );
 
-	csg_select_succes( $excludeCounter );
 }
+
+echo "<div id='message' class='info'>".__( 'Remove items from your sitemap by checking the checkbox. You can always add them back by unchecking it again.', 'companion-sitemap-generator' )."</div>";
+
+// Show subtabs
+echo "<ul class='subsubsub' style='margin: 10px 0;'>";
+	foreach( csg_get_posttypes() as $key => $type ) {
+		if( $type != 'post' ) echo " | ";
+		$active = ( $type == 'post' ) ? 'current' : '';
+		echo "<li><a data-table='table-".$type."' class='showtable table-".$type." ".$active."'>".get_post_type_object( $type )->label."</a></li>";
+	}
+echo "</ul>
+
+<br class='clear'>";
 
 ?>
 
-<ul class="subsubsub">
-	<?php
-	if( !isset( $_GET['ptt'] ) ) {
-		$ptt = 'post';
-	} else {
-		$ptt = $_GET['ptt'];
-	}
-
-	$i = 0;
-	foreach ( $post_types as $post_type ) {
-		if( $post_type != 'attachment' ) {
-			$post_typeO 		= get_post_type_object( $post_type ); 
-			$post_type_name 	= $post_typeO->label;
-			if( $i != '0' ) echo " | ";
-			echo '<li><a data-table="table-'.$post_type.'" class="showtable table-'.$post_type; if( $i == 0 ) { echo " current"; } echo ' ">'.$post_type_name.'</a></li>';
-			$i++;
-		}
-	}
-
-	?>
-</ul>
-
-<br class="clear" />
 <form method="POST">
 
-	<script>
+	<script type="text/javascript">
 		jQuery( '.showtable' ).click(function() {
-
 			jQuery( '.showtable' ).removeClass( 'current' );
-			jQuery(this).addClass( 'current' );
-
+			jQuery( this ).addClass( 'current' );
 			var thisClass = jQuery(this).attr( 'data-table' );
-
 			jQuery( '.wp-list-table' ).hide();
 			jQuery( '.'+thisClass ).show();
-
-			console.log( '.wp-list-table .'+thisClass );
-
-
 		});
 	</script>
 
 	<?php 
 
-	submit_button();
-
-	foreach ( $post_types  as $post_type ) {
-		if( $post_type != 'attachment' ) {
-			create_table( $post_type );
-		}
-	}
-
-	function create_table( $postType ) { ?>
+	foreach( csg_get_posttypes() as $postType ) { ?>
 
 		<table class="wp-list-table widefat striped table-<?php echo $postType; ?> csg-table">
 
@@ -131,19 +101,9 @@ if( isset( $_POST['submit'] ) ) {
 				while ( have_posts() ) : the_post();
 
 					global $wpdb;
-					$table_name = $wpdb->prefix . "sitemap-excludes"; 
-
-					if( in_array( get_the_id(), csg_exclude() ) ) {
-						$checked = 'CHECKED';
-					} else {
-						$checked = '';
-					}
-
-					if( get_the_id() == $frontpageid ) {
-						$showmore = '<span class="post-state">&dash; '.__( "Front page" , "companion-sitemap-generator" ).'</span>';
-					} else {
-						$showmore = '';
-					}
+					$table_name = $wpdb->prefix . "sitemap-excludes";
+					$checked 	= in_array( get_the_id(), csg_exclude() ) ? 'CHECKED' : ''; 
+					$showmore 	= ( get_the_id() == $frontpageid ) ? '<span class="post-state">&dash; '.__( "Front page" ).'</span>' : '';
 
 					echo '
 					<tr id="post-'.get_the_id().'">

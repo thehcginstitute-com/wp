@@ -3,7 +3,7 @@
  * Plugin Name: Max Mega Menu
  * Plugin URI:  https://www.megamenu.com
  * Description: An easy to use mega menu plugin. Written the WordPress way.
- * Version:     2.9.2
+ * Version:     3.3.1
  * Author:      megamenu.com
  * Author URI:  https://www.megamenu.com
  * License:     GPL-2.0+
@@ -35,7 +35,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '2.9.2';
+		public $version = '3.3.1';
 
 
 		/**
@@ -111,6 +111,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 					'Mega_Menu_Locations',
 					'Mega_Menu_Themes',
 					'Mega_Menu_Tools',
+					'Mega_Menu_Admin_Notices'
 				);
 
 				foreach ( $admin_classes as $class ) {
@@ -130,7 +131,6 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 			}
 
 		}
-
 
 		/**
 		 * Add a body class for each active mega menu location.
@@ -166,7 +166,6 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 				if ( in_array( $hook, array( 'nav-menus.php', 'gutenberg_page_gutenberg-navigation' ), true ) ) {
 					// load widget scripts and styles first to allow us to dequeue conflicting colorbox scripts from other plugins.
 					do_action( 'sidebar_admin_setup' );
-					do_action( 'admin_enqueue_scripts', 'widgets.php' );
 					do_action( 'megamenu_nav_menus_scripts', $hook );
 				}
 
@@ -232,7 +231,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 		 * Load TinyMCE assets on nav-menus.php page.
 		 *
 		 * @since  1.8
-.		 * @param  array $pages Pages to load tinymce scripts on
+		 * @param  array $pages Pages to load tinymce scripts on
 		 * @return array $pages
 		 */
 		public function megamenu_blackstudio_tinymce( $pages ) {
@@ -248,18 +247,18 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 		 */
 		public function install_upgrade_check() {
 			$version = get_option( 'megamenu_version' );
+			$install_date = get_option( 'megamenu_install_date');
+
+			if ( ! $install_date ) {
+				add_option( 'megamenu_install_date', time() );
+			}
 
 			if ( $version ) {
-
 				if ( version_compare( $this->version, $version, '!=' ) ) {
-
 					update_option( 'megamenu_version', $this->version );
-
 					do_action( 'megamenu_after_update' );
-
 				}
 			} else {
-
 				add_option( 'megamenu_version', $this->version );
 				add_option( 'megamenu_initial_version', $this->version );
 				add_option( 'megamenu_multisite_share_themes', 'false' );
@@ -289,14 +288,16 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 			if ( class_exists( 'Mega_Menu_Widget' ) ) {
 				register_widget( 'Mega_Menu_Widget' );
 			}
-			//register_widget( 'Mega_Menu_Widget_Reusable_Block' );
+
+			if ( class_exists( 'Mega_Menu_Widget_Reusable_Block' ) ) {
+				register_widget( 'Mega_Menu_Widget_Reusable_Block' );
+			}
 
 			// Check if Elementor installed and activated
 			//if ( did_action( 'elementor/loaded' ) ) {
 			//    register_widget( 'Mega_Menu_Widget_Elementor_Template' );
 			//}
 		}
-
 
 		/**
 		 * Create our own widget area to store all mega menu widgets.
@@ -386,6 +387,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 				'Mega_Menu_Widget_Reusable_Block'     => MEGAMENU_PATH . 'classes/widgets/widget-reusable-block.class.php',
 				'Mega_Menu_Widget_Elementor_Template' => MEGAMENU_PATH . 'classes/widgets/widget-elementor-template.class.php',
 				'Mega_Menu_toggle_Blocks'             => MEGAMENU_PATH . 'classes/toggle-blocks.class.php',
+				'Mega_Menu_Admin_Notices'             => MEGAMENU_PATH . 'classes/admin-notices.class.php'
 			);
 
 			return $classes;
@@ -419,6 +421,10 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 				default:
 					break;
 			}
+
+			// gutenberg block
+			include_once MEGAMENU_PATH . 'integration/block/location/block.php';
+
 		}
 
 
@@ -489,6 +495,10 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 				if ( in_array( 'mega-current-menu-item', $classes ) ) {
 					$classes = array_diff( $classes, array( 'mega-current-menu-item' ) );
 				}
+
+				if ( in_array( 'mega-current-page-ancestor', $classes ) ) {
+					$classes = array_diff( $classes, array( 'mega-current-page-ancestor' ) );
+				}
 			}
 
 			return $classes;
@@ -507,11 +517,11 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 			$args = (object) $args;
 
 			// make sure we're working with a Mega Menu.
-			if ( ! $args->walker || ! is_a( $args->walker, 'Mega_Menu_Walker' ) ) {
+			if ( ! property_exists( $args, 'walker' ) || ! $args->walker || ! is_a( $args->walker, 'Mega_Menu_Walker' ) ) {
 				return $nav_menu;
 			}
 
-			$find = 'class="' . $args->container_class . '">';
+			$find = '<ul id="' . $args->menu_id . '"';
 
 			$theme_id = mmm_get_theme_id_for_location( $args->theme_location );
 
@@ -519,7 +529,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 
 			$content = apply_filters( 'megamenu_toggle_bar_content', $content, $nav_menu, $args, $theme_id );
 
-			$replace = $find . '<div class="mega-menu-toggle">' . $content . '</div>';
+			$replace = '<div class="mega-menu-toggle">' . $content . '</div>' . $find;
 
 			return str_replace( $find, $replace, $nav_menu );
 		}
@@ -587,6 +597,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 								'content'             => $widget_manager->show_widget( $widget['id'] ),
 								'menu_item_parent'    => $item->ID,
 								'db_id'               => 0,
+								'url'                 => '',
 								'ID'                  => $widget['id'],
 								'menu_order'          => $next_order - $total_widgets_in_menu + $widget_position,
 								'megamenu_order'      => $widget['order'],
@@ -644,6 +655,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 								'ID'                  => "{$item->ID}-{$row}",
 								'megamenu_settings'   => Mega_Menu_Nav_Menus::get_menu_item_defaults(),
 								'db_id'               => $rolling_dummy_id,
+								'url'                 => '',
 								'classes'             => $classes,
 							);
 
@@ -690,6 +702,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 									'ID'                  => "{$item->ID}-{$row}-{$col}",
 									'megamenu_settings'   => Mega_Menu_Nav_Menus::get_menu_item_defaults(),
 									'db_id'               => $rolling_dummy_id,
+									'url'                 => '',
 									'classes'             => $classes,
 								);
 
@@ -706,18 +719,19 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 											$widget_settings = array_merge( Mega_Menu_Nav_Menus::get_menu_item_defaults() );
 
 											$menu_item = array(
-												'type'    => 'widget',
-												'parent_submenu_type' => '',
-												'title'   => '',
-												'content' => $widget_manager->show_widget( $block['id'] ),
-												'menu_item_parent' => $rolling_dummy_id,
-												'db_id'   => 0,
-												'ID'      => $block['id'],
-												'menu_order' => $next_order,
-												'megamenu_order' => 0,
-												'megamenu_settings' => $widget_settings,
-												'depth'   => 1,
-												'classes' => array(
+												'type'					=> 'widget',
+												'parent_submenu_type'	=> '',
+												'title'					=> $block['id'],
+												'content'				=> $widget_manager->show_widget( $block['id'] ),
+												'menu_item_parent'		=> $rolling_dummy_id,
+												'db_id'					=> 0,
+												'url'					=> '',
+												'ID'					=> $block['id'],
+												'menu_order'			=> $next_order,
+												'megamenu_order'		=> 0,
+												'megamenu_settings'		=> $widget_settings,
+												'depth'					=> 1,
+												'classes'				=> array(
 													'menu-item',
 													'menu-item-type-widget',
 													'menu-widget-class-' . $widget_manager->get_widget_class( $block['id'] ),
@@ -934,7 +948,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 
 			if ( 'enabled' === $descriptions ) {
 				foreach ( $items as $item ) {
-					if ( property_exists( $item, 'description' ) && strlen( $item->description ) ) {
+					if ( property_exists( $item, 'description' ) && is_string( $item->description ) && strlen( $item->description ) ) {
 						$item->mega_description = $item->description;
 						$item->classes[]        = 'has-description';
 					}
@@ -990,6 +1004,10 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 
 					if ( 'true' === $item->megamenu_settings['hide_on_mobile'] ) {
 						$item->classes[] = 'hide-on-mobile';
+					}
+
+					if ( 'true' === $item->megamenu_settings['close_after_click'] ) {
+						$item->classes[] = 'close-after-click';
 					}
 
 					if ( 'true' === $item->megamenu_settings['hide_sub_menu_on_mobile'] ) {
@@ -1204,7 +1222,7 @@ if ( ! class_exists( 'Mega_Menu' ) ) :
 						'data-unbind'                => 'disabled' === $unbind ? 'false' : 'true',
 						'data-mobile-state'          => $mobile_state,
 						'data-hover-intent-timeout'  => absint( $hover_intent_params['timeout'] ),
-						'data-hover-intent-interval' => absint( $hover_intent_params['interval'] ),
+						'data-hover-intent-interval' => absint( $hover_intent_params['interval'] )
 					),
 					$menu_id,
 					$menu_settings,

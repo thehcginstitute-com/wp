@@ -2,9 +2,9 @@
 Contributors: wfryan, wfmattr, mmaunder, wfmatt
 Tags: security, login security, 2fa, two factor authentication, captcha, xml-rpc, mfa, 2 factor
 Requires at least: 4.5
-Requires PHP: 5.3
-Tested up to: 5.9
-Stable tag: 1.0.9
+Requires PHP: 5.5
+Tested up to: 6.5
+Stable tag: 1.1.12
 
 Secure your website with Wordfence Login Security, providing two-factor authentication, login and registration CAPTCHA, and XML-RPC protection.
 
@@ -57,6 +57,77 @@ Secure your website with Wordfence Login Security.
 3. Configuration options include XML-RPC protection and login page CAPTCHA.
 
 == Changelog ==
+
+= 1.1.12 - June 6, 2024 =
+* Change: Revised the formatting of TOTP app URLs to prioritize the site's own URL for better sorting and display
+* Fix: Fixed the last captcha column in the users page so it no longer displays "(not required)" on 2FA users since that no longer applies
+
+= 1.1.11 - April 3, 2024 =
+* Fix: Revised the behavior of the reCAPTCHA verification to use the documented expiration period of the token and response to avoid sending verification requests too frequently, which could artificially lower scores in some circumstances
+
+= 1.1.10 - March 11, 2024 =
+* Change: Removed the extra site link from the CAPTCHA verification email message to avoid confusion with the verify link
+* Change: CAPTCHA verification when enabled now additionally applies to 2FA logins (may send an email verification on low scores) and no longer reveals whether a user exists for the submitted account credentials (credit: Raxis)
+
+= 1.1.9 - February 14, 2024 =
+* Fix: Fixed an issue where user profiles with a selected locale different from the site itself could end up loading the site's locale instead
+
+= 1.1.8 - January 2, 2024 =
+* Fix: Fixed an issue where a login lockout on a WooCommerce login form could fail silently
+
+= 1.1.7 - November 6, 2023 =
+* Fix: Compatibility fix for WordPress 6.4 on the login page styling
+
+= 1.1.6 - October 30, 2023 =
+* Fix: Addressed an issue with multisite installations when the wp_options tables had different encodings/collations
+
+= 1.1.5 - October 23, 2023 =
+* Fix: 2FA AJAX calls now use an absolute path rather than a full URL to avoid CORS issues on sites that do not canonicalize www and non-www requests
+* Fix: Addressed a race condition where multiple concurrent hits on multisite could trigger overlapping role sync tasks
+* Fix: Improved performance when viewing the user list on large multisites
+* Fix: Fixed a UI bug where an invalid code on 2FA activation would leave the activate button disabled
+* Fix: Reverted a change on error modals to bring back the additional close button for better accessibility
+
+= 1.1.4 - July 12, 2023 =
+* Fix: Changed text domain to wordfence-login-security to match plugin slug as required by WordPress
+* Fix: Added translation support for additional strings
+
+= 1.1.3 - June 21, 2023 =
+* Improvement: Added translation support for strings in JavaScript
+* Improvement: Updated JavaScript libraries
+* Improvement: Added "Text Domain" header to support translation functionality
+
+= 1.1.2 - March 27, 2023 =
+* Fix: Prevent double-clicking when activating 2FA to avoid an "already set up" error
+
+= 1.1.1 - March 1, 2023 =
+* Improvement: Further improved performance when viewing 2FA settings and hid user counts by default on sites with many users
+* Fix: Adjusted style inclusion and usage to prevent missing icons
+* Fix: Avoided using the ctype extension as it may not be enabled
+
+= 1.1.0 - February 14, 2023 =
+* Improvement: Added 2FA management shortcode and WooCommerce account integration
+* Improvement: Improved performance when viewing 2FA settings on sites with many users
+* Fix: Ensured Captcha and 2FA scripts load on WooCommerce when activated on a sub-site in multisite
+* Fix: Prevented reCAPTCHA logo from being obscured by some themes
+* Fix: Enabled wfls_registration_blocked_message filter support for WooCommerce integration
+
+= 1.0.12 - November 28, 2022 =
+* Improvement: Added feedback when login form is submitted with 2FA
+* Fix: Restored click support on login button when using 2FA with WooCommerce
+* Fix: Corrected display issue with reCAPTCHA score history graph
+* Fix: Prevented errors on PHP caused by corrupted login timestamps
+
+= 1.0.11 - September 19, 2022 =
+* Improvement: Hardened 2FA login flow to reduce exposure in cases where an attacker is able to obtain privileged information from the database
+
+= 1.0.10 - June 2, 2022 =
+* Improvement: Added option to toggle display of last login column on WP Users page
+* Improvement: Improved autocomplete support for 2FA code on Apple devices
+* Fix: Corrected issue that prevented reCAPTCHA scores from being recorded
+* Fix: Prevented invalid JSON setting values from triggering fatal errors
+* Fix: Made text domains consistent for translation support
+* Fix: Clarified that allowlisted IP addresses also bypass reCAPTCHA
 
 = 1.0.9 - October 12, 2021 =
 * Fix: Prevented login errors with WooCommerce integration when manual username entry is enabled on the WooCommerce registration form

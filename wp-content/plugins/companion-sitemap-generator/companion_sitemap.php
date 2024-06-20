@@ -1,11 +1,11 @@
 <?php
 /*
  * Plugin Name: Companion Sitemap Generator
- * Plugin URI: http://codeermeneer.nl/portfolio/companion-sitemap-generator/
+ * Plugin URI: https://plugins.wijzijnqreative.nl/plugin/companion-sitemap-generator/
  * Description: Easy to use XML & HTML sitemap generator and robots editor.
- * Version: 4.3.1
+ * Version: 4.5.9.3
  * Author: Papin Schipper
- * Author URI: http://codeermeneer.nl
+ * Author URI: https://plugins.wijzijnqreative.nl/
  * Contributors: papin
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -54,16 +54,11 @@ function csg_install( $network_wide ) {
 
 	// Create sitemap(s)
 	if( is_multisite() ) {
-		$sites = get_sites();
-
-		foreach ( $sites as $site ) {
-
+		foreach ( get_sites() as $site ) {
 	        $subsite_id 		= $site->blog_id;
 			$csg_sitemap_file 	= $csg_website_root.'/'.csg_sitemap_file( true, $subsite_id );
 			if ( !file_exists( $csg_sitemap_file ) ) $csg_myfile = fopen( $csg_sitemap_file, "w" );
-
 	    }
-
 	} else {
 		$csg_sitemap_file 	= $csg_website_root.'/'.csg_sitemap_file();
 		if ( !file_exists( $csg_sitemap_file ) ) $csg_myfile = fopen( $csg_sitemap_file, "w" );
@@ -74,31 +69,18 @@ function csg_install( $network_wide ) {
 add_action( 'csg_create_sitemap', 'csg_sitemap' );
 
 // Robots file
-function csg_has_robots() {
-
-	// Root
-	$csg_website_root 	= get_home_path();
-
-	// Does robots file exist?
-	$csg_robots_file 	= $csg_website_root.'/robots.txt';
-	if ( file_exists( $csg_robots_file ) ) {
-		return true;
-	} else {
-		return false;
-	}
-
+function csg_robots() {
+	return get_home_path() . '/robots.txt';
 }
+
+// Check if robots file exists
+function csg_has_robots() {
+	return file_exists( csg_robots() ) ? true : false;
+}
+
+// Create robots file
 function csg_create_robots() {
-
-	// Root
-	$csg_website_root 	= get_home_path();
-
-	// Create robots file
-	$csg_robots_file 	= $csg_website_root.'/robots.txt';
-	if ( !file_exists( $csg_robots_file ) ) {
-		$csg_robots_myfile = fopen( $csg_robots_file, "w" );
-	}
-
+	if ( !file_exists( csg_robots() ) ) $csg_robots_myfile = fopen( csg_robots(), "w+" );
 }
 
 // Create database table when new multisite blog is created
@@ -113,7 +95,7 @@ add_action( 'wpmu_new_blog', 'csg_newBlogCreation', 10, 6 );
 
 // Database version
 function csg_db_version() {
-	return '4.3.0';
+	return '4.5.9';
 }
 
 // Run database creator
@@ -121,12 +103,10 @@ function csg_database_creation() {
 
 	global $wpdb;
 
-	// Plugin db info
-	$csg_db_version = csg_db_version();
-	$table_name 	= $wpdb->prefix . "csg_sitemap"; 
-
-	// WordPress db info
-	$charset_collate = $wpdb->get_charset_collate();
+	// Database information
+	$csg_db_version 	= csg_db_version();
+	$table_name 		= $wpdb->prefix . "csg_sitemap"; 
+	$charset_collate 	= $wpdb->get_charset_collate();
 
 	// DB table creation queries
 	$sql = "CREATE TABLE $table_name (
@@ -137,7 +117,7 @@ function csg_database_creation() {
 	) $charset_collate;";
 
 	// Create DB tables
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	require_once ABSPATH.'wp-admin/includes/upgrade.php';
 	dbDelta( $sql );
 
 	// Database version
@@ -145,6 +125,9 @@ function csg_database_creation() {
 
 	// Insert data
 	csg_install_data();
+
+	// Disable WP-sitemaps
+	add_filter( 'wp_sitemaps_enabled', '__return_false' );
 
 	// Updating..
 	$installed_ver = get_option( "csg_db_version" );
@@ -154,11 +137,7 @@ function csg_database_creation() {
 
 // Check database version
 function csg_incorrectDatabaseVersion() {
-	if( get_option( "csg_db_version" ) != csg_db_version() ) {
-		return true;
-	} else {
-		return false;
-	}
+	return ( get_option( "csg_db_version" ) != csg_db_version() ) ? true : false;
 }
 
 // Check if database table exists before creating
@@ -166,15 +145,10 @@ function csg_check_if_exists( $whattocheck ) {
 
 	global $wpdb;
 	$table_name = $wpdb->prefix . "csg_sitemap"; 
+	$rows 		= $wpdb->get_col( "SELECT COUNT(*) as num_rows FROM {$table_name} WHERE name = '{$whattocheck}'" );
+	$check 		= $rows[0];
 
-	$rows 	= $wpdb->get_col( "SELECT COUNT(*) as num_rows FROM {$table_name} WHERE name = '{$whattocheck}'" );
-	$check 	= $rows[0];
-
-	if( $check > 0 ) {
-		return true;
-	} else {
-		return false;
-	}
+	return ( $check > 0 ) ? true : false;
 
 }
 
@@ -193,20 +167,31 @@ function csg_install_data() {
 	if( !csg_check_if_exists( 'sitemap_stylesheet' ) ) 		$wpdb->insert( $table_name, array( 'name' => 'sitemap_stylesheet', 'onoroff' => '' ) ); // Stylesheet URL
 	if( !csg_check_if_exists( 'use_sitemap_stylesheet' ) ) 	$wpdb->insert( $table_name, array( 'name' => 'use_sitemap_stylesheet', 'onoroff' => 'on' ) ); // Use the stylesheet or not?
 
+	if( !csg_check_if_exists( 'xml_in_html' ) ) 			$wpdb->insert( $table_name, array( 'name' => 'xml_in_html', 'onoroff' => '' ) ); // Display the XML sitemap in the HTML one?
+
 	if( !csg_check_if_exists( 'additionalpages' ) ) 		$wpdb->insert( $table_name, array( 'name' => 'additionalpages', 'onoroff' => '' ) ); // Additional pages
 
 	if( !csg_check_if_exists( 'ping_google' ) ) 			$wpdb->insert( $table_name, array( 'name' => 'ping_google', 'onoroff' => '' ) ); // Ping Google
 	if( !csg_check_if_exists( 'ping_bing' ) ) 				$wpdb->insert( $table_name, array( 'name' => 'ping_bing', 'onoroff' => '' ) ); // Ping Bing
+	if( !csg_check_if_exists( 'ping_yandex' ) ) 			$wpdb->insert( $table_name, array( 'name' => 'ping_yandex', 'onoroff' => '' ) ); // Ping Yandex
 
 }
 register_activation_hook( __FILE__, 'csg_install' );
 
 // Clear everything
 function csg_remove() {
+
+	// Delete database table
 	global $wpdb;
 	$table_name = $wpdb->prefix . "csg_sitemap"; 
 	$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
-	wp_clear_scheduled_hook('csg_create_sitemap');
+
+	// Clear the custom events
+	wp_clear_scheduled_hook( 'csg_create_sitemap' );
+
+	// Re-active WP sitemaps
+	add_filter( 'wp_sitemaps_enabled', '__return_true' );
+
 }
 register_deactivation_hook(  __FILE__, 'csg_remove' );
 
@@ -220,30 +205,10 @@ add_filter( 'wpmu_drop_tables', 'csg_removeMultisite' );
 
 // Update the database
 function csg_update_db_check() {
-
-    global $csg_db_version;
-
-    if ( get_site_option( 'csg_db_version' ) != $csg_db_version ) {
-
+    if ( get_site_option( 'csg_db_version' ) != csg_db_version() ) {
         csg_database_creation();
-
-        // In 4.3.0 we've added $wpdb->get_charset_collate and renamed the table
-        if( get_site_option( 'csg_db_version' ) < '4.3.0' ) {
-
-        	global $wpdb;
-			$old_table 		= $wpdb->prefix."sitemap"; 
-			$table 			= $wpdb->prefix."csg_sitemap"; 
-        	$db_charset 	= constant( 'DB_CHARSET' );
-
-        	$wpdb->query( "ALTER TABLE $old_table RENAME $table" );
-        	$wpdb->query( "ALTER TABLE $table CONVERT TO CHARACTER SET $db_charset" );
-
-        }
-
         update_option( "csg_db_version", csg_db_version() );
-
     }
-
 }
 add_action( 'plugins_loaded', 'csg_update_db_check' );
 
@@ -262,33 +227,31 @@ add_action( 'admin_enqueue_scripts', 'load_csg_styles' );
 
 // Add to menu
 function csg_menu_items(){
-	add_submenu_page( 'tools.php', __('Sitemap', 'companion-sitemap-generator'), __('Sitemap', 'companion-sitemap-generator'), 'manage_options', 'csg-sitemap', 'csg_dashboard' );
+	add_submenu_page( 'tools.php', __( 'Sitemap', 'companion-sitemap-generator' ), __( 'Sitemap', 'companion-sitemap-generator' ), 'manage_options', 'csg-sitemap', 'csg_dashboard' );
 }
 add_action( 'admin_menu', 'csg_menu_items' );
 
 // Add generate sitemap link on plugin page
 function csg_settings_link( $links ) { 
-	$settings_link 	= '<a href="tools.php?page=csg-sitemap">'.__('Settings', 'companion-sitemap-generator' ).'</a>'; 
-	$settings_link2 = '<a href="https://translate.wordpress.org/projects/wp-plugins/companion-sitemap-generator" target="_blank">'.__('Help us translate', 'companion-sitemap-generator' ).'</a>'; 
-	array_unshift( $links, $settings_link ); 
-	array_unshift( $links, $settings_link2 ); 
+	$links[] = '<a href="tools.php?page=csg-sitemap">'.__( 'Settings', 'companion-sitemap-generator' ).'</a>'; 
+	$links[] = '<a href="https://translate.wordpress.org/projects/wp-plugins/companion-sitemap-generator" target="_blank">'.__( 'Help us translate', 'companion-sitemap-generator' ).'</a>'; 
 	return $links; 
 }
 $plugin = plugin_basename(__FILE__); 
-add_filter("plugin_action_links_$plugin", 'csg_settings_link' );
+add_filter( "plugin_action_links_$plugin", "csg_settings_link" );
 
 // Load functions
-require( 'csg_functions.php' );
+require 'csg_functions.php';
 
 // Sitemap dashboard
 function csg_dashboard() {
-	require( 'dashboard/start.php' );
+	require 'dashboard/start.php';
 }
 
 // Create widget
-require( 'dashboard/widget.php' );
+require 'dashboard/widget.php';
 
 // Skip block registration if Gutenberg is not enabled/merged.
 if ( function_exists( 'register_block_type' ) ) {
-	require( 'csg_gutenberg.php' );
+	require 'csg_gutenberg.php';
 }

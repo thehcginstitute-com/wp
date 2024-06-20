@@ -1,14 +1,14 @@
 === Companion Sitemap Generator - HTML & XML ===
 Contributors: papin, boudewijnkok
-Donate link: https://www.paypal.me/dakel/10
-Tags: sitemap, generator, xml, html, robots, companion, seo, searchengine, optimization, google sitemap, google sitemap generator, sitemap xml, xml sitemap, xml sitemap generator, multilingual, polylang, mulitisite
-Requires at least: 4.6.0
-Tested up to: 5.6
-Stable tag: 4.3.1
+Donate link: https://www.paypal.me/dakel/
+Tags: sitemap, xml, robots, seo, multilingual
+Requires at least: 5.3.0
+Tested up to: 6.5
+Stable tag: 4.5.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-
-Creates and XML sitemap for search engines and allows you to add an HTML sitemap to any page using a shortcode or Gutenberg block. Also comes with an built-in Robots.txt editor.
+ 
+Easy to use XML and HTML sitemap generator + Robots editor
 
 == Description ==
 
@@ -26,6 +26,7 @@ The following URLs are added to the sitemap (with an option to hide them, ofcour
 
 * Pages
 * Posts
+* Post images
 * Post categories
 * Post tags
 * Custom post types
@@ -65,6 +66,65 @@ This plugin has support for multisite. Each site will get its own sitemap.
 5. HTML Sitemap
 
 == Changelog ==
+
+= 4.5.9.3 (June 12, 2024) =
+* Fixed Additional pages being blank
+
+= 4.5.9.2 (March 20, 2024) =
+* Fixed another small issue with Additional pages
+
+= 4.5.9.1 (March 8, 2024) =
+* Database version update to fix Yandex on update
+
+= 4.5.9 (February 29, 2024) =
+* New: Added option to auto-ping to Yandex
+
+= 4.5.8 (February 29, 2024) =
+* Fixed: Issue where it would show and empty "Additional pages" heading
+
+= 4.5.7 (December 20, 2023) =
+* Fixed: Taxonomy items not showing up in HTML sitemap
+* Fixed: Adding the XML sitemap to the HTML sitemap would break the page
+
+= 4.5.6 (December 19, 2023) =
+* Improvement: Better performance on larger sites
+
+= 4.5.5 (September 20, 2023) =
+* Fix: Fixed issue where multilingual would break the sitemap
+
+= 4.5.4 (September 19, 2023) =
+* New: Added "Never" option for the auto update, because why not?
+* Improvement: Better performance on larger sites
+
+= 4.5.3 (June 12, 2023) =
+* Fix: XSS issues
+
+= 4.5.2 (October 28, 2022) =
+* Fix: Critical error on Post content filter
+
+= 4.5.1 (October 27, 2022) =
+* Fix: "The link followed has expired" error on Post content filter
+
+= 4.5.0 (October 13, 2022) =
+* New: Add images to the sitemap [Read more](https://developers.google.com/search/docs/advanced/sitemaps/image-sitemaps)
+* Fix: Squashed some bugs
+
+= 4.4.3 (July 4, 2022) =
+* New: The plugin can now create missing files when needed rather than having you re-activate the plugin
+* Fixed: ACTUALLY added the option to remove the "changefreg" tag from the sitemap
+* Fixed: ALTER TABLE queries slowing down site on some occassions
+
+= 4.4.1 (February 2, 2022) =
+* New: Added option to remove the "changefreg" tag from the sitemap
+* New: Added more option to the auto-updater
+* Tweak: Made some slight improvements to the code
+* Tweak: Fixed a minor styling issue with WP5.9
+
+= 4.4.0 (April 6, 2021) =
+* New: Limit the number of posts shown per block in the HTML sitemap
+* New: Option to add a link to the XML sitemap in the HTML sitemap
+* Tweak: Fixed the overlapping of the robots textfield
+* Tweak: Updated some deprecated functions to newer funtions
 
 = 4.3.1 (December 9, 2020) =
 * Fix: Error when adding additional pages
@@ -109,171 +169,5 @@ This plugin has support for multisite. Each site will get its own sitemap.
 = 4.0 (January 2, 2020) =
 * New: We've added a fancy shiny gutenberg block to replace the shortcode
 
-= 3.9.1 (November 7, 2019) =
-* Tweak: Only load frontend stylesheet on the HTML sitemap page
 
-= 3.9.0 (September 27, 2019) =
-* New: Option to disable XML stylesheet
-
-= 3.8.9 (September 20, 2019) =
-* Actually added XML styling
-* Added option to use custom XML stylesheet
-
-= 3.8.8 (August 7, 2019) =
-* New: XML sitemap now has styling added
-* Fixed: Few minor errors
-
-= 3.8.7 (August 3, 2019) =
-* New: Multilingual categories, terms etc. will now show up in the proper format on XML sitemap
-* Fixed: Few minor errors
-* Tweak: All items in HTML sitemap now have an unique class
-
-= 3.8.6 (May 16, 2019) =
-* Fix: Error: Cannot modify header information 
-
-= 3.8.5 (April 6, 2019) =
-* Fix: Variable mismatch error
-
-= 3.8.4 (March 12, 2019) = 
-* Actually added the option to exclude items in taxonomies
-
-= 3.8.3 (March 12, 2019) = 
-* Added hierarchy to categories
-* Option to exclude items in taxonomies (Categories, Tags and More)
-
-= 3.8.2 (March 7, 2019) =
-* Few changes in HTML sitemap classes
-
-= 3.8.1 (February 27, 2019) =
-* Security improvements
-
-= 3.8.0 (February 22, 2019) =
-* New: Added support for Post tags and Custom taxonomies
-* Fix: Fixed a few minor errors
-
-= 3.7.4 (February 20, 2019) =
-* New: New support page
-* New: Exclude categories option
-* Improvement: On the HTML sitemap custom post types no longer show as Post type: {identifier} but now show using the proper name
-* Improvement: Some security improvements
-* Fix: Fixed a few errors when saving settings
-* BETA: Few fixes for new gutenberg block beta
-
-= 3.7.3 =
-* We no longer create a robots file on activation, instead you'll have to enable this yourself.
-
-= 3.7.2 =
-* New: We're working hard on a Gutenberg block to "replace" the shortcode. If you'd like to give feedback on this button you can start testing it with this version :)
-* Fixed: Undefined index page error
-* Fixed: Exclude Posts table being a bit off
-* Fixed: Call to undefined function error
-
-= 3.7.1 =
-* New: We're working hard on a Gutenberg block to "replace" the shortcode. If you'd like to give feedback on this button you can start testing it with this version :)
-
-= 3.7.0 =
-* Fix: Cross-site request forgery (CSRF) vulnerabilitie
-* Removed add to content button for old editor
-
-= 3.6.6 =
-* HTML sitemap columns work properly again
-* HTML sitemap now has Level 3 hierarchy (still working on even deeper levels)
-
-= 3.6.5 =
-* Re-enabled post-exclusion and robots editor for multisite
-
-= 3.6.4 =
-* Fix for multisite issues.
-
-= 3.6.3 =
-* Multisite support stopped working, the sitemaps are fixed but settings are temporarily disabled on sub-sites.
-
-= 3.6.2 =
-* Fix: HTML sitemap would look distorted when post types were hidden or empty
-
-= 3.6.1 = 
-* Fix: Error: unexpected '[' 
-
-= 3.6 =
-* Fix: Multisite support
-* Fix: Error with & sign in search console
-
-= 3.5.5 =
-* New: Set auto-update schedule, how often should the sitemap be updated?
-
-= 3.5.0 =
-* New: HTML sitemap: Show in 2 columns
-* New: HTML sitemap: Sort by date or name
-* New: HTML sitemap: Order ASC or DESC
-
-= 3.4.5 =
-* Dashboard redesign
-* Add HTML sitemap tab (settings coming up)
-
-= 3.4.1 = 
-* Added Hungarian translations
-
-= 3.3.5 =
-* New: Added categories to the sitemap
-
-= 3.3.1 =
-* Exclude posts fix for multiple languages
-
-= 3.3.0 =
-* New: Support for multilingual (only works with Polylang atm)
-
-= 3.2.0 =
-* New: Added lastmodified to sitemap
-* New: Added changefreq to sitemap
-
-= 3.1.6 = 
-* Fix: Undefined variable: charset_collate
-
-= 3.1.5 =
-* Fix: Undefined index: page error
-* Fix: Undefined index: tabbed error
-
-= 3.1.4. =
-* Fix: Few strings were not translatable
-
-= 3.1.3 =
-* Improvement: HTML sitemap pages now have hierarchy
-
-= 3.1.2 =
-* Fix: Pages not being added to sitemap
-
-= 3.1.1 =
-* Fix: Update not working
-
-= 3.1.0 =
-* New: Exclude post types.
-* New: Added classes to the HTML sitemap list to allow styling.
-* New: Added button to quicker insert HTML sitemap into a page.
-* Fix: Empty post types are no longer shown in HTML sitemap.
-
-= 3.0.3 =
-* Few minor fixes
-
-= 3.0.2 =
-* Fix: Some strings could not be translated.
-* Fix: You could not exclude posts from multiple post types.
-* Improvement: Minor dashboard improvement.
-* New: Update sitemap from plugin dashboard.
-
-= 3.0.1 =
-* Fix: After selecting posts all posts were selected
-
-= 3.0 =
-* Completely rewrote the plugin fixing sooo many bugs
-* Fix: Better errors
-* Fix: auto-updating of sitemap
-* New: HTML-sitemap shortcode
-* New: Sitemap is updated every hour
-* New: Better robots dashboard
-* New: Better sitemap dashboard
-* New: Remove pages/posts etc. from sitemap
-* Improvement: Better dashboard widget
-* Improvement: Cleaner code
-* Improvement: Better update handling
-
-[View full changelog](https://codeermeneer.nl/stuffs/companion-sitemap-generator-changelog/)
+[View full changelog](https://plugins.wijzijnqreative.nl/stuffs/companion-sitemap-generator-changelog/)

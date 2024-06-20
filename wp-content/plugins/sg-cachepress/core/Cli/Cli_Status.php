@@ -3,6 +3,7 @@ namespace SiteGround_Optimizer\Cli;
 
 use SiteGround_Optimizer\Options\Options;
 use SiteGround_Optimizer\Htaccess\Htaccess;
+use SiteGround_Optimizer\Message_Service\Message_Service;
 /**
  * WP-CLI: wp sg status {type}.
  *
@@ -37,20 +38,16 @@ class Cli_Status {
 	 *  - querystring
 	 *  - emojis
 	 *  - webp
-	 *  - lazyload_images
-	 *  - image_compression
-	 *  - heartbeat_post_interval
-	 *  - heartbeat_dashboard_interval
-	 *  - heartbeat_frontend_interval
+	 *  - lazyload-images
 	 *  - memcache
 	 *  - ssl
 	 *  - ssl-fix
 	 *  - autoflush
 	 *  - dynamic-cache
+	 *  - file-cache
 	 *  - google-fonts
 	 *  - database-optimization
-	 *  - dns-prefetch
-	 *  - heartbeat-control
+	 *  - browser-caching
 	 * ---
 	 *
 	 * [--blog_id=<blog_id>]
@@ -77,6 +74,7 @@ class Cli_Status {
 		$mapping = array(
 			'autoflush'                    => 'siteground_optimizer_autoflush_cache',
 			'dynamic-cache'                => 'siteground_optimizer_enable_cache',
+			'file-cache'                   => 'siteground_optimizer_file_caching',
 			'memcache'                     => 'siteground_optimizer_enable_memcached',
 			'ssl-fix'                      => 'siteground_optimizer_fix_insecure_content',
 			'html'                         => 'siteground_optimizer_optimize_html',
@@ -86,18 +84,13 @@ class Cli_Status {
 			'combine-css'                  => 'siteground_optimizer_combine_css',
 			'querystring'                  => 'siteground_optimizer_remove_query_strings',
 			'emojis'                       => 'siteground_optimizer_disable_emojis',
-			'lazyload_images'              => 'siteground_optimizer_lazyload_images',
-			'heartbeat_post_interval'      => 'siteground_optimizer_heartbeat_post_interval',
-			'heartbeat_dashboard_interval' => 'siteground_optimizer_heartbeat_dashboard_interval',
-			'heartbeat_frontend_interval'  => 'siteground_optimizer_heartbeat_frontend_interval',
-			'image_compression'            => 'siteground_optimizer_compression_level',
+			'lazyload-images'              => 'siteground_optimizer_lazyload_images',
 			'ssl'                          => 'siteground_optimizer_ssl_enabled',
 			'google-fonts'                 => 'siteground_optimizer_optimize_web_fonts',
 			'combine-js'                   => 'siteground_optimizer_combine_javascript',
 			'webp'                         => 'siteground_optimizer_webp_support',
 			'database-optimization'        => 'siteground_optimizer_database_optimization',
-			'dns-prefetch'                 => 'siteground_optimizer_dns_prefetch',
-			'heartbeat-control'            => 'siteground_optimizer_heartbeat_control',
+			'browser-caching'              => 'siteground_optimizer_user_agent_header',
 		);
 
 		if ( ! array_key_exists( $type, $mapping ) ) {
@@ -110,6 +103,9 @@ class Cli_Status {
 			case 'browser-caching':
 				$status = $this->htaccess_service->is_enabled( $type );
 				break;
+			case 'database-optimization':
+				$status = empty( get_option( 'siteground_optimizer_database_optimization', array() ) ) ? false : true;
+				break;
 			default:
 				$this->validate_multisite( $type, $blog_id );
 				$status = $this->get_option_status( $mapping[ $type ], $blog_id );
@@ -117,7 +113,7 @@ class Cli_Status {
 		}
 
 		// Very ugly way to get meaningful message.
-		$message = str_replace( ' Disabled', '', $this->option_service->get_response_message( true, $mapping[ $type ], false ) );
+		$message = Message_Service::get_response_message( $status, str_replace( 'siteground_optimizer_', '', $mapping[ $type ] ), null );
 
 		// The optimization is disabled.
 		if ( false === $status ) {

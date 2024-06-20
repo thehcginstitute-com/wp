@@ -63,7 +63,25 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                         <?php _e('Default', 'ultimate-social-media-plus'); ?>
                     </label>
                     <div class="sfsiplus_icns_tab_3">
-                        <span class="sfsiplus_row_1_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_1_2 sfsiplus_email_section"></span><span class="sfsiplus_row_1_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_1_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_1_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_1_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_1_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_1_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_1_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_1_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_1_23 sfsiplus_vk_section"></span><span class="sfsiplus_row_1_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_1_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_1_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_1_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_1_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_1_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_1_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_1_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_1_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_1_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_1_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_1_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_1_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_1_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_1_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_1_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_1_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_1_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_1_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_1_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_1_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_1_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_1_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_1_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_1_31 sfsiplus_inha_section"></span>
                         <!--<span class="sfsiplus_row_1_11 sf_section"></span>-->
                     </div>
                 </li>
@@ -88,7 +106,7 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                         <?php _e( 'Flat', 'ultimate-social-media-plus' ); ?>
                     </label>
                     <?php
-                        $sfsi_plus_rss_bgColor = $sfsi_plus_rss_bgColor_style = $sfsi_plus_email_bgColor = $sfsi_plus_email_bgColor_style = $sfsi_plus_facebook_bgColor = $sfsi_plus_facebook_bgColor_style = $sfsi_plus_twitter_bgColor = $sfsi_plus_twitter_bgColor_style = $sfsi_plus_youtube_bgColor = $sfsi_plus_youtube_bgColor_style = $sfsi_plus_linkedin_bgColor = $sfsi_plus_linkedin_bgColor_style = $sfsi_plus_pinterest_bgColor = $sfsi_plus_pinterest_bgColor_style = $sfsi_plus_instagram_bgColor = $sfsi_plus_instagram_bgColor_style = $sfsi_plus_houzz_bgColor = $sfsi_plus_houzz_bgColor_style = $sfsi_plus_ok_bgColor = $sfsi_plus_ok_bgColor_style = $sfsi_plus_telegram_bgColor = $sfsi_plus_telegram_bgColor_style = $sfsi_plus_vk_bgColor = $sfsi_plus_vk_bgColor_style = $sfsi_plus_wechat_bgColor = $sfsi_plus_wechat_bgColor_style = $sfsi_plus_whatsapp_bgColor = $sfsi_plus_whatsapp_bgColor_style = $sfsi_plus_weibo_bgColor = $sfsi_plus_weibo_bgColor_style = $sfsi_plus_copylink_bgColor = $sfsi_plus_copylink_bgColor_style = $sfsi_plus_mastodon_bgColor = $sfsi_plus_mastodon_bgColor_style =  '';
+                        $sfsi_plus_rss_bgColor = $sfsi_plus_rss_bgColor_style = $sfsi_plus_email_bgColor = $sfsi_plus_email_bgColor_style = $sfsi_plus_facebook_bgColor = $sfsi_plus_facebook_bgColor_style = $sfsi_plus_twitter_bgColor = $sfsi_plus_twitter_bgColor_style = $sfsi_plus_youtube_bgColor = $sfsi_plus_youtube_bgColor_style = $sfsi_plus_linkedin_bgColor = $sfsi_plus_linkedin_bgColor_style = $sfsi_plus_pinterest_bgColor = $sfsi_plus_pinterest_bgColor_style = $sfsi_plus_instagram_bgColor = $sfsi_plus_instagram_bgColor_style = $sfsi_plus_houzz_bgColor = $sfsi_plus_houzz_bgColor_style = $sfsi_plus_ok_bgColor = $sfsi_plus_ok_bgColor_style = $sfsi_plus_telegram_bgColor = $sfsi_plus_telegram_bgColor_style = $sfsi_plus_vk_bgColor = $sfsi_plus_vk_bgColor_style = $sfsi_plus_wechat_bgColor = $sfsi_plus_wechat_bgColor_style = $sfsi_plus_whatsapp_bgColor = $sfsi_plus_whatsapp_bgColor_style = $sfsi_plus_weibo_bgColor = $sfsi_plus_weibo_bgColor_style = $sfsi_plus_copylink_bgColor = $sfsi_plus_copylink_bgColor_style = $sfsi_plus_mastodon_bgColor = $sfsi_plus_mastodon_bgColor_style = $sfsi_plus_ria_bgColor = $sfsi_plus_ria_bgColor_style = $sfsi_plus_inha_bgColor = $sfsi_plus_inha_bgColor_style =  '';
                         
                         if ( isset( $option3['sfsi_plus_rss_bgColor'] ) && $option3['sfsi_plus_rss_bgColor'] != '' ) {
                             $sfsi_plus_rss_bgColor = $option3['sfsi_plus_rss_bgColor'];
@@ -143,6 +161,20 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                         } else {
                             $sfsi_plus_pinterest_bgColor_style = 'background: #CC3333';
                         }
+
+                    if ( isset( $option3['sfsi_plus_ria_bgColor'] ) && $option3['sfsi_plus_ria_bgColor'] != '' ) {
+                        $sfsi_plus_ria_bgColor = $option3['sfsi_plus_ria_bgColor'];
+                        $sfsi_plus_ria_bgColor_style = 'background: '.$sfsi_plus_ria_bgColor;
+                    } else {
+                        $sfsi_plus_ria_bgColor_style = 'background: #10A9A0';
+                    }
+
+                    if ( isset( $option3['sfsi_plus_inha_bgColor'] ) && $option3['sfsi_plus_inha_bgColor'] != '' ) {
+                        $sfsi_plus_inha_bgColor = $option3['sfsi_plus_inha_bgColor'];
+                        $sfsi_plus_inha_bgColor_style = 'background: '.$sfsi_plus_inha_bgColor;
+                    } else {
+                        $sfsi_plus_inha_bgColor_style = 'background: #348cbc';
+                    }
 
                         if ( isset( $option3['sfsi_plus_instagram_bgColor'] ) && $option3['sfsi_plus_instagram_bgColor'] != '' ) {
                             $sfsi_plus_instagram_bgColor = $option3['sfsi_plus_instagram_bgColor'];
@@ -244,7 +276,7 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                                 <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/icons_theme/flat/flat_twitter.png" alt="" />
                             </span>
                             <span class="sfsiplus_icon_color_picker">
-                                <input name="sfsi_plus_twitter_bgColor" data-default-color="#00ACEC" id="sfsi_plus_twitter_bgColor" class="sfsi_plus_input_bgColor" type="text" value="<?php echo esc_attr( $sfsi_plus_twitter_bgColor ); ?>" />
+                                <input name="sfsi_plus_twitter_bgColor" data-default-color="#000000" id="sfsi_plus_twitter_bgColor" class="sfsi_plus_input_bgColor" type="text" value="<?php echo esc_attr( $sfsi_plus_twitter_bgColor ); ?>" />
                             </span>
                         </span>
                         <span class="sfsiplus_row_2_7 sfsiplus_icon_bgcolor sfsiplus_youtube_section">
@@ -348,7 +380,25 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                                 <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/icons_theme/flat/flat_mastodon.png" alt="" />
                             </span>
                             <span class="sfsiplus_icon_color_picker">
-                                <input name="sfsi_plus_mastodon_bgColor" data-default-color="#3ED946" id="sfsi_plus_mastodon_bgColor" class="sfsi_plus_input_bgColor" type="text" value="<?php echo esc_attr( $sfsi_plus_mastodon_bgColor ); ?>" />
+                                <input name="sfsi_plus_mastodon_bgColor" data-default-color="#583ED1" id="sfsi_plus_mastodon_bgColor" class="sfsi_plus_input_bgColor" type="text" value="<?php echo esc_attr( $sfsi_plus_mastodon_bgColor ); ?>" />
+                            </span>
+                        </span>
+
+                        <span class="sfsiplus_row_2_30 sfsiplus_icon_bgcolor sfsiplus_ria_section">
+                            <span class="sfsiplus_icon_img_wrapper" style="<?php echo esc_attr( $sfsi_plus_ria_bgColor_style ); ?>">
+                                <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/icons_theme/flat/flat_ria.png" alt="" />
+                            </span>
+                            <span class="sfsiplus_icon_color_picker">
+                                <input name="sfsi_plus_ria_bgColor" data-default-color="#10A9A0" id="sfsi_plus_ria_bgColor" class="sfsi_plus_input_bgColor" type="text" value="<?php echo esc_attr( $sfsi_plus_ria_bgColor ); ?>" />
+                            </span>
+                        </span>
+
+                        <span class="sfsiplus_row_2_31 sfsiplus_icon_bgcolor sfsiplus_inha_section">
+                            <span class="sfsiplus_icon_img_wrapper" style="<?php echo esc_attr( $sfsi_plus_inha_bgColor_style ); ?>">
+                                <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/icons_theme/flat/flat_inha.png" alt="" />
+                            </span>
+                            <span class="sfsiplus_icon_color_picker">
+                                <input name="sfsi_plus_inha_bgColor" data-default-color="#348cbc" id="sfsi_plus_inha_bgColor" class="sfsi_plus_input_bgColor" type="text" value="<?php echo esc_attr( $sfsi_plus_inha_bgColor ); ?>" />
                             </span>
                         </span>
                         <!--<span class="sfsiplus_row_2_11 sf_section"></span>-->
@@ -360,9 +410,27 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                     <label>
                         <?php _e('Thin', 'ultimate-social-media-plus'); ?>
                     </label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_3_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_3_2 sfsiplus_email_section"></span><span class="sfsiplus_row_3_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_3_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_3_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_3_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_3_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_3_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_3_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_3_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_3_23 sfsiplus_vk_section"></span><span class="sfsiplus_row_3_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_3_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_3_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_3_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_3_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_3_28 sfsiplus_mastodon_section"></span>
-                        <!--<span class="sfsiplus_row_3_11 sf_section"></span>-->
-                    </div>
+                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_3_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_3_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_3_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_3_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_3_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_3_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_3_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_3_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_3_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_3_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_3_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_3_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_3_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_3_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_3_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_3_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_3_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_3_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_3_31 sfsiplus_inha_section"></span>
+                        <!--
+                        <span class="sfsiplus_row_3_11 sf_section"></span>-->    </div>
                 </li>
 
                 <li>
@@ -370,9 +438,27 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                     <label>
                         <?php _e('Cute', 'ultimate-social-media-plus'); ?>
                     </label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_4_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_4_2 sfsiplus_email_section"></span><span class="sfsiplus_row_4_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_4_5  sfsiplus_twitter_section"></span><span class="sfsiplus_row_4_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_4_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_4_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_4_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_4_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_4_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_4_23 sfsiplus_vk_section"></span><span class="sfsiplus_row_4_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_4_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_4_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_4_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_4_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_4_28 sfsiplus_mastodon_section"></span>
-                        <!--<span class="sfsiplus_row_4_11 sf_section"></span>-->
-                    </div>
+                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_4_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_4_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_4_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_4_5  sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_4_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_4_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_4_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_4_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_4_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_4_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_4_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_4_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_4_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_4_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_4_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_4_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_4_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_4_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_4_31 sfsiplus_inha_section"></span>
+                        <!--
+                        <span class="sfsiplus_row_4_11 sf_section"></span>-->    </div>
                 </li>
 
                 <!--------------------start next four------------------------>
@@ -381,23 +467,80 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'cubes') ?  'checked="true"' : ''; ?> type="radio" value="cubes" class="styled" />
                     <label><?php _e('Cubes', 'ultimate-social-media-plus'); ?></label>
 
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_5_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_5_2 sfsiplus_email_section"></span><span class="sfsiplus_row_5_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_5_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_5_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_5_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_5_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_5_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_5_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_5_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_5_23 sfsiplus_vk_section"></span><span class="sfsiplus_row_5_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_5_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_5_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_5_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_5_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_5_28 sfsiplus_mastodon_section"></span>
-                        <!--<span class="sfsiplus_row_5_11 sf_section"></span>-->
-                    </div>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_5_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_5_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_5_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_5_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_5_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_5_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_5_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_5_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_5_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_5_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_5_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_5_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_5_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_5_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_5_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_5_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_5_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_5_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_5_31 sfsiplus_inha_section"></span>
+                        <!--
+                        <span class="sfsiplus_row_5_11 sf_section"></span>-->    </div>
                 </li>
 
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'chrome_blue') ?  'checked="true"' : ''; ?> type="radio" value="chrome_blue" class="styled" />
                     <label><?php _e('Chrome Blue', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_6_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_6_2 sfsiplus_email_section"></span><span class="sfsiplus_row_6_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_6_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_6_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_6_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_6_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_6_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_6_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_6_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_6_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_6_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_6_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_6_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_6_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_6_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_6_28 sfsiplus_mastodon_section"></span>
-                        <!--<span class="sfsiplus_row_6_11 sf_section"></span>-->
-                    </div>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_6_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_6_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_6_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_6_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_6_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_6_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_6_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_6_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_6_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_6_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_6_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_6_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_6_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_6_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_6_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_6_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_6_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_6_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_6_31 sfsiplus_inha_section"></span>
+                        <!--
+                        <span class="sfsiplus_row_6_11 sf_section"></span>-->    </div>
                 </li>
 
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'chrome_grey') ?  'checked="true"' : ''; ?> type="radio" value="chrome_grey" class="styled" />
                     <label><?php _e('Chrome Grey', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_7_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_7_2 sfsiplus_email_section"></span><span class="sfsiplus_row_7_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_7_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_7_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_7_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_7_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_7_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_7_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_7_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_7_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_7_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_7_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_7_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_7_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_7_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_7_28 sfsiplus_mastodon_section"></span>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_7_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_7_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_7_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_7_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_7_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_7_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_7_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_7_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_7_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_7_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_7_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_7_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_7_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_7_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_7_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_7_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_7_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_7_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_7_31 sfsiplus_inha_section"></span>
                         <!--<span class="sfsiplus_row_7_11 sf_section"></span>-->
                     </div>
                 </li>
@@ -405,7 +548,26 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'splash') ?  'checked="true"' : ''; ?> type="radio" value="splash" class="styled" />
                     <label><?php _e('Splash', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_8_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_8_2 sfsiplus_email_section"></span><span class="sfsiplus_row_8_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_8_5  sfsiplus_twitter_section"></span><span class="sfsiplus_row_8_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_8_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_8_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_8_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_8_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_8_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_8_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_8_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_8_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_8_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_8_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_8_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_8_28 sfsiplus_mastodon_section"></span>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_8_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_8_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_8_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_8_5  sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_8_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_8_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_8_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_8_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_8_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_8_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_8_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_8_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_8_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_8_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_8_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_8_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_8_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_8_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_8_31 sfsiplus_inha_section"></span>
                         <!--<span class="sfsiplus_row_8_11 sf_section"></span>-->
                     </div>
                 </li>
@@ -417,7 +579,26 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'orange') ?  'checked="true"' : ''; ?> type="radio" value="orange" class="styled" />
                     <label><?php _e('Orange', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_9_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_9_2 sfsiplus_email_section"></span><span class="sfsiplus_row_9_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_9_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_9_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_9_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_9_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_9_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_9_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_9_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_9_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_9_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_9_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_9_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_9_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_9_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_9_28 sfsiplus_mastodon_section"></span>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_9_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_9_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_9_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_9_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_9_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_9_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_9_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_9_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_9_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_9_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_9_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_9_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_9_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_9_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_9_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_9_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_9_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_9_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_9_31 sfsiplus_inha_section"></span>
                         <!--<span class="sfsiplus_row_9_11 sf_section"></span>-->
                     </div>
                 </li>
@@ -425,15 +606,53 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'crystal') ?  'checked="true"' : ''; ?> type="radio" value="crystal" class="styled" />
                     <label><?php _e('Crystal', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_10_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_10_2 sfsiplus_email_section"></span><span class="sfsiplus_row_10_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_10_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_10_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_10_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_10_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_10_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_10_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_10_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_10_23 sfsiplus_vk_section"></span><span class="sfsiplus_row_10_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_10_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_10_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_10_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_10_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_10_28 sfsiplus_mastodon_section"></span>
-                        <!--<span class="sfsiplus_row_10_11 sf_section"></span>-->
-                    </div>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_10_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_10_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_10_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_10_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_10_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_10_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_10_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_10_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_10_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_10_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_10_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_10_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_10_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_10_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_10_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_10_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_10_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_10_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_10_31 sfsiplus_inha_section"></span>
+                        <!--
+                        <span class="sfsiplus_row_10_11 sf_section"></span>-->    </div>
                 </li>
 
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'glossy') ?  'checked="true"' : ''; ?> type="radio" value="glossy" class="styled" />
                     <label><?php _e('Glossy', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_11_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_11_2 sfsiplus_email_section"></span><span class="sfsiplus_row_11_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_11_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_11_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_11_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_11_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_11_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_11_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_11_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_11_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_11_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_11_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_11_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_11_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_11_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_11_28 sfsiplus_mastodon_section"></span>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_11_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_11_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_11_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_11_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_11_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_11_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_11_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_11_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_11_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_11_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_11_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_11_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_11_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_11_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_11_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_11_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_11_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_11_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_11_31 sfsiplus_inha_section"></span>
                         <!--<span class="sfsiplus_row_11_11 sf_section"></span>-->
                     </div>
                 </li>
@@ -441,9 +660,28 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'black') ?  'checked="true"' : ''; ?> type="radio" value="black" class="styled" />
                     <label><?php _e('Black', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_12_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_12_2 sfsiplus_email_section"></span><span class="sfsiplus_row_12_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_12_5  sfsiplus_twitter_section"></span><span class="sfsiplus_row_12_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_12_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_12_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_12_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_12_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_12_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_12_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_12_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_12_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_12_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_12_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_12_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_12_28 sfsiplus_mastodon_section"></span>
-                        <!--<span class="sfsiplus_row_12_11 sf_section"></span>-->
-                    </div>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_12_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_12_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_12_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_12_5  sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_12_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_12_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_12_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_12_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_12_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_12_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_12_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_12_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_12_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_12_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_12_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_12_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_12_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_12_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_12_31 sfsiplus_inha_section"></span>
+                        <!--
+                        <span class="sfsiplus_row_12_11 sf_section"></span>-->    </div>
                 </li>
 
 
@@ -452,15 +690,53 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'silver') ?  'checked="true"' : ''; ?> type="radio" value="silver" class="styled" />
                     <label><?php _e('Silver', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_13_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_13_2 sfsiplus_email_section"></span><span class="sfsiplus_row_13_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_13_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_13_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_13_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_13_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_13_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_13_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_13_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_13_23 sfsiplus_vk_section"></span><span class="sfsiplus_row_13_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_13_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_13_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_13_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_13_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_13_28 sfsiplus_mastodon_section"></span>
-                        <!--<span class="sfsiplus_row_13_11 sf_section"></span>-->
-                    </div>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_13_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_13_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_13_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_13_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_13_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_13_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_13_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_13_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_13_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_13_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_13_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_13_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_13_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_13_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_13_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_13_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_13_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_13_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_13_31 sfsiplus_inha_section"></span>
+                        <!--
+                        <span class="sfsiplus_row_13_11 sf_section"></span>-->    </div>
                 </li>
 
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'shaded_dark') ?  'checked="true"' : ''; ?> type="radio" value="shaded_dark" class="styled" />
                     <label><?php _e('Shaded Dark', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_14_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_14_2 sfsiplus_email_section"></span><span class="sfsiplus_row_14_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_14_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_14_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_14_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_14_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_14_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_14_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_14_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_14_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_14_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_14_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_14_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_14_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_14_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_14_28 sfsiplus_mastodon_section"></span>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_14_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_14_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_14_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_14_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_14_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_14_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_14_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_14_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_14_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_14_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_14_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_14_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_14_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_14_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_14_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_14_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_14_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_14_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_14_31 sfsiplus_inha_section"></span>
                         <!--<span class="sfsiplus_row_14_11 sf_section"></span>-->
                     </div>
                 </li>
@@ -468,7 +744,26 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                 <li>
                     <input name="sfsi_plus_actvite_theme" <?php echo ($option3['sfsi_plus_actvite_theme'] == 'shaded_light') ?  'checked="true"' : ''; ?> type="radio" value="shaded_light" class="styled" />
                     <label><?php _e('Shaded Light', 'ultimate-social-media-plus'); ?></label>
-                    <div class="sfsiplus_icns_tab_3"><span class="sfsiplus_row_15_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_15_2 sfsiplus_email_section"></span><span class="sfsiplus_row_15_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_15_5 sfsiplus_twitter_section"></span><span class="sfsiplus_row_15_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_15_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_15_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_15_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_15_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_15_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_15_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_15_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_15_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_15_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_15_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_15_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_15_28 sfsiplus_mastodon_section"></span>
+                    <div class="sfsiplus_icns_tab_3">
+                        <span class="sfsiplus_row_15_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_15_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_15_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_15_5 sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_15_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_15_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_15_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_15_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_15_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_15_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_15_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_15_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_15_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_15_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_15_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_15_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_15_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_15_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_15_31 sfsiplus_inha_section"></span>
                         <!--<span class="sfsiplus_row_15_11 sf_section"></span>-->
                     </div>
                 </li>
@@ -479,7 +774,26 @@ $mouseover_other_icons_transition_effect = (isset($option3['mouseover_other_icon
                         <?php _e('Transparent', 'ultimate-social-media-plus'); ?> <br />
                         <span style="font-size: 9px;">(<?php _e('for dark backgrounds', 'ultimate-social-media-plus') ?>)</span>
                     </label>
-                    <div class="sfsiplus_icns_tab_3 trans_bg" style="padding-left: 6px;"><span class="sfsiplus_row_16_1 sfsiplus_rss_section"></span><span class="sfsiplus_row_16_2 sfsiplus_email_section"></span><span class="sfsiplus_row_16_3 sfsiplus_facebook_section"></span><span class="sfsiplus_row_16_5  sfsiplus_twitter_section"></span><span class="sfsiplus_row_16_7 sfsiplus_youtube_section"></span><span class="sfsiplus_row_16_8 sfsiplus_pinterest_section"></span><span class="sfsiplus_row_16_9 sfsiplus_linkedin_section"></span><span class="sfsiplus_row_16_10 sfsiplus_instagram_section"></span><span class="sfsiplus_row_16_11 sfsiplus_houzz_section"></span><span class="sfsiplus_row_16_22 sfsiplus_telegram_section"></span><span class="sfsiplus_row_16_23 sfsiplus_vk_section"></span> <span class="sfsiplus_row_16_24 sfsiplus_ok_section"></span><span class="sfsiplus_row_16_26 sfsiplus_wechat_section"></span><span class="sfsiplus_row_16_25 sfsiplus_weibo_section"></span><span class="sfsiplus_row_16_27 sfsiplus_whatsapp_section"></span><span class="sfsiplus_row_16_29 sfsiplus_copylink_section"></span><span class="sfsiplus_row_16_28 sfsiplus_mastodon_section"></span>
+                    <div class="sfsiplus_icns_tab_3 trans_bg" style="padding-left: 6px;">
+                        <span class="sfsiplus_row_16_1 sfsiplus_rss_section"></span>
+                        <span class="sfsiplus_row_16_2 sfsiplus_email_section"></span>
+                        <span class="sfsiplus_row_16_3 sfsiplus_facebook_section"></span>
+                        <span class="sfsiplus_row_16_5  sfsiplus_twitter_section"></span>
+                        <span class="sfsiplus_row_16_7 sfsiplus_youtube_section"></span>
+                        <span class="sfsiplus_row_16_8 sfsiplus_pinterest_section"></span>
+                        <span class="sfsiplus_row_16_9 sfsiplus_linkedin_section"></span>
+                        <span class="sfsiplus_row_16_10 sfsiplus_instagram_section"></span>
+                        <span class="sfsiplus_row_16_11 sfsiplus_houzz_section"></span>
+                        <span class="sfsiplus_row_16_22 sfsiplus_telegram_section"></span>
+                        <span class="sfsiplus_row_16_23 sfsiplus_vk_section"></span>
+                        <span class="sfsiplus_row_16_24 sfsiplus_ok_section"></span>
+                        <span class="sfsiplus_row_16_26 sfsiplus_wechat_section"></span>
+                        <span class="sfsiplus_row_16_25 sfsiplus_weibo_section"></span>
+                        <span class="sfsiplus_row_16_27 sfsiplus_whatsapp_section"></span>
+                        <span class="sfsiplus_row_16_29 sfsiplus_copylink_section"></span>
+                        <span class="sfsiplus_row_16_28 sfsiplus_mastodon_section"></span>
+                        <span class="sfsiplus_row_16_30 sfsiplus_ria_section"></span>
+                        <span class="sfsiplus_row_16_31 sfsiplus_inha_section"></span>
                         <!--<span class="sfsiplus_row_16_11 sf_section"></span>-->
                     </div>
                 </li>

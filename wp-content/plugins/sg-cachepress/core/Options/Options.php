@@ -196,10 +196,6 @@ class Options {
 		global $blog_id;
 
 		$prefix = $wpdb->get_blog_prefix( $blog_id );
-		$plain_options = array(
-			'cloudflare_email',
-			'cloudflare_auth_key',
-		);
 
 		$options = array();
 
@@ -232,8 +228,7 @@ class Options {
 
 			if (
 				! is_array( $value ) &&
-				null !== filter_var( $value, FILTER_VALIDATE_BOOLEAN ) &&
-				! in_array( $option->name, $plain_options )
+				null !== filter_var( $value, FILTER_VALIDATE_BOOLEAN )
 			) {
 				$value = intval( $value );
 			}
@@ -348,79 +343,6 @@ class Options {
 	}
 
 	/**
-	 * Prepare response message for react app.
-	 *
-	 * @since  5.0.0
-	 *
-	 * @param  bool   $status The result of operation.
-	 * @param  string $key    The option key.
-	 * @param  bool   $type   True for enable, false for disable option.
-	 *
-	 * @return string       The response message.
-	 */
-	public function get_response_message( $status, $key, $type ) {
-		$messages = array(
-			'siteground_optimizer_enable_cache'              => __( 'Dynamic Cache', 'sg-cachepress' ),
-			'siteground_optimizer_autoflush_cache'           => __( 'Autoflush', 'sg-cachepress' ),
-			'siteground_optimizer_purge_rest_cache'          => __( 'Autoflush Rest Cache', 'sg-cachepress' ),
-			'siteground_optimizer_user_agent_header'         => __( 'Browser-Specific Caching', 'sg-cachepress' ),
-			'siteground_optimizer_enable_memcached'          => __( 'Memcache', 'sg-cachepress' ),
-			'siteground_optimizer_ssl_enabled'               => __( 'HTTPS', 'sg-cachepress' ),
-			'siteground_optimizer_fix_insecure_content'      => __( 'Insecure Content Fix', 'sg-cachepress' ),
-			'siteground_optimizer_enable_gzip_compression'   => __( 'GZIP Compression', 'sg-cachepress' ),
-			'siteground_optimizer_enable_browser_caching'    => __( 'Browser Caching', 'sg-cachepress' ),
-			'siteground_optimizer_optimize_html'             => __( 'HTML Minification', 'sg-cachepress' ),
-			'siteground_optimizer_optimize_javascript'       => __( 'JavaScript Minification', 'sg-cachepress' ),
-			'siteground_optimizer_optimize_javascript_async' => __( 'Defer Render-blocking JS', 'sg-cachepress' ),
-			'siteground_optimizer_optimize_css'              => __( 'CSS Minification', 'sg-cachepress' ),
-			'siteground_optimizer_combine_css'               => __( 'CSS Combination', 'sg-cachepress' ),
-			'siteground_optimizer_combine_javascript'        => __( 'JavaScript Files Combination', 'sg-cachepress' ),
-			'siteground_optimizer_optimize_web_fonts'        => __( 'Web Fonts Optimization', 'sg-cachepress' ),
-			'siteground_optimizer_remove_query_strings'      => __( 'Query Strings Removal', 'sg-cachepress' ),
-			'siteground_optimizer_disable_emojis'            => __( 'Emoji Removal Filter', 'sg-cachepress' ),
-			'siteground_optimizer_backup_media'              => __( 'Backup Media', 'sg-cachepress' ),
-			'siteground_optimizer_resize_images'             => __( 'Maximum Image Width', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_images'           => __( 'Lazy Loading Images', 'sg-cachepress' ),
-			'siteground_optimizer_webp_support'              => __( 'WebP Generation for New Images', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_gravatars'        => __( 'Lazy Loading Gravatars', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_thumbnails'       => __( 'Lazy Loading Thumbnails', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_responsive'       => __( 'Lazy Loading Responsive Images', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_textwidgets'      => __( 'Lazy Loading Widgets', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_mobile'           => __( 'Lazy Load for Mobile', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_woocommerce'      => __( 'Lazy Load for Product Images', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_shortcodes'       => __( 'Fix for Lazy Loading Short Codes', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_videos'           => __( 'Lazy Load Videos', 'sg-cachepress' ),
-			'siteground_optimizer_lazyload_iframes'          => __( 'Lazy Load Iframes', 'sg-cachepress' ),
-			'siteground_optimizer_supercacher_permissions'   => __( 'Can Config SuperCacher', 'sg-cachepress' ),
-			'siteground_optimizer_frontend_permissions'      => __( 'Can Optimize Frontend', 'sg-cachepress' ),
-			'siteground_optimizer_images_permissions'        => __( 'Can Optimize Images', 'sg-cachepress' ),
-			'siteground_optimizer_environment_permissions'   => __( 'Can Optimize Environment', 'sg-cachepress' ),
-			'siteground_optimizer_heartbeat_control'         => __( 'Heartbeat Optimization', 'sg-cachepress' ),
-			'siteground_optimizer_database_optimization'     => __( 'Scheduled Database Maintenance', 'sg-cachepress' ),
-			'siteground_optimizer_dns_prefetch'              => __( 'DNS Prefetching', 'sg-cachepress' ),
-			'siteground_optimizer_cloudflare_optimization_status'   => __( 'Cloudflare Optimization', 'sg-cachepress' ),
-		);
-
-		// Get the option name. Fallback to `Option` if the option key doens't exists in predefined messages.
-		$option = ! array_key_exists( $key, $messages ) ? __( 'Option', 'sg-cachepress' ) : $messages[ $key ];
-
-		if ( true === $status ) {
-			if ( true === $type ) {
-				return sprintf( __( '%s Enabled', 'sg-cachepress' ), $option );
-			}
-
-			return sprintf( __( '%s Disabled', 'sg-cachepress' ), $option );
-
-		}
-
-		if ( true === $type ) {
-			return sprintf( __( 'Could not enable %s', 'sg-cachepress' ), $option );
-		}
-
-		return sprintf( __( 'Could not disable %s', 'sg-cachepress' ), $option );
-	}
-
-	/**
 	 * Retrieves the possible options for the exclusion of media types from the lazy load logic.
 	 *
 	 * @since 6.0.0
@@ -452,6 +374,38 @@ class Options {
 			$result[] = array(
 				'title' => $title,
 				'value' => $type,
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Prepare the defaults for Database optimization menu.
+	 *
+	 * @since  7.2.2
+	 *
+	 * @return array $result Array containing the title and value pair for the FE pop-up.
+	 */
+	public function get_database_optimization_defaults() {
+		// List of default supported options and their title.
+		$defaults = array(
+			'optimize_tables'       => 'Perform Database Optimization for MyISAM tables',
+			'delete_auto_drafts'    => 'Delete all automatically created post and page drafts',
+			'delete_revisions'      => 'Delete all page and post revisions',
+			'delete_trashed_posts'  => 'Delete all posts and pages in your Trash',
+			'delete_spam_comments'  => 'Delete all comments marked as Spam',
+			'delete_trash_comments' => 'Delete all comments in your Trash',
+			'expired_transients'    => 'Delete all expired Transients'
+		);
+
+		$result = array();
+
+		// Loop trough all methods and prepare the array to be sent to the FE App.
+		foreach ( $defaults as $method => $title ) {
+			$result[] = array(
+				'title' => $title,
+				'value' => $method
 			);
 		}
 

@@ -170,6 +170,8 @@ function sfsi_plus_FrontPopupDiv() {
 		$sfsi_section5['sfsi_plus_wechatIcon_order'] => 'wechat',
 		$sfsi_section5['sfsi_plus_whatsappIcon_order'] => 'whatsapp',
 		$sfsi_section5['sfsi_plus_mastodonIcon_order'] => 'mastodon',
+		$sfsi_section5['sfsi_plus_riaIcon_order'] => 'ria',
+		$sfsi_section5['sfsi_plus_inhaIcon_order'] => 'inha',
 		(isset($sfsi_section5['sfsi_plus_houzzIcon_order']))
 			? $sfsi_section5['sfsi_plus_houzzIcon_order']
 			: 11 => 'houzz'
@@ -243,6 +245,12 @@ function sfsi_plus_FrontPopupDiv() {
 			case 'instagram':
 				if ($sfsi_plus_section1_options['sfsi_plus_instagram_display'] == 'yes')    $icons .= "<li>" . sfsi_plus_prepairIcons('instagram', 1) . "</li>";
 				break;
+            case 'ria':
+                if ($sfsi_plus_section1_options['sfsi_plus_ria_display'] == 'yes')    $icons .= "<li>" . sfsi_plus_prepairIcons('ria', 1) . "</li>";
+                break;
+            case 'inha':
+                if ($sfsi_plus_section1_options['sfsi_plus_inha_display'] == 'yes')    $icons .= "<li>" . sfsi_plus_prepairIcons('inha', 1) . "</li>";
+                break;
 			case 'houzz':
 				if (
 					isset($sfsi_plus_section1_options['sfsi_plus_houzz_display']) &&

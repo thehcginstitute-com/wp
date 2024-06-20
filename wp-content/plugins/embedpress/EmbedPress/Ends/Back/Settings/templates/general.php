@@ -5,13 +5,15 @@
  */
 
 $g_settings = get_option(EMBEDPRESS_PLG_NAME);
-$lazy_load = isset($g_settings['g_lazyload']) ? $g_settings['g_lazyload'] : 0;
-$pdf_custom_color_settings = isset($g_settings['pdf_custom_color_settings']) ? $g_settings['pdf_custom_color_settings'] : 0;
 
-$custom_color = isset($g_settings['custom_color']) ? $g_settings['custom_color'] : '#333333';
+$lazy_load = isset($g_settings['g_lazyload']) ? intval($g_settings['g_lazyload']) : 0;
+$pdf_custom_color_settings = isset($g_settings['pdf_custom_color_settings']) ? intval($g_settings['pdf_custom_color_settings']) : 0;
 
-$enableEmbedResizeHeight = isset($g_settings['enableEmbedResizeHeight']) ? $g_settings['enableEmbedResizeHeight'] : 550;
-$enableEmbedResizeWidth = isset($g_settings['enableEmbedResizeWidth']) ? $g_settings['enableEmbedResizeWidth'] : 600;
+$custom_color = isset($g_settings['custom_color']) ? sanitize_text_field($g_settings['custom_color']) : '#333333';
+
+$enableEmbedResizeHeight = isset($g_settings['enableEmbedResizeHeight']) ? intval($g_settings['enableEmbedResizeHeight']) : 550;
+$enableEmbedResizeWidth = isset($g_settings['enableEmbedResizeWidth']) ? intval($g_settings['enableEmbedResizeWidth']) : 600;
+
 ?>
 
 <div class="embedpress__settings  background__white radius-16 p-24">
@@ -120,31 +122,22 @@ $enableEmbedResizeWidth = isset($g_settings['enableEmbedResizeWidth']) ? $g_sett
 				<img class="embedpress-banner" src="<?php echo esc_url('https://embedpress.com/wp-content/uploads/2023/10/Mega-Page.gif'); ?>"
 					alt="">
 
-				<ul class="feature-list">
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">Social Share</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">Lazy Loading</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">SEO Optimized</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">Custom Branding
-					</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">Content Protection
-					</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">Custom Audio &
-						Video
-						Player</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">PDF & Documents
-						Embedding</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">Embed From 150+
-						Sources</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">Wrapper Support
-					</li>
-					<li><img src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/check2.svg" alt="">& Many more...</li>
-
-				</ul>
-
+					<ul class="feature-list">
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('Social Share', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('Lazy Loading', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('SEO Optimized', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('Custom Branding', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('Content Protection', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('Custom Audio & Video Player', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('PDF & Documents Embedding', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('Embed From 150+ Sources', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('Wrapper Support', 'embedpress'); ?></li>
+						<li><img src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/check2.svg'); ?>" alt=""><?php echo esc_html__('& Many more...', 'embedpress'); ?></li>
+					</ul>
 
 				<a class="pro-upgrade-button" target="_blank"
-					href="<?php echo esc_url('https://wpdeveloper.com/in/upgrade-embedpress'); ?>">Upgrade to Pro <img
-						src="<?php echo EMBEDPRESS_SETTINGS_ASSETS_URL; ?>img/external-white.svg" alt=""></a>
+					href="<?php echo esc_url('https://wpdeveloper.com/in/upgrade-embedpress'); ?>"><?php echo esc_html__('Upgrade to Pro', 'embedpress'); ?><img
+						src="<?php echo esc_url(EMBEDPRESS_SETTINGS_ASSETS_URL . 'img/external-white.svg'); ?>" alt=""></a>
 			</div>
 
 		</div>

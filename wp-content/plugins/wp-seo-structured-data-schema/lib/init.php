@@ -3,14 +3,50 @@
 if ( ! class_exists( 'KcSeoWPSchema' ) ) {
 
 	class KcSeoWPSchema {
+		/*
+		 * Options
+		 */
 		public $options;
+		/**
+		 * @var string
+		 */
 		public $KcSeoPrefix;
+		/**
+		 * @var string
+		 */
+		public $incPath;
+		/**
+		 * @var string
+		 */
+		public $functionsPath ;
+
+		/**
+		 * @var string
+		 */
+		public $classesPath  ;
+		/**
+		 * @var string
+		 */
+		public $viewsPath;
+		/**
+		 * @var string
+		 */
+		public $assetsUrl;
+
+		/**
+		 * @var string
+		 */
+		public $modelPath;
+
+		/**
+		 * @var string
+		 */
+		public $objects;
 
 		/**
 		 * Store the singleton object.
 		 */
 		private static $singleton = false;
-
 
 		/**
 		 * Fetch an instance of the class.

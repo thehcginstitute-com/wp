@@ -2,7 +2,7 @@
 namespace SiteGround_Optimizer\Htaccess;
 
 use SiteGround_Optimizer;
-use SiteGround_Optimizer\Helper\Helper;
+use SiteGround_Helper\Helper_Service;
 
 class Htaccess {
 
@@ -74,11 +74,16 @@ class Htaccess {
 	 */
 	public function __construct() {
 		if ( null === $this->wp_filesystem ) {
-			$this->wp_filesystem = Helper::setup_wp_filesystem();
+			$this->wp_filesystem = Helper_Service::setup_wp_filesystem();
 		}
 
 		if ( null === $this->path ) {
-			$this->set_htaccess_path();
+			$status = $this->set_htaccess_path();
+
+			// Bail if .htaccess is inaccessible.
+			if ( false === $status ) {
+				return false;
+			}
 		}
 
 		self::$instance = $this;
@@ -211,6 +216,11 @@ class Htaccess {
 	 * @return bool            True on success, false otherwise.
 	 */
 	private function lock_and_write( $content ) {
+		// Bail if .htaccess is not writable.
+		if ( ! $this->wp_filesystem->is_writable( $this->path ) ) {
+			return false;
+		}
+
 		$fp = fopen( $this->path, 'w+' );
 
 		if ( flock( $fp, LOCK_EX ) ) {

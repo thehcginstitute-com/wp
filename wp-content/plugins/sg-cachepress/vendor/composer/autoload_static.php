@@ -4,28 +4,66 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc338f7fbd7d73a58c836a6fc15bad979
+class ComposerStaticInit2cd2b9631e81eb8c3a6d7dee0bba7027
 {
     public static $files = array (
-        '0d5072bb3af3f8dc141e158c7699adf2' => __DIR__ . '/../..' . '/helpers/helpers.php',
+        '7135897415a2b76322abd22e8fdd66f8' => __DIR__ . '/../..' . '/helpers/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
+            'SiteGround_i18n\\' => 16,
             'SiteGround_Optimizer\\' => 21,
+            'SiteGround_Helper\\' => 18,
+            'SiteGround_Emails\\' => 18,
+            'SiteGround_Data\\' => 16,
+        ),
+        'M' => 
+        array (
+            'MatthiasMullie\\PathConverter\\' => 29,
+            'MatthiasMullie\\Minify\\' => 22,
         ),
         'C' => 
         array (
+            'Composer\\Installers\\' => 20,
             'CharlesRumley\\Tests\\' => 20,
             'CharlesRumley\\' => 14,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'SiteGround_i18n\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/siteground/siteground-i18n/src',
+        ),
         'SiteGround_Optimizer\\' => 
         array (
             0 => __DIR__ . '/../..' . '/core',
+        ),
+        'SiteGround_Helper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/siteground/siteground-helper/src',
+        ),
+        'SiteGround_Emails\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/siteground/siteground-emails/src',
+        ),
+        'SiteGround_Data\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/siteground/siteground-data/src',
+        ),
+        'MatthiasMullie\\PathConverter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/matthiasmullie/path-converter/src',
+        ),
+        'MatthiasMullie\\Minify\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/matthiasmullie/minify/src',
+        ),
+        'Composer\\Installers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
         'CharlesRumley\\Tests\\' => 
         array (
@@ -45,13 +83,6 @@ class ComposerStaticInitc338f7fbd7d73a58c836a6fc15bad979
                 0 => __DIR__ . '/..' . '/sepia/po-parser/src',
             ),
         ),
-        'N' => 
-        array (
-            'Net_DNS2' => 
-            array (
-                0 => __DIR__ . '/..' . '/pear/net_dns2',
-            ),
-        ),
     );
 
     public static $classMap = array (
@@ -63,10 +94,10 @@ class ComposerStaticInitc338f7fbd7d73a58c836a6fc15bad979
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc338f7fbd7d73a58c836a6fc15bad979::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc338f7fbd7d73a58c836a6fc15bad979::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitc338f7fbd7d73a58c836a6fc15bad979::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitc338f7fbd7d73a58c836a6fc15bad979::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2cd2b9631e81eb8c3a6d7dee0bba7027::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2cd2b9631e81eb8c3a6d7dee0bba7027::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2cd2b9631e81eb8c3a6d7dee0bba7027::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit2cd2b9631e81eb8c3a6d7dee0bba7027::$classMap;
 
         }, null, ClassLoader::class);
     }

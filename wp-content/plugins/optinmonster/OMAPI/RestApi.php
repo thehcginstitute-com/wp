@@ -503,7 +503,7 @@ class OMAPI_RestApi extends OMAPI_BaseRestApi {
 			);
 		}
 
-		$this->base->refresh->sync( $campaign_id, $request->get_param( 'legacy' ) );
+		$this->base->refresh->sync( $campaign_id );
 
 		return new WP_REST_Response(
 			array( 'message' => esc_html__( 'OK', 'optin-monster-api' ) ),

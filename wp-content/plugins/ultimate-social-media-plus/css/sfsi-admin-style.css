@@ -38,6 +38,8 @@ body {
 .tab1 ul.plus_icn_listing li .sfsicls_facebook,
 .tab1 ul.plus_icn_listing li .sfsicls_ggle_pls,
 .tab1 ul.plus_icn_listing li .sfsicls_instagram,
+.tab1 ul.plus_icn_listing li .sfsicls_ria,
+.tab1 ul.plus_icn_listing li .sfsicls_inha,
 .tab1 ul.plus_icn_listing li .sfsicls_telegram,
 .tab1 ul.plus_icn_listing li .sfsicls_ok,
 .tab1 ul.plus_icn_listing li .sfsicls_vk,
@@ -168,6 +170,22 @@ body {
     background-size: contain;
 }
 
+.sfsicls_ria {
+    background-image: url('../images/icons_theme/default/default_ria.png') !important;
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
+.sfsicls_inha {
+    background-image: url('../images/icons_theme/default/default_inha.png') !important;
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
+}
+
 .sfsicls_copylink {
     background-image: url('../images/icons_theme/default/default_copylink.png') !important;
     -webkit-background-size: contain;
@@ -183,6 +201,23 @@ body {
 }
 
 .tab1 ul.plus_icn_listing li .sfsicls_mastodon {
+    background-position: 0;
+    color: #369;
+    background-size: contain;
+    margin-left: 14px;
+    padding-left: 54px;
+}
+
+
+.tab1 ul.plus_icn_listing li .sfsicls_ria {
+    background-position: 0;
+    color: #369;
+    background-size: contain;
+    margin-left: 14px;
+    padding-left: 54px;
+}
+
+.tab1 ul.plus_icn_listing li .sfsicls_inha {
     background-position: 0;
     color: #369;
     background-size: contain;
@@ -267,7 +302,9 @@ ul.sfsiplus_icn_listing8 li .sfsiplus_right_info a {
 .tab2 .row h2.sfsicls_wechat,
 .tab2 .row h2.sfsicls_xing,
 .tab2 .row h2.sfsicls_copylink,
-.tab2 .row h2.sfsicls_mastodon {
+.tab2 .row h2.sfsicls_mastodon,
+.tab2 .row h2.sfsicls_ria,
+.tab2 .row h2.sfsicls_inha{
     background: url(../images/tab_1_icn_list.png) no-repeat;
     padding: 10px 0 0 70px;
     margin: 15px 0 7px 21px;
@@ -418,6 +455,20 @@ ul.sfsiplus_icn_listing8 li .sfsiplus_right_info a {
 .tab2 .row h2.sfsicls_mastodon {
     background-position: 0;
     color: #583ED1;
+    background-size: contain;
+    margin-left: 27px !important;
+}
+
+.tab2 .row h2.sfsicls_ria {
+    background-position: 0;
+    color: #0E9890;
+    background-size: contain;
+    margin-left: 27px !important;
+}
+
+.tab2 .row h2.sfsicls_inha {
+    background-position: 0;
+    color: #397baf;
     background-size: contain;
     margin-left: 27px !important;
 }
@@ -924,7 +975,39 @@ ul.tab_2_email_sec li .radio {
 .sfsiplus_icns_tab_3 .sfsiplus_row_13_29,
 .sfsiplus_icns_tab_3 .sfsiplus_row_14_29,
 .sfsiplus_icns_tab_3 .sfsiplus_row_15_29,
-.sfsiplus_icns_tab_3 .sfsiplus_row_16_29 {
+.sfsiplus_icns_tab_3 .sfsiplus_row_16_29,
+.sfsiplus_icns_tab_3 .sfsiplus_row_1_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_2_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_3_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_4_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_5_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_6_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_7_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_8_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_9_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_10_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_11_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_12_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_13_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_14_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_15_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_16_30,
+.sfsiplus_icns_tab_3 .sfsiplus_row_1_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_2_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_3_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_4_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_5_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_6_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_7_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_8_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_9_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_10_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_11_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_12_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_13_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_14_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_15_31,
+.sfsiplus_icns_tab_3 .sfsiplus_row_16_31{
     background: url(../images/tab_3_icns.png) no-repeat;
     width: 53px;
     height: 52px;
@@ -994,6 +1077,14 @@ ul.tab_2_email_sec li .radio {
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_1_27 {
     background-position: -1045px 0;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_1_30 {
+    background-position: -1172px 0;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_1_31 {
+    background-position: -1234px 0;
 }
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_1_28 {
@@ -1066,6 +1157,14 @@ ul.tab_2_email_sec li .radio {
     background-position: -1045px -74px;
 }
 
+.sfsiplus_icns_tab_3 .sfsiplus_row_2_30 {
+    background-position: -1172px -74px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_2_31 {
+    background-position: -1234px -74px;
+}
+
 .sfsiplus_icns_tab_3 .sfsiplus_row_2_28 {
     background-image: url(../images/icons_theme/flat/flat_mastodon.png);
     background-position: 0;
@@ -1134,6 +1233,14 @@ ul.tab_2_email_sec li .radio {
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_3_27 {
     background-position: -1045px -147px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_3_30 {
+    background-position: -1172px -147px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_3_31 {
+    background-position: -1234px -147px;
 }
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_3_28 {
@@ -1206,6 +1313,14 @@ ul.tab_2_email_sec li .radio {
     background-position: -1045px -222px;
 }
 
+.sfsiplus_icns_tab_3 .sfsiplus_row_4_30 {
+    background-position: -1172px -222px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_4_31 {
+    background-position: -1234px -222px;
+}
+
 .sfsiplus_icns_tab_3 .sfsiplus_row_4_28 {
     background-image: url(../images/icons_theme/cute/cute_mastodon.png);
     background-position: 0;
@@ -1274,6 +1389,14 @@ ul.tab_2_email_sec li .radio {
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_5_27 {
     background-position: -1045px -296px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_5_30 {
+    background-position: -1172px -296px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_5_31 {
+    background-position: -1234px -296px;
 }
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_5_28 {
@@ -1346,6 +1469,14 @@ ul.tab_2_email_sec li .radio {
     background-position: -1045px -370px;
 }
 
+.sfsiplus_icns_tab_3 .sfsiplus_row_6_30 {
+    background-position: -1172px -370px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_6_31 {
+    background-position: -1234px -370px;
+}
+
 .sfsiplus_icns_tab_3 .sfsiplus_row_6_28 {
     background-image: url(../images/icons_theme/chrome_blue/chrome_blue_mastodon.png);
     background-position: 0;
@@ -1414,6 +1545,14 @@ ul.tab_2_email_sec li .radio {
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_7_27 {
     background-position: -1045px -444px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_7_30 {
+    background-position: -1172px -444px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_7_31 {
+    background-position: -1234px -444px;
 }
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_7_28 {
@@ -1486,6 +1625,14 @@ ul.tab_2_email_sec li .radio {
     background-position: -1045px -518px;
 }
 
+.sfsiplus_icns_tab_3 .sfsiplus_row_8_30 {
+    background-position: -1172px -518px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_8_31 {
+    background-position: -1234px -518px;
+}
+
 .sfsiplus_icns_tab_3 .sfsiplus_row_8_28 {
     background-image: url(../images/icons_theme/splash/splash_mastodon.png);
     background-position: 0;
@@ -1554,6 +1701,14 @@ ul.tab_2_email_sec li .radio {
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_9_27 {
     background-position: -1045px -592px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_9_30 {
+    background-position: -1172px -592px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_9_31 {
+    background-position: -1234px -592px;
 }
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_9_28 {
@@ -1626,6 +1781,14 @@ ul.tab_2_email_sec li .radio {
     background-position: -1045px -666px;
 }
 
+.sfsiplus_icns_tab_3 .sfsiplus_row_10_30 {
+    background-position: -1172px -666px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_10_31 {
+    background-position: -1234px -666px;
+}
+
 .sfsiplus_icns_tab_3 .sfsiplus_row_10_28 {
     background-image: url(../images/icons_theme/crystal/crystal_mastodon.png);
     background-position: 0;
@@ -1694,6 +1857,14 @@ ul.tab_2_email_sec li .radio {
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_11_27 {
     background-position: -1045px -740px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_11_30 {
+    background-position: -1172px -740px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_11_31 {
+    background-position: -1234px -740px;
 }
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_11_28 {
@@ -1766,6 +1937,14 @@ ul.tab_2_email_sec li .radio {
     background-position: -1045px -814px;
 }
 
+.sfsiplus_icns_tab_3 .sfsiplus_row_12_30 {
+    background-position: -1172px -814px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_12_31 {
+    background-position: -1234px -814px;
+}
+
 .sfsiplus_icns_tab_3 .sfsiplus_row_12_28 {
     background-image: url(../images/icons_theme/black/black_mastodon.png);
     background-position: 0;
@@ -1834,6 +2013,14 @@ ul.tab_2_email_sec li .radio {
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_13_27 {
     background-position: -1045px -888px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_13_30 {
+    background-position: -1172px -888px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_13_31 {
+    background-position: -1234px -888px;
 }
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_13_28 {
@@ -1906,6 +2093,14 @@ ul.tab_2_email_sec li .radio {
     background-position: -1045px -962px;
 }
 
+.sfsiplus_icns_tab_3 .sfsiplus_row_14_30 {
+    background-position: -1172px -962px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_14_31 {
+    background-position: -1234px -962px;
+}
+
 .sfsiplus_icns_tab_3 .sfsiplus_row_14_28 {
     background-image: url(../images/icons_theme/shaded_dark/shaded_dark_mastodon.png);
     background-position: 0;
@@ -1976,6 +2171,14 @@ ul.tab_2_email_sec li .radio {
     background-position: -1045px -1036px;
 }
 
+.sfsiplus_icns_tab_3 .sfsiplus_row_15_30 {
+    background-position: -1172px -1036px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_15_31 {
+    background-position: -1234px -1036px;
+}
+
 .sfsiplus_icns_tab_3 .sfsiplus_row_15_28 {
     background-image: url(../images/icons_theme/shaded_light/shaded_light_mastodon.png);
     background-position: 0;
@@ -2044,6 +2247,14 @@ ul.tab_2_email_sec li .radio {
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_16_27 {
     background-position: -1045px -1109px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_16_30 {
+    background-position: -1172px -1109px;
+}
+
+.sfsiplus_icns_tab_3 .sfsiplus_row_16_31 {
+    background-position: -1234px -1109px;
 }
 
 .sfsiplus_icns_tab_3 .sfsiplus_row_16_28 {
@@ -6580,4 +6791,13 @@ div#analyst-install-modal * {
     background: url(../images/icons_theme/transparent/transparent_copylink.png) no-repeat;
     background-position: 0;
     background-size: contain;
+}
+
+.ui-sortable-handle img{
+    width: 54px;
+    height: 54px;
+}
+.like_icon img{
+    width: 54px;
+    height: 54px;
 }

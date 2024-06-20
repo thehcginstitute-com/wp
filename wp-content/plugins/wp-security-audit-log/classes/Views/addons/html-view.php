@@ -3,6 +3,7 @@
  * Addons HTML View in Admin.
  *
  * @package wsal
+ * @subpackage views
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,61 +11,53 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $utm_params = array(
-	'utm_source'   => 'plugin',
-	'utm_medium'   => 'referral',
-	'utm_campaign' => 'WSAL',
+	'utm_source'   => 'plugins',
+	'utm_medium'   => 'button',
+	'utm_campaign' => 'wsal',
 );
+
+$buy_now_utm_params = $utm_params;
+
+if (property_exists($this, 'hook_suffix')){
 switch ( $this->hook_suffix ) {
-	case 'audit-log_page_wsal-loginusers':
-		$utm_params['utm_content'] = 'users+sessions';
+	case 'wp-activity-log_page_wsal-loginusers':
+		$utm_params['utm_content']            = 'sessions';
+		$buy_now_utm_params['utm_content']    = 'upgrade+now+loginusers';
 		break;
-	case 'audit-log_page_wsal-reports':
-		$utm_params['utm_content'] = 'reports';
+	case 'wp-activity-log_page_wsal-reports':
+		$utm_params['utm_content']            = 'reports';
+		$buy_now_utm_params['utm_content']    = 'upgrade+now+reports';
 		break;
-	case 'audit-log_page_wsal-emailnotifications':
-		$utm_params['utm_content'] = 'notifications';
+	case 'wp-activity-log_page_wsal-emailnotifications':
+		$utm_params['utm_content']            = 'notifications';
+		$buy_now_utm_params['utm_content']    = 'upgrade+now+notifications';
 		break;
-	case 'audit-log_page_wsal-externaldb':
-		$utm_params['utm_content'] = 'db+integrations';
+	case 'wp-activity-log_page_wsal-externaldb':
+		$utm_params['utm_content']            = 'integrations';
+		$buy_now_utm_params['utm_content']    = 'upgrade+now+integrations';
 		break;
-	case 'audit-log_page_wsal-search':
-		$utm_params['utm_content'] = 'search';
+	case 'wp-activity-log_page_wsal-search':
+		$utm_params['utm_content']            = 'search';
+		$buy_now_utm_params['utm_content']    = 'upgrade+now+search';
 		break;
-    default:
-	    //  fallback for any other hook suffices would go here
-	    break;
+	default:
+		// Fallback for any other hook suffix would go here.
+		break;
+}
 }
 // Links.
 $more_info = add_query_arg(
 	$utm_params,
-	'https://wpactivitylog.com/premium-features/'
-);
-
-// Trial link arguments.
-$trial_args = array(
-	'page'          => 'wsal-auditlog-pricing',
-	'billing_cycle' => 'annual',
-	'trial'         => 'true',
+	'https://melapress.com/wordpress-activity-log/features/'
 );
 
 // Buy Now button link.
-$buy_now        = add_query_arg( 'page', 'wsal-auditlog-pricing', admin_url( 'admin.php' ) );
-$buy_now_target = '';
-$trial_link     = add_query_arg( $trial_args, admin_url( 'admin.php' ) );
+$buy_now        = add_query_arg(
+	$buy_now_utm_params,
+	'https://melapress.com/wordpress-activity-log/pricing/'
+);
+$buy_now_target = ' target="_blank"';
 
-// If user is not super admin and website is multisite then change the URL.
-if ( $this->_plugin->IsMultisite() && ! is_super_admin() ) {
-	$buy_now        = 'https://wpactivitylog.com/pricing/';
-	$trial_link     = 'https://wpactivitylog.com/pricing/';
-	$buy_now_target = ' target="_blank"';
-} elseif ( $this->_plugin->IsMultisite() && is_super_admin() ) {
-	$buy_now    = add_query_arg( 'page', 'wsal-auditlog-pricing', network_admin_url( 'admin.php' ) );
-	$trial_link = add_query_arg( $trial_args, network_admin_url( 'admin.php' ) );
-} elseif ( ! $this->_plugin->IsMultisite() && ! current_user_can( 'manage_options' ) ) {
-	$buy_now        = 'https://wpactivitylog.com/pricing/';
-	$trial_link     = 'https://wpactivitylog.com/pricing/';
-	$buy_now_target = ' target="_blank"';
-}
 ?>
 
 <div class="user-login-row">
@@ -92,8 +85,8 @@ if ( $this->_plugin->IsMultisite() && ! is_super_admin() ) {
 				</div>
 			</div>
 			<div class="user-login-cta">
-				<a href="<?php echo esc_url( $buy_now ); ?>" class="user-gradient-cta"<?php echo esc_attr( $buy_now_target ); ?>><?php esc_html_e( 'Upgrade to Premium', 'wp-security-audit-log' ); ?></a>
-				<a href="<?php echo esc_url( $more_info ); ?>" class="user-bordered-cta" target="_blank"><?php esc_html_e( 'More Information', 'wp-security-audit-log' ); ?></a>
+				<a href="<?php echo esc_url( $buy_now ); ?>" class="user-gradient-cta"<?php echo esc_attr( $buy_now_target ); ?>><?php esc_html_e( 'Get WP Activity Log Premium', 'wp-security-audit-log' ); ?></a>
+				<a href="<?php echo esc_url( $more_info ); ?>" class="user-bordered-cta" target="_blank"><?php esc_html_e( 'See all features', 'wp-security-audit-log' ); ?></a>
 			</div>
 		</div>
 	</div>
@@ -117,8 +110,7 @@ if ( $this->_plugin->IsMultisite() && ! is_super_admin() ) {
 				</div>
 			<?php endforeach; ?>
 			<div class="user-login-cta">
-				<a href="<?php echo esc_url( $buy_now ); ?>" class="user-gradient-cta"<?php echo esc_attr( $buy_now_target ); ?>><?php esc_html_e( 'Upgrade to Premium', 'wp-security-audit-log' ); ?></a>
-				<a href="<?php echo esc_url( $trial_link ); ?>" class="user-bordered-cta"<?php echo esc_attr( $buy_now_target ); ?>><?php esc_html_e( 'Start Free 14-Day Premium Trial', 'wp-security-audit-log' ); ?></a>
+				<a href="<?php echo esc_url( $buy_now ); ?>" class="user-bordered-cta"<?php echo esc_attr( $buy_now_target ); ?>><?php esc_html_e( 'Get WP Activity Log Premium', 'wp-security-audit-log' ); ?></a>
 			</div>
 		</div>
 	</div>

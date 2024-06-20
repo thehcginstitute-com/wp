@@ -30,7 +30,7 @@ class OMAPI_Shortcodes_Shortcode {
 	public $base;
 
 	/**
-	 * Shorcode attributes.
+	 * Shortcode attributes.
 	 *
 	 * @since 2.6.9
 	 *
@@ -39,7 +39,7 @@ class OMAPI_Shortcodes_Shortcode {
 	public $atts = array();
 
 	/**
-	 * The shorcode campaign identifier, slug (or ID for legacy/back-compat).
+	 * The shortcode campaign identifier, slug (or ID for legacy/back-compat).
 	 *
 	 * @since 2.6.9
 	 *

@@ -4,6 +4,7 @@ namespace WordfenceLS;
 
 use WordfenceLS\Crypto\Model_JWT;
 use WordfenceLS\Crypto\Model_Symmetric;
+use RuntimeException;
 
 class Controller_Users {
 	const RECOVERY_CODE_COUNT = 5;
@@ -12,6 +13,16 @@ class Controller_Users {
 	const META_KEY_GRACE_PERIOD_RESET = 'wfls-grace-period-reset';
 	const META_KEY_GRACE_PERIOD_OVERRIDE = 'wfls-grace-period-override';
 	const META_KEY_ALLOW_GRACE_PERIOD = 'wfls-allow-grace-period';
+	const META_KEY_VERIFICATION_TOKENS = 'wfls-verification-tokens';
+	const META_KEY_CAPTCHA_SCORES = 'wfls-captcha-scores';
+	const VERIFICATION_TOKEN_BYTES = 64;
+	const VERIFICATION_TOKEN_LIMIT = 5; //Max number of concurrent tokens
+	const VERIFICATION_TOKEN_TRANSIENT_PREFIX = 'wfls_verify_';
+	const CAPTCHA_SCORE_LIMIT = 2; //Max number of captcha scores cached
+	const CAPTCHA_SCORE_TRANSIENT_PREFIX = 'wfls_captcha_';
+	const CAPTCHA_SCORE_CACHE_DURATION = 60; //seconds
+	const LARGE_USER_BASE_THRESHOLD = 1000;
+	const TRUNCATED_ROLE_KEY = 1;
 	
 	/**
 	 * Returns the singleton Controller_Users.
@@ -181,40 +192,9 @@ class Controller_Users {
 	 */
 	public function can_activate_2fa($user) {
 		if (is_multisite() && !is_super_admin($user->ID)) {
-			$blogs = get_blogs_of_user($user->ID);
-			foreach ($blogs as $id => $info) {
-				if ($this->_user_can_for_blog($user, $id, Controller_Permissions::CAP_ACTIVATE_2FA_SELF)) {
-					return true;
-				}
-			}
-			return false;
+			return Controller_Permissions::shared()->does_user_have_multisite_capability($user, Controller_Permissions::CAP_ACTIVATE_2FA_SELF);
 		}
 		return user_can($user, Controller_Permissions::CAP_ACTIVATE_2FA_SELF);
-	}
-	
-	/**
-	 * Implementation of current_user_can_for_blog that works for an arbitrary user.
-	 * 
-	 * @param int $user_id
-	 * @param int $blog_id
-	 * @param string $capability
-	 * @return bool
-	 */
-	private function _user_can_for_blog($user_id, $blog_id, $capability) {
-		$switched = is_multisite() ? switch_to_blog($blog_id) : false;
-		
-		$user = new \WP_User($user_id);
-	
-		$args = array_slice(func_get_args(), 2);
-		$args = array_merge(array($capability), $args);
-		
-		$can = call_user_func_array(array($user, 'has_cap'), $args);
-		
-		if ($switched) {
-			restore_current_blog();
-		}
-		
-		return $can;
 	}
 	
 	/**
@@ -341,7 +321,6 @@ class Controller_Users {
 	 */
 	public function record_captcha_score($user, $score) {
 		if (!Controller_CAPTCHA::shared()->enabled()) { return; }
-		if ($this->has_2fa_active($user)) { return; } //2FA activated users do not retrieve a score
 		
 		if ($user) { update_user_meta($user->ID, 'wfls-last-captcha-score', $score); }
 		$stats = Controller_Settings::shared()->get_array(Controller_Settings::OPTION_CAPTCHA_STATS);
@@ -369,59 +348,110 @@ class Controller_Users {
 		return array('active_users' => $active_users, 'inactive_users' => max($total_users - $active_users, 0));
 	}
 	
-	public function detailed_user_counts() {
+	public function detailed_user_counts($force = false) {
 		global $wpdb;
 		
-		//Base counts
-		$counts = count_users();
-		
-		//Adaptation of the source of the above call to get enabled counts
-		$site_id = get_current_blog_id();
-		$blog_prefix = $wpdb->get_blog_prefix($site_id);
-		$roles = new \WP_Roles();
-		if (is_multisite() && get_current_blog_id() != $site_id) {
-			switch_to_blog($site_id);
-			$avail_roles = $roles->get_names();
-			restore_current_blog();
+		$blog_prefix = $wpdb->get_blog_prefix();
+		$wp_roles = new \WP_Roles();
+		$roles = $wp_roles->get_names();
+
+		$counts = array();
+		$groups = array('avail_roles' => 0, 'active_avail_roles' => 0);
+
+		foreach ($groups as $group => $count) {
+			$counts[$group] = array();
+			foreach ($roles as $role_key => $role_name) {
+				$counts[$group][$role_key] = 0;
+			}
+			$counts[$group][self::TRUNCATED_ROLE_KEY] = 0;
+		}
+
+		$dbController = Controller_DB::shared();
+
+		if ($dbController->create_temporary_role_counts_table()) {
+			$lock = new Utility_NullLock();
+			$role_counts_table = $dbController->role_counts_temporary;
 		}
 		else {
-			$avail_roles = $roles->get_names();
+			$lock = new Utility_DatabaseLock($dbController, 'role-count-calculation');
+			$role_counts_table = $dbController->role_counts;
 		}
-		
-		// Build a CPU-intensive query that will return concise information.
-		$select_count = array();
-		foreach ($avail_roles as $this_role => $name) {
-			if (!method_exists($wpdb, 'esc_like')) {
-				$like = addcslashes('"' . $this_role . '"', '_%\\'); //for WP < 4.0
-			}
-			else {
-				$like = $wpdb->esc_like('"' . $this_role . '"');
-			}
-			$select_count[] = $wpdb->prepare("COUNT(NULLIF(`meta_value` LIKE %s, false))", '%' . $like . '%');
+
+		try {
+			$lock->acquire();
+
+			if(!$force && Controller_Settings::shared()->get_bool(Controller_Settings::OPTION_USER_COUNT_QUERY_STATE))
+				throw new RuntimeException('Previous user count query failed to completed successfully. User count queries are currently disabled');
+			Controller_Settings::shared()->set(Controller_Settings::OPTION_USER_COUNT_QUERY_STATE, true);
+
+			$dbController->require_schema_version(2);
+			$secrets_table = $dbController->secrets;
+
+			$dbController->query("TRUNCATE {$role_counts_table}");
+			$dbController->query($wpdb->prepare(<<<SQL
+				INSERT INTO {$role_counts_table}
+				SELECT
+					um.meta_value AS serialized_roles,
+					s.user_id IS NULL AS two_factor_inactive,
+					1 AS user_count
+				FROM
+					{$wpdb->usermeta} um
+				INNER JOIN {$wpdb->users} u ON u.ID = um.user_id
+				LEFT JOIN {$secrets_table} s ON s.user_id = u.ID
+				WHERE
+					meta_key = %s
+				ON DUPLICATE KEY
+					UPDATE user_count = user_count + 1;
+SQL
+			, "{$blog_prefix}capabilities"));
+
+			$results = $wpdb->get_results(<<<SQL
+				SELECT
+					serialized_roles AS serialized_roles,
+					two_factor_inactive,
+					user_count
+				FROM
+					{$role_counts_table};
+SQL
+			, OBJECT);
+
+			Controller_Settings::shared()->set(Controller_Settings::OPTION_USER_COUNT_QUERY_STATE, false);
 		}
-		$select_count[] = "COUNT(NULLIF(`meta_value` = 'a:0:{}', false))";
-		$select_count = implode(', ', $select_count);
-		
-		// Add the meta_value index to the selection list, then run the query.
-		$table = Controller_DB::shared()->secrets;
-		$row = $wpdb->get_row("
-			SELECT {$select_count}, COUNT(*)
-			FROM {$wpdb->usermeta} um
-			INNER JOIN {$table} tf ON um.user_id = tf.user_id
-			WHERE meta_key = '{$blog_prefix}capabilities'
-		", ARRAY_N);
-		
-		// Run the previous loop again to associate results with role names.
-		$col = 0;
-		$role_counts = array();
-		foreach ($avail_roles as $this_role => $name) {
-			$count = (int) $row[$col++];
-			if ($count > 0) {
-				$role_counts[$this_role] = $count;
+		catch (RuntimeException $e) {
+			$lock->release(); //Finally is not supported in older PHP versions, so it is necessary to release the lock in two places
+			return false;
+		}
+		$lock->release();
+
+		foreach ($results as $row) {
+			$truncated_role = false;
+			try {
+				$row_roles = Utility_Serialization::unserialize($row->serialized_roles, array('allowed_classes' => false), 'is_array');
+			}
+			catch (RuntimeException $e) {
+				$row_roles = array(self::TRUNCATED_ROLE_KEY => true);
+				$truncated_role = true;
+			}
+			foreach ($row_roles as $row_role => $state) {
+				if ($state !== true || (!$truncated_role && !is_string($row_role)))
+					continue;
+				if (array_key_exists($row_role, $roles) || $row_role === self::TRUNCATED_ROLE_KEY) {
+					foreach ($groups as $group => &$group_count) {
+						if ($group === 'active_avail_roles' && $row->two_factor_inactive)
+							continue;
+						$counts[$group][$row_role] += $row->user_count;
+						$group_count += $row->user_count;
+					}
+				}
 			}
 		}
-		
-		$role_counts['none'] = (int) $row[$col++];
+
+		foreach ($roles as $role_key => $role_name) {
+			if ($counts['avail_roles'][$role_key] === 0 && $counts['active_avail_roles'][$role_key] === 0) {
+				unset($counts['avail_roles'][$role_key]);
+				unset($counts['active_avail_roles'][$role_key]);
+			}
+		}
 
 		// Separately add super admins for multisite
 		if (is_multisite()) {
@@ -435,14 +465,11 @@ class Controller_Users {
 				}
 			}
 			$counts['avail_roles']['super-admin'] = $superAdmins;
-			$role_counts['super-admin'] = $activeSuperAdmins;
+			$counts['active_avail_roles']['super-admin'] = $activeSuperAdmins;
 		}
 		
-		// Get the meta_value index from the end of the result set.
-		$total_users = (int) $row[$col];
-		
-		$counts['active_total_users'] = $total_users;
-		$counts['active_avail_roles'] =& $role_counts;
+		$counts['total_users'] = $groups['avail_roles'];
+		$counts['active_total_users'] = $groups['active_avail_roles'];
 
 		return $counts;
 	}
@@ -491,13 +518,13 @@ class Controller_Users {
 	
 	public function _manage_users_columns($columns = array()) {
 		if (user_can(wp_get_current_user(), Controller_Permissions::CAP_ACTIVATE_2FA_OTHERS)) {
-			$columns['wfls_2fa_status'] = esc_html__('2FA Status', 'wordfence-2fa');
+			$columns['wfls_2fa_status'] = esc_html__('2FA Status', 'wordfence-login-security');
 		}
 		
-		if (Controller_Permissions::shared()->can_manage_settings(wp_get_current_user())) {
-			$columns['wfls_last_login'] = esc_html__('Last Login', 'wordfence-2fa');
+		if (Controller_Settings::shared()->are_login_history_columns_enabled() && Controller_Permissions::shared()->can_manage_settings(wp_get_current_user())) {
+			$columns['wfls_last_login'] = esc_html__('Last Login', 'wordfence-login-security');
 			if (Controller_CAPTCHA::shared()->enabled()) {
-				$columns['wfls_last_captcha'] = esc_html__('Last CAPTCHA', 'wordfence-2fa');
+				$columns['wfls_last_captcha'] = esc_html__('Last CAPTCHA', 'wordfence-login-security');
 			}
 		}
 		return $columns;
@@ -507,40 +534,35 @@ class Controller_Users {
 		switch($column_name) {
 			case 'wfls_2fa_status':
 				$user = new \WP_User($user_id);
-				$value = __('Not Allowed', 'wordfence-2fa');
+				$value = __('Not Allowed', 'wordfence-login-security');
 				if (Controller_Users::shared()->can_activate_2fa($user)) {
 					$has2fa = Controller_Users::shared()->has_2fa_active($user);
 					$requires2fa = $this->requires_2fa($user, $inGracePeriod);
 					if ($has2fa) {
-						$value = esc_html__('Active', 'wordfence-2fa');
+						$value = esc_html__('Active', 'wordfence-login-security');
 					}
 					elseif ($inGracePeriod) {
-						$value = wp_kses(__('Inactive<small class="wfls-sub-status">(Grace Period)</small>', 'wordfence-2fa'), array('small'=>array('class'=>array())));
+						$value = wp_kses(__('Inactive<small class="wfls-sub-status">(Grace Period)</small>', 'wordfence-login-security'), array('small'=>array('class'=>array())));
 					}
 					elseif (($requires2fa && !$has2fa)) {
-						$value = wp_kses($inGracePeriod === null ? __('Locked Out<small class="wfls-sub-status">(Grace Period Disabled)</small>') : __('Locked Out<small class="wfls-sub-status">(Grace Period Exceeded)</small>', 'wordfence-2fa'), array('small'=>array('class'=>array())));
+						$value = wp_kses($inGracePeriod === null ? __('Locked Out<small class="wfls-sub-status">(Grace Period Disabled)</small>', 'wordfence-login-security') : __('Locked Out<small class="wfls-sub-status">(Grace Period Exceeded)</small>', 'wordfence-login-security'), array('small'=>array('class'=>array())));
 					}
 					else {
-						$value = esc_html__('Inactive', 'wordfence-2fa');
+						$value = esc_html__('Inactive', 'wordfence-login-security');
 					}
 				}
 				break;
 			case 'wfls_last_login':
 				$value = '-';
-				if (($last = get_user_meta($user_id, 'wfls-last-login', true))) {
+				if (($last = get_user_meta($user_id, 'wfls-last-login', true)) && Utility_Number::isUnixTimestamp($last)) {
 					$value = Controller_Time::format_local_time(get_option('date_format') . ' ' . get_option('time_format'), $last);
 				}
 				break;
 			case 'wfls_last_captcha':
 				$user = new \WP_User($user_id);
-				if (Controller_Users::shared()->can_activate_2fa($user) && Controller_Users::shared()->has_2fa_active($user)) {
-					$value = __('(not required)', 'wordfence-2fa');
-				}
-				else {
-					$value = '-';
-					if (($last = get_user_meta($user_id, 'wfls-last-captcha-score', true))) {
-						$value = number_format($last, 1);
-					}
+				$value = '-';
+				if (($last = get_user_meta($user_id, 'wfls-last-captcha-score', true))) {
+					$value = number_format($last, 1);
 				}
 				break;
 		}
@@ -628,7 +650,7 @@ class Controller_Users {
 		//Format is 'view' => '<a href="https://wfpremium.dev1.ryanbritton.com/author/ryan/" aria-label="View posts by ryan">View</a>'
 		if (user_can(wp_get_current_user(), Controller_Permissions::CAP_ACTIVATE_2FA_OTHERS) && (Controller_Users::shared()->can_activate_2fa($user) || Controller_Users::shared()->has_2fa_active($user))) {
 			$url = (is_multisite() ? network_admin_url('admin.php?page=WFLS&user=' . $user->ID) : admin_url('admin.php?page=WFLS&user=' . $user->ID));
-			$actions['wf2fa'] = '<a href="' . esc_url($url) . '" aria-label="' . esc_attr(sprintf(__('Edit two-factor authentication for %s', 'wordfence-2fa'), $user->user_login)) . '">' . esc_html__('2FA', 'wordfence-2fa') . '</a>';
+			$actions['wf2fa'] = '<a href="' . esc_url($url) . '" aria-label="' . esc_attr(sprintf(__('Edit two-factor authentication for %s', 'wordfence-login-security'), $user->user_login)) . '">' . esc_html__('2FA', 'wordfence-login-security') . '</a>';
 		}
 		return $actions;
 	}
@@ -639,8 +661,8 @@ class Controller_Users {
 		if (user_can(wp_get_current_user(), Controller_Permissions::CAP_ACTIVATE_2FA_OTHERS) && version_compare($wp_version, '4.4.0', '>=')) {
 			$counts = $this->user_counts();
 			$views['all'] = str_replace(' class="current" aria-current="page"', '', $views['all']);
-			$views['wfls-active'] = '<a href="' . esc_url(add_query_arg('wf2fa', 'active', 'users.php')) . '"' . (isset($_GET['wf2fa']) && $_GET['wf2fa'] == 'active' ? ' class="current" aria-current="page"' : '') . '>' . esc_html__('2FA Active', 'wordfence-2fa') . ' <span class="count">(' . number_format($counts['active_users']) . ')</span></a>';
-			$views['wfls-inactive'] = '<a href="' . esc_url(add_query_arg('wf2fa', 'inactive', 'users.php')) . '"' . (isset($_GET['wf2fa']) && $_GET['wf2fa'] == 'inactive' ? ' class="current" aria-current="page"' : '') . '>' . esc_html__('2FA Inactive', 'wordfence-2fa') . ' <span class="count">(' . number_format($counts['inactive_users']) . ')</span></a>';
+			$views['wfls-active'] = '<a href="' . esc_url(add_query_arg('wf2fa', 'active', 'users.php')) . '"' . (isset($_GET['wf2fa']) && $_GET['wf2fa'] == 'active' ? ' class="current" aria-current="page"' : '') . '>' . esc_html__('2FA Active', 'wordfence-login-security') . ' <span class="count">(' . number_format($counts['active_users']) . ')</span></a>';
+			$views['wfls-inactive'] = '<a href="' . esc_url(add_query_arg('wf2fa', 'inactive', 'users.php')) . '"' . (isset($_GET['wf2fa']) && $_GET['wf2fa'] == 'inactive' ? ' class="current" aria-current="page"' : '') . '>' . esc_html__('2FA Inactive', 'wordfence-login-security') . ' <span class="count">(' . number_format($counts['inactive_users']) . ')</span></a>';
 		}
 		return $views;
 	}
@@ -875,4 +897,206 @@ SQL;
 			return $results;
 		}
 	}
+
+	private function get_verification_token_transient_key($hash) {
+		return self::VERIFICATION_TOKEN_TRANSIENT_PREFIX . $hash;
+	}
+
+	private function load_verification_token($hash) {
+		$key = $this->get_verification_token_transient_key($hash);
+		$userId = get_transient($key);
+		if ($userId === false)
+			return null;
+		return intval($userId);
+	}
+
+	private function load_verification_tokens($user) {
+		$storedHashes = get_user_meta($user->ID, self::META_KEY_VERIFICATION_TOKENS, true);
+		$validHashes = array();
+		if (is_array($storedHashes)) {
+			foreach ($storedHashes as $hash) {
+				$userId = $this->load_verification_token($hash);
+				if ($userId === $user->ID)
+					$validHashes[] = $hash;
+			}
+		}
+		return $validHashes;
+	}
+
+	private function hash_verification_token($token) {
+		return wp_hash($token);
+	}
+
+	public function generate_verification_token($user) {
+		$token = Model_Crypto::random_bytes(self::VERIFICATION_TOKEN_BYTES);
+		$hash = $this->hash_verification_token($token);
+		$tokens = $this->load_verification_tokens($user);
+		array_unshift($tokens, $hash);
+		while (count($tokens) > self::VERIFICATION_TOKEN_LIMIT) {
+			$excessHash = array_pop($tokens);
+			delete_transient($this->get_verification_token_transient_key($excessHash));
+		}
+		$key = $this->get_verification_token_transient_key($hash);
+		set_transient($key, $user->ID, WORDFENCE_LS_EMAIL_VALIDITY_DURATION_MINUTES * 60);
+		update_user_meta($user->ID, self::META_KEY_VERIFICATION_TOKENS, $tokens);
+		return base64_encode($token);
+	}
+
+	public function validate_verification_token($token, $user = null) {
+		$hash = $this->hash_verification_token(base64_decode($token));
+		$userId = $this->load_verification_token($hash);
+		return $userId !== null && ($user === null || $userId === $user->ID);
+	}
+	
+	/**
+	 * Returns the key used to store a captcha score transient.
+	 * 
+	 * @param string $hash
+	 * @return string
+	 */
+	private function get_captcha_score_transient_key($hash) {
+		return self::CAPTCHA_SCORE_TRANSIENT_PREFIX . $hash;
+	}
+	
+	/**
+	 * Attempts to look up a stored captcha score for the given hash and user. If found, returns the score. If not, 
+	 * returns null.
+	 * 
+	 * @param string $hash
+	 * @param \WP_User $user
+	 * @return float|false
+	 */
+	private function load_captcha_score($hash, $user) {
+		$key = $this->get_captcha_score_transient_key($hash);
+		$data = get_transient($key);
+		if ($data === false) {
+			return false;
+		}
+		
+		if (!$user->exists() || $data['user'] !== $user->ID) {
+			return false;
+		}
+		
+		return floatval($data['score']);
+	}
+	
+	/**
+	 * Deletes the stored captcha score if present for the given hash.
+	 * 
+	 * @param string $hash
+	 */
+	private function clear_captcha_score($token, $user) {
+		$hash = $this->hash_captcha_token($token);
+		$key = $this->get_captcha_score_transient_key($hash);
+		delete_transient($key);
+		
+		$storedHashes = get_user_meta($user->ID, self::META_KEY_CAPTCHA_SCORES, true);
+		$validHashes = array();
+		if (is_array($storedHashes)) {
+			foreach ($storedHashes as $hash) {
+				$storedScore = $this->load_captcha_score($hash, $user);
+				if ($storedScore !== false) {
+					$validHashes[] = $hash;
+				}
+			}
+		}
+		$validHashes = array_slice($validHashes, 0, self::CAPTCHA_SCORE_LIMIT);
+		update_user_meta($user->ID, self::META_KEY_CAPTCHA_SCORES, $validHashes);
+	}
+	
+	/**
+	 * Hashes the captcha token for storage.
+	 * 
+	 * @param string $token
+	 * @return string
+	 */
+	private function hash_captcha_token($token) {
+		return wp_hash($token);
+	}
+	
+	/**
+	 * Returns the cached score for the given captcha score and user if available. This action removes it from the cache
+	 * since the intent is for it only to be used for the initial login request to validate credentials + the follow-up
+	 * request either finalizing the login (no 2FA set) or with the 2FA token.
+	 * 
+	 * $expired will be set to `true` if the reason for returning `false` is because the $token is recently expired. It
+	 * will be false when the $token is either uncached or has been expired long enough to be removed from the internal
+	 * list.
+	 * 
+	 * @param string $token
+	 * @param \WP_User $user
+	 * @param bool $expired
+	 * @return float|false
+	 */
+	public function cached_captcha_score($token, $user, &$expired = false) {
+		$hash = $this->hash_captcha_token($token);
+		$score = $this->load_captcha_score($hash, $user);
+		if ($score === false) {
+			$storedHashes = get_user_meta($user->ID, self::META_KEY_CAPTCHA_SCORES, true);
+			if (is_array($storedHashes)) {
+				$expired = in_array($hash, $storedHashes);
+			}
+		}
+		
+		$this->clear_captcha_score($token, $user);
+		return $score;
+	}
+	
+	/**
+	 * Caches the $token/$score pair for $user, automatically pruning its cached list to the maximum allowable count
+	 * 
+	 * @param string $token
+	 * @param float|false $score
+	 * @param \WP_User $user
+	 */
+	public function cache_captcha_score($token, $score, $user) {
+		if ($score === false) {
+			return;
+		}
+		
+		$storedHashes = get_user_meta($user->ID, self::META_KEY_CAPTCHA_SCORES, true);
+		$validHashes = array();
+		if (is_array($storedHashes)) {
+			foreach ($storedHashes as $hash) {
+				$storedScore = $this->load_captcha_score($hash, $user);
+				if ($storedScore !== false) {
+					$validHashes[] = $hash;
+				}
+			}
+		}
+		
+		$hash = $this->hash_verification_token($token);
+		array_unshift($validHashes, $hash);
+		while (count($validHashes) > self::CAPTCHA_SCORE_LIMIT) {
+			$excessHash = array_pop($validHashes);
+			delete_transient($this->get_captcha_score_transient_key($excessHash));
+		}
+		
+		$key = $this->get_captcha_score_transient_key($hash);
+		set_transient($key, array('user' => $user->ID, 'score' => $score), self::CAPTCHA_SCORE_CACHE_DURATION);
+		update_user_meta($user->ID, self::META_KEY_CAPTCHA_SCORES, $validHashes);
+	}
+
+	public function get_user_count() {
+		global $wpdb;
+		if (function_exists('get_user_count'))
+			return get_user_count();
+		return $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->users}");
+	}
+
+	public function has_large_user_base() {
+		return $this->get_user_count() >= self::LARGE_USER_BASE_THRESHOLD;
+	}
+
+	public function should_force_user_counts() {
+		return isset($_GET['wfls-show-user-counts']);
+	}
+
+	public function get_detailed_user_counts_if_enabled() {
+		$force = $this->should_force_user_counts();
+		if ($this->has_large_user_base() && !$force)
+			return null;
+		return $this->detailed_user_counts($force);
+	}
+
 }

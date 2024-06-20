@@ -2619,8 +2619,8 @@ h2.optional {
     margin: 9px 0 0;
     display: inline-block;
     float: none;
-    width: 58px;
-    height: 20px;
+    /*width: 58px;*/
+    /*height: 20px;*/
     overflow: hidden;
 }
 
@@ -2633,7 +2633,7 @@ h2.optional {
     height: 20px;
     display: inline-block;
     float: none;
-    width: 58px;
+    /*width: 58px;*/
 }
 
 .utube_tool_bdr .sfsi_plus_inside {

@@ -2,7 +2,7 @@
 namespace SiteGround_Optimizer\Rest;
 
 use SiteGround_Optimizer;
-use SiteGround_Optimizer\Helper\Helper;
+use SiteGround_Helper\Helper_Service;
 
 /**
  * Rest Helper class that manages the plugin dashboard.
@@ -18,7 +18,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 		$response = array();
 
 		// Add notification if we have updates available.
-		if ( Helper::has_updates() ) {
+		if ( Helper_Service::has_updates() ) {
 			$response = array(
 				array(
 					'title'       => __( 'YOUR WORDPRESS NEEDS ATTENTION', 'sg-cachepress' ),
@@ -75,8 +75,8 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 				'icon'        => 'product-caching',
 				'icon_color'  => 'salmon',
 				'status'      => 'warning',
-				'text'        => __( 'Dynamic Caching is essential for speeding up your website and is the single most effective optimization that every website must have.', 'sg-cachepress' ),
-				'button_text' => __( ' Go to Dynamic Caching', 'sg-cachepress' ),
+				'text'        => __( 'Caching is essential for speeding up your website and is the single most effective optimization that every website must have.', 'sg-cachepress' ),
+				'button_text' => __( ' Go to Caching', 'sg-cachepress' ),
 				'button_link' => 'admin.php?page=sgo_caching',
 				'title'       => __( 'Caching', 'sg-cachepress' ),
 				'is_enabled'  => intval( get_option( 'siteground_optimizer_enable_cache', 0 ) ),
@@ -86,6 +86,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 		if ( 0 === $boxes['caching']['is_enabled'] ) {
 			$boxes['caching']['text'] = __( 'Review your caching settings and enable the recommended options to get the best of your website caching.', 'sg-cachepress' );
 		}
+
 		$data = array();
 
 		// Loop the optimization necesary boxes.
@@ -159,24 +160,9 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 	 * @since  6.0.0
 	 */
 	public function ebook() {
-
-		$data = array(
-			'image' => SiteGround_Optimizer\URL . '/assets/images/ebook.png',
-			'link'  => 'https://www.siteground.com/wordpress-speed-optimization-ebook?utm_source=sitegroundoptimizer',
-			'title' => __( 'Free Ebook', 'sg-cachepress' ),
-		);
-
-		if ( ! file_exists( '/Z' ) ) {
-			$data = array(
-				'image' => SiteGround_Optimizer\URL . '/assets/images/banner.png',
-				'link'  => 'https://www.siteground.com/wordpress-hosting.htm?mktafcode=8df9fe65af8e6fd3d868748fb344b2ed',
-				'title' => __( 'Get Secure WordPress Hosting', 'sg-cachepress' ),
-			);
-		}
-
 		self::send_json_success(
 			'',
-			$data
+			$this->get_banners()
 		);
 	}
 
@@ -212,5 +198,69 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 				'show' => ! intval( get_option( 'siteground_optimizer_hide_rating', 0 ) ),
 			)
 		);
+	}
+
+	/**
+	 * Get Dashboard banner.
+	 *
+	 * @since 7.4.6
+	 *
+	 * @return array $banner The banner array containing image, link and title.
+	 */
+	public function get_banners() {
+		// Get the locale.
+		$locale = get_locale();
+		// Determine the type of asset we are going to show.
+		$type = Helper_Service::is_siteground() ? 'ebook' : 'banners';
+
+		// Default banners.
+		$banners = array(
+			'ebook' => array(
+				'it_IT' => array(
+					'image' => SiteGround_Optimizer\URL . '/assets/images/banners/ebook_it.png',
+					'link'  => 'https://it.siteground.com/ebook-wordpress?utm_medium=banner&utm_source=sgoptimizerplugin&utm_campaign=ebook_banner_sg_optimizer',
+					'title' => 'eBook gratuito',
+				),
+				'es_ES' => array(
+					'image' => SiteGround_Optimizer\URL . '/assets/images/banners/ebook_es.png',
+					'link'  => 'https://www.siteground.es/ebook-wordpress?utm_medium=banner&utm_source=sgoptimizerplugin&utm_campaign=ebook_banner_sg_optimizer',
+					'title' => 'Ebook gratuit',
+				),
+				'de_DE' => array(
+					'image' => SiteGround_Optimizer\URL . '/assets/images/banners/ebook_de.png',
+					'link'  => 'https://de.siteground.com/wordpress-speed-optimization-ebook?utm_source=sitegroundoptimizer',
+					'title' => 'Kostenloses E-Book',
+				),
+				'default' => array(
+					'image' => SiteGround_Optimizer\URL . '/assets/images/banners/ebook.png',
+					'link'  => 'https://www.siteground.com/wordpress-speed-optimization-ebook?utm_source=sitegroundoptimizer',
+					'title' => 'Free Ebook',
+				),
+			),
+			'banners' => array(
+				'it_IT' => array(
+					'image' => SiteGround_Optimizer\URL . '/assets/images/banners/banner_it.png',
+					'link'  => 'https://it.siteground.com/unlock-speed-options?utm_source=sgoptimizerbanner',
+					'title' => 'Hosting WordPress ultraveloce',
+				),
+				'es_ES' => array(
+					'image' => SiteGround_Optimizer\URL . '/assets/images/banners/banner_es.png',
+					'link'  => 'https://www.siteground.es/unlock-speed-options?utm_source=sgoptimizerbanner',
+					'title' => 'Hosting WordPress ultrarrápido',
+				),
+				'de_DE' => array(
+					'image' => SiteGround_Optimizer\URL . '/assets/images/banners/banner_de.png',
+					'link'  => 'https://de.siteground.com/unlock-speed-options?utm_source=sgoptimizerbanner',
+					'title' => 'Ultraschnelles WordPress-Hosting',
+				),
+				'default' => array(
+					'image' => SiteGround_Optimizer\URL . '/assets/images/banners/banner.png',
+					'link'  => 'https://www.siteground.com/unlock-speed-options?utm_source=sgoptimizerbanner',
+					'title' => 'Ultrafast WordPress Hosting',
+				),
+			),
+		);
+
+		return array_key_exists( $locale, $banners[ $type ] ) ? $banners[ $type ][ $locale ] : $banners[ $type ]['default'];
 	}
 }

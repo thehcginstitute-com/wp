@@ -147,6 +147,13 @@
 	$option4['sfsi_plus_mastodon_countsDisplay'] 		= 	(isset($option4['sfsi_plus_mastodon_countsDisplay']))
 															? sanitize_text_field($option4['sfsi_plus_mastodon_countsDisplay'])
 															: '';
+$option4['sfsi_plus_ria_countsDisplay'] 		= 	(isset($option4['sfsi_plus_ria_countsDisplay']))
+    ? sanitize_text_field($option4['sfsi_plus_ria_countsDisplay'])
+    : '';
+
+$option4['sfsi_plus_inha_countsDisplay'] 		= 	(isset($option4['sfsi_plus_inha_countsDisplay']))
+    ? sanitize_text_field($option4['sfsi_plus_inha_countsDisplay'])
+    : '';
 
 	$option4['sfsi_plus_mastodon_manualCounts'] 		= 	(isset($option4['sfsi_plus_mastodon_manualCounts']))
 															? intval($option4['sfsi_plus_mastodon_manualCounts'])
@@ -219,7 +226,7 @@
 			</a><span>12k</span>
 		</li>
         <li class="sfsiplus_twitter_section">
-			<a href="#" title="Twitter">
+			<a href="#" title="X/Twitter">
 				<img src="<?php echo SFSI_PLUS_PLUGURL ?>images/twitter.png" alt="Twitter" />
 			</a><span>12k</span>
 		</li>
@@ -243,6 +250,16 @@
 				<img src="<?php echo SFSI_PLUS_PLUGURL ?>images/instagram.png" alt="instagram" />
 			</a><span>12k</span>
 		</li>
+        <li class="sfsiplus_ria_section">
+            <a href="#" title="ria">
+                <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/ria.png" alt="ria" />
+            </a><span>12k</span>
+        </li>
+        <li class="sfsiplus_inha_section">
+            <a href="#" title="inha">
+                <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/inha.png" alt="inha" />
+            </a><span>12k</span>
+        </li>
         <li class="sfsiplus_houzz_section">
 			<a href="#" title="Houzz">
 				<img src="<?php echo SFSI_PLUS_PLUGURL ?>images/houzz.png" alt="instagram" />
@@ -441,6 +458,10 @@
 						<?php  _e( 'Enter the figure manually', 'ultimate-social-media-plus' ); ?>
 						<input name="sfsi_plus_facebook_manualCounts" type="text" class="input" value="<?php echo ($option4['sfsi_plus_facebook_manualCounts']!='') ?  $option4['sfsi_plus_facebook_manualCounts'] : '' ;?>"  style="<?php echo ($option4['sfsi_plus_facebook_countsFrom']=='likes' || $option4['sfsi_plus_facebook_countsFrom']=='followers' || $option4['sfsi_plus_facebook_countsFrom']=='mypage') ?  'display:none;' : '' ;?>" />
 					</li>
+
+                    <li style="margin-left: 7px">
+                        <input name="sfsi_plus_facebook_enableCache" <?php echo (isset($option4['sfsi_plus_facebook_enableCache']) && $option4['sfsi_plus_facebook_enableCache'] == 'yes') ?  'checked="true"' : ''; ?> type="checkbox" class="styled" />Enable cache for 24 hours
+                    </li>
 				</ul>
 				<?php if($option4['sfsi_plus_premium_count_box'] =='yes') { ?>
 				<div class="sfsi_plus_facebook_pagedeasc" style="<?php echo (isset($option4['sfsi_plus_facebook_countsFrom']) && $option4['sfsi_plus_facebook_countsFrom'] =='manual') ?  'display:none;' : '' ;?>">
@@ -461,7 +482,7 @@
 			<div class="social_icon_like">
 				<ul class="like_icon">
 					<li>
-						<a title="Twitter">
+						<a title="X/Twitter">
 							<img src="<?php echo SFSI_PLUS_PLUGURL ?>images/twitter.png" alt="Twitter" />
 							<span><?php echo $counts['twitter_count']; ?></span>
 						</a>
@@ -472,7 +493,7 @@
 				<ul>
 					<li>
 						<input name="sfsi_plus_twitter_countsFrom" <?php echo ($option4['sfsi_plus_twitter_countsFrom']=='source') ?  'checked="true"' : '' ;?>  type="radio" value="source" class="styled" />
-						<?php  _e( 'Retrieve the number of Twitter followers', 'ultimate-social-media-plus' ); ?>
+						<?php  _e( 'Retrieve the number of X (Twitter) followers', 'ultimate-social-media-plus' ); ?>
 					</li>
 					<li class="SFSI_tglli">
 						<ul class="SFSI_lsngfrm">
@@ -503,7 +524,7 @@
 						 </ul>
 						<ul class="SFSI_instructions">
 							<li class="tw_follow_options" style="<?php echo ($option4['sfsi_plus_twitter_countsFrom']=='manual') ?  'display:none;' : '' ;?>">
-								<?php  _e( 'Please make sure you have entered the Username for "Follow me on Twitter:" in twitter settings under question number 2.', 'ultimate-social-media-plus' ); ?>
+								<?php  _e( 'Please make sure you have entered the Username for "Follow me on X (Twitter):" in X Twitter settings under question number 2.', 'ultimate-social-media-plus' ); ?>
 							</li>
 							<li class="tw_follow_options" style="<?php echo ($option4['sfsi_plus_twitter_countsFrom']=='manual') ?  'display:none;' : '' ;?>">
 								<h3 style="font-size: 18px;">
@@ -982,6 +1003,62 @@
 				</ul>
 			</div>
 		</div>
+
+        <!-- RIA ICON COUNT SECTION-->
+        <div class="sfsiplus_specify_counts sfsiplus_ria_section">
+            <div class="radio_section">
+                <input name="sfsi_plus_ria_countsDisplay" <?php echo (isset($option4['sfsi_plus_ria_countsDisplay']) && $option4['sfsi_plus_ria_countsDisplay']=='yes') ?  'checked="true"' : '' ;?>  type="checkbox" value="yes" class="styled"  />
+            </div>
+            <div class="social_icon_like">
+                <ul class="like_icon">
+                    <li>
+                        <a title="Mastodon">
+                            <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/icons_theme/default/default_ria.png" alt="Mastodon" />
+                            <span><?php echo $counts['ria_count']?></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="listing">
+                <ul>
+                    <li>
+                        <input name="sfsi_plus_ria_countsFrom" checked="true" type="radio" value="manual" class="styled" />
+                        <label class="high_prb">
+                            <?php  _e( 'Enter the figure manually', 'ultimate-social-media-plus' ); ?>
+                        </label>
+                        <input name="sfsi_plus_ria_manualCounts" type="text" class="input" value="<?php echo (isset($option4['sfsi_plus_ria_manualCounts']) && $option4['sfsi_plus_ria_manualCounts']!='') ?  $option4['sfsi_plus_ria_manualCounts'] : '20' ;?>" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- INHA ICON COUNT SECTION-->
+        <div class="sfsiplus_specify_counts sfsiplus_inha_section">
+            <div class="radio_section">
+                <input name="sfsi_plus_inha_countsDisplay" <?php echo (isset($option4['sfsi_plus_inha_countsDisplay']) && $option4['sfsi_plus_inha_countsDisplay']=='yes') ?  'checked="true"' : '' ;?>  type="checkbox" value="yes" class="styled"  />
+            </div>
+            <div class="social_icon_like">
+                <ul class="like_icon">
+                    <li>
+                        <a title="Mastodon">
+                            <img src="<?php echo SFSI_PLUS_PLUGURL ?>images/icons_theme/default/default_inha.png" alt="Mastodon" />
+                            <span><?php echo $counts['inha_count']?></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="listing">
+                <ul>
+                    <li>
+                        <input name="sfsi_plus_inha_countsFrom" checked="true" type="radio" value="manual" class="styled" />
+                        <label class="high_prb">
+                            <?php  _e( 'Enter the figure manually', 'ultimate-social-media-plus' ); ?>
+                        </label>
+                        <input name="sfsi_plus_inha_manualCounts" type="text" class="input" value="<?php echo (isset($option4['sfsi_plus_inha_manualCounts']) && $option4['sfsi_plus_inha_manualCounts']!='') ?  $option4['sfsi_plus_inha_manualCounts'] : '20' ;?>" />
+                    </li>
+                </ul>
+            </div>
+        </div>
 
 		  <h4 style="clear: both;"><?php  _e( 'For which icons do you want to show the counts?', 'ultimate-social-media-plus' ); ?></h4>
 		  <div class="sfsiplus_specify_counts" style="border-top: 0px solid #eaebee;padding-top: 0px;">

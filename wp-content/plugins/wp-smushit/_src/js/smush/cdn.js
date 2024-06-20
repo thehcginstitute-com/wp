@@ -20,6 +20,7 @@
 			 */
 			if ( this.cdnEnableButton ) {
 				this.cdnEnableButton.addEventListener( 'click', ( e ) => {
+					e.preventDefault();
 					e.currentTarget.classList.add( 'sui-button-onload' );
 					this.toggle_cdn( true );
 				} );
@@ -62,7 +63,7 @@
 				if ( 200 === xhr.status ) {
 					const res = JSON.parse( xhr.response );
 					if ( 'undefined' !== typeof res.success && res.success ) {
-						location.reload();
+						WP_Smush.helpers.redirectToPage( 'cdn' );
 					} else if ( 'undefined' !== typeof res.data.message ) {
 						WP_Smush.helpers.showErrorNotice( res.data.message );
 					}
@@ -89,7 +90,7 @@
 			}
 
 			// Only fetch the new stats, when user is on CDN page.
-			if ( ! window.location.search.includes( 'view=cdn' ) ) {
+			if ( ! window.location.search.includes( 'page=smush-cdn' ) ) {
 				return;
 			}
 

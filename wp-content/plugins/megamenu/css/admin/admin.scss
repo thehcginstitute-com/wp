@@ -58,6 +58,11 @@ $header_height: 75px;
 body[class*='_page_maxmegamenu_'],
 body.toplevel_page_maxmegamenu,
 .nav-menus-php {
+
+	.sp-container {
+		border: 1px solid #7e8993;
+	}
+
 	input.button-primary.is-busy {
 		pointer-events: none;
 		background-size: 100px 100% !important;
@@ -1237,6 +1242,8 @@ body.toplevel_page_maxmegamenu,
 					line-height: 1.5em;
 					text-indent: 2px;
 					margin-top: 5px;
+					display: inline;
+					font-style: italic;
 
 					p {
 						font-size: 0.9em;
@@ -1252,7 +1259,6 @@ body.toplevel_page_maxmegamenu,
 					.mega-description {
 						float: left;
 						margin-left: 10px;
-						font-style: italic;
 					}
 				}
 			}
@@ -1421,6 +1427,13 @@ body.toplevel_page_maxmegamenu,
 		.inside {
 			margin: 0;
 		}
+
+		.accordion-section-content,
+		.accordion-section-title,
+		.postbox {
+		    opacity: 1;
+		}
+
 		div.accordion-section-content {
 			padding: 0;
 
@@ -1875,23 +1888,28 @@ body.toplevel_page_maxmegamenu {
 
 	.mm-picker-container {
 		border-radius: 3px;
-		box-shadow: 0 1px 0 rgba(0,0,0,.08);
-		border: 1px solid #7e8993;
+		border: 1px solid #8c8f94;
 		font-size: 0.9em;
 		float: left;
 
 		.sp-replacer {
 			margin: 0;
 			float: left;
-			border-right: 1px solid #7e8993;
+			border: 0;
+			background: transparent;
+			padding: 0;
 		}
 
+		.sp-dd {
+			display: none;
+		}
 		.sp-palette-container {
 		    width: 40px;
 		}
 
 		.sp-replacer .sp-preview {
 			border: 0;
+			border-right: 1px solid #8c8f94;
 			height: 26px;
 			width: 26px;
 			margin: 0;
@@ -1989,6 +2007,25 @@ body.toplevel_page_maxmegamenu {
 
 			&.menu_settings_menu_locations {
 
+				.mega-accordion-title {
+					h4:before {
+						font: 400 14px/1 dashicons;
+						content: "\f347";
+						speak: none;
+						padding: 0;
+						margin-right: 10px;
+						display: inline-block;
+						vertical-align: middle;
+						-webkit-font-smoothing: antialiased;
+						-moz-osx-font-smoothing: grayscale;
+						transition: all 0.4s ease;
+					}
+
+					&.mega-accordion-open h4:before {
+						transform: rotateZ(-180deg);
+					}
+				}
+
 				.mega-add-location {
 					margin-top: 20px;
 				}
@@ -2026,6 +2063,8 @@ body.toplevel_page_maxmegamenu {
 				table.output_options td.mega-value {
 					textarea {
 						width: 100%;
+						height: auto;
+						margin-bottom: 0;
 					}
 					label {
 						float: none;
@@ -2261,6 +2300,10 @@ body.toplevel_page_maxmegamenu {
 					min-height: 28px;
 				}
 
+				select {
+					max-width: 200px;
+				}
+				
 				textarea {
 					width: 100%;
 					height: 150px;

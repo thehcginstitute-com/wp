@@ -2,7 +2,7 @@
 namespace SiteGround_Optimizer\Analysis;
 
 use SiteGround_Optimizer\Options\Options;
-use SiteGround_Optimizer\Helper\Helper;
+use SiteGround_Helper\Helper_Service;
 
 /**
  * SG Analysis main plugin class
@@ -67,7 +67,7 @@ class Analysis {
 			'non-composited-animations',
 			'third-party-facades',
 		),
-		'general_optimiazions' => array(
+		'general_optimizations' => array(
 			'server-response-time',
 			'uses-text-compression',
 			'redirects',
@@ -92,7 +92,6 @@ class Analysis {
 	 * @param  array $result Speed test results.
 	 */
 	public function process_analysis( $result ) {
-
 		// Bail if the are no results.
 		if ( empty( $result ) ) {
 			wp_send_json_error();
@@ -103,12 +102,15 @@ class Analysis {
 			'data'                     => array(),
 			'timeStamp'                => time(),
 			'optimizations'            => array(),
-			'human_readable_timestamp' => date( 'd M Y, G:i e' ),
 		);
 		$options = array();
 
 		foreach ( $result['lighthouseResult']['categories'] as $group ) {
 			foreach ( $group['auditRefs'] as $ref ) {
+
+				if ( 'first-contentful-paint' === $ref['id'] ) {
+					$items['scores']['fcp'] = $result['lighthouseResult']['audits'][ $ref['id'] ]['numericValue'];
+				}
 
 				if ( empty( $ref['group'] ) ) {
 					continue;
@@ -120,14 +122,6 @@ class Analysis {
 					1.00 === $result['lighthouseResult']['categories']['performance']['score']
 				) {
 					continue;
-				}
-
-				if ( 'server-response-time' === $ref['id'] ) {
-					$items['scores']['ttfb'] = round( $result['lighthouseResult']['audits'][ $ref['id'] ]['numericValue'] );
-				}
-
-				if ( 'first-contentful-paint' === $ref['id'] ) {
-					$items['scores']['fcp'] = $result['lighthouseResult']['audits'][ $ref['id'] ]['numericValue'];
 				}
 
 				$audit = $result['lighthouseResult']['audits'][ $ref['id'] ];
@@ -165,7 +159,9 @@ class Analysis {
 							break;
 					}
 				} else {
-					$items['data'][ $ref['group'] ]['info'] = $result['lighthouseResult']['categoryGroups'][ $ref['group'] ];
+					if ( ! empty( $items['data'][ $ref['group'] ]['info'] ) ) {
+						$items['data'][ $ref['group'] ]['info'] = $result['lighthouseResult']['categoryGroups'][ $ref['group'] ];
+					}
 					// The optimization group may have to be left empty.
 					$items['data'][ $ref['group'] ]['data'][ $optimization_group ][] = $audit;
 				}
@@ -243,7 +239,6 @@ class Analysis {
 						break;
 				}
 			}
-
 
 			if ( ! empty( $resources['css'] ) ) {
 				if ( ! isset( $items['data']['load-opportunities']['data']['css_optimizations'] ) ) {
@@ -338,6 +333,11 @@ class Analysis {
 			if ( $test_data['scores']['score']['score'] < 2 ) {
 				$test_data['scores']['score']['score'] = $test_data['scores']['score']['score'] * 100;
 			}
+
+			// Show human readable timestamp with local timezone.
+			$date = new \DateTime( '@' . $test_data['timeStamp'] );
+			$date->setTimezone( new \DateTimeZone( \wp_timezone_string() ) );
+			$test_data['human_readable_timestamp'] = $date->format( 'd M Y, G:i e' );
 
 			$data[] = array(
 				'option_name' => $result['option_name'],
@@ -447,7 +447,6 @@ class Analysis {
 	public function get_messages( $scores ) {
 		$data = array();
 		$descriptions = array(
-			'ttfb'  => __( 'Time to First Byte identifies the time for which your server sends a response.', 'sg-cachepress' ),
 			'score' => __( 'Summarizes the page\'s performance.', 'sg-cachpress' ),
 			'fcp'   => __( 'Speed Index shows how quickly the contents of a page are visibly populated.', 'sg-cachepress' ),
 		);
@@ -456,24 +455,6 @@ class Analysis {
 			'fcp'   => array(
 				'low' => 2000,
 				'medium' => 4000,
-				'colors' => array(
-					'low' => array(
-						'class_name'       => 'placeholder-without-svg placeholder-top',
-						'class_name_table' => 'success',
-					),
-					'medium' => array(
-						'class_name'       => 'placeholder-without-svg placeholder-meduim',
-						'class_name_table' => 'warning',
-					),
-					'high' => array(
-						'class_name'       => 'placeholder-without-svg placeholder-low',
-						'class_name_table' => 'error',
-					),
-				),
-			),
-			'ttfb'  => array(
-				'low' => 100,
-				'medium' => 600,
 				'colors' => array(
 					'low' => array(
 						'class_name'       => 'placeholder-without-svg placeholder-top',
@@ -589,11 +570,18 @@ class Analysis {
 	public function check_for_premigration_test() {
 		global $wp_filesystem;
 		// Bail if the file does not exist.
-		if ( ! file_exists( Helper::get_uploads_dir() . '/pagespeed_results.json' ) ) {
+		if ( ! file_exists( Helper_Service::get_uploads_dir() . '/pagespeed_results.json' ) ) {
 			return false;
 		}
 		// Return the string containing the pre-migration speed test.
-		$pre_migration_result = json_decode( $wp_filesystem->get_contents( Helper::get_uploads_dir() . '/pagespeed_results.json' ), true );
+		$pre_migration_result = json_decode( $wp_filesystem->get_contents( Helper_Service::get_uploads_dir() . '/pagespeed_results.json' ), true );
+
+		// Bail if json cannot be decoded or if the encoded data is deeper than the nesting limit.
+		if ( false === (bool) $pre_migration_result ) {
+			// Delete the file so we don't try to decode it upon future activation.
+			$wp_filesystem->delete( Helper_Service::get_uploads_dir() . '/pagespeed_results.json' );
+			return false;
+		}
 
 		$data = array_merge( $this->process_analysis( $pre_migration_result ), array( 'device' => 'desktop' ) );
 
@@ -601,7 +589,7 @@ class Analysis {
 		add_option( 'sgo_pre_migration_speed_test', $data, '', false );
 
 		// Remove the file from the folder.
-		$wp_filesystem->delete( Helper::get_uploads_dir() . '/pagespeed_results.json' );
+		$wp_filesystem->delete( Helper_Service::get_uploads_dir() . '/pagespeed_results.json' );
 	}
 
 }

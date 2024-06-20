@@ -26,24 +26,18 @@ function csg_sitemap_block() {
 		plugins_url( 'backend/editor.css', __FILE__ ),
 		array( 'wp-edit-blocks' )
 	);
-	
-	// wp_register_style(
-	// 	'sitemap_block_frontend_style',
-	// 	plugins_url( 'frontend/style.css', __FILE__ ),
-	// 	array()
-	// );
 
 	// Register the block
 	register_block_type( 'sitemap/block', 
 		array(
 			'editor_script' 	=> 'sitemap_block_script',
 			'editor_style' 		=> 'sitemap_block_style',
-			'style'				=> 'sitemap_block_frontend_style',
 			'render_callback' 	=> 'htmlsitemap_block_handler',
 			'attributes' 		=> [
 				'columns' 	=> [ 'default' => '1', 'type' => 'string' ],
 				'orderby' 	=> [ 'default' => 'date', 'type' => 'string' ],
-				'sort' 		=> [ 'default' => 'asc', 'type' => 'string' ]
+				'sort' 		=> [ 'default' => 'asc', 'type' => 'string' ],
+				'limit' 	=> [ 'default' => '-1', 'type' => 'string' ]
 			]
 		)
 	);
@@ -52,5 +46,5 @@ add_action( 'init', 'csg_sitemap_block' );
 
 // Block handler
 function htmlsitemap_block_handler( $attributes ) {
-	return htmlsitemap( $attributes['columns'], $attributes['orderby'], $attributes['sort'] );
+	return htmlsitemap( $attributes['columns'], $attributes['orderby'], $attributes['sort'], $attributes['limit'] );
 }

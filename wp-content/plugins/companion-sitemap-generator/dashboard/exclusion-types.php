@@ -1,39 +1,21 @@
 <?php
 
-// Default types
-$types 		= array( 
-	'category' => __( 'Categories', 'companion-sitemap-generator' ), 
-	'post_tag' => __( 'Tags', 'companion-sitemap-generator' ) 
-);
-
-// Get taxonomies 
-$taxonomies = csg_get_taxonomies();
-if ( $taxonomies ) {
-	foreach( $taxonomies as $taxonomie ) {
-		$thisTaxonomie = get_taxonomy( $taxonomie );
-		$types[$thisTaxonomie->name] = $thisTaxonomie->label;
-	} 
-}
-
 // Submit
 if( isset( $_POST['submit'] ) ) {
 
 	check_admin_referer( 'csg_save_types' );
 
 	global $wpdb;
-	$table_name = $wpdb->prefix."csg_sitemap";
-
-	$excludeposts 	= '';
-	$excludeCounter = 0;
+	$table_name 		= $wpdb->prefix."csg_sitemap";
+	$excludeposts 		= array();
+	$exclude_counter 	= 0;
 
 	if( !empty( $_POST['post'] ) ) {
 
-		foreach ( $_POST['post'] as $key ) {
-			$excludeposts .= sanitize_text_field( $key ).', ';
-			$excludeCounter++;
-		}
-
-		$wpdb->query( $wpdb->prepare( "UPDATE {$table_name} SET onoroff = %s WHERE name = 'ctam'", $excludeposts ) );
+		foreach ( $_POST['post'] as $key ) array_push( $excludeposts, sanitize_text_field( $key ) );
+		$exclude_these 		= implode( ", ", $excludeposts );
+		$exclude_counter 	= count( $excludeposts );
+		$wpdb->query( $wpdb->prepare( "UPDATE {$table_name} SET onoroff = %s WHERE name = 'ctam'", $exclude_these ) );
 
 	} else {
 
@@ -41,52 +23,40 @@ if( isset( $_POST['submit'] ) ) {
 
 	}
 
-	csg_select_succes( $excludeCounter );
+	csg_select_succes( $exclude_counter );
 
 }
 
-// Show subtabs
-echo "<ul class='subsubsub'>";
-	$i = 0;
-	foreach ( $types as $type => $type_name ) {
-		if( $i != '0' ) echo " | ";
-		echo '<li><a data-table="table-'.$type.'" class="showtable table-'.$type; if( $i == 0 ) { echo " current"; } echo ' ">'.$type_name.'</a></li>';
-		$i++;
-	}
-echo "</ul>";
+echo "<div id='message' class='info'>".__( 'Remove items from your sitemap by checking the checkbox. You can always add them back by unchecking it again.', 'companion-sitemap-generator' )."</div>";
 
-echo "<br class='clear'>";
+// Show subtabs
+echo "<ul class='subsubsub' style='margin: 10px 0;'>";
+	foreach( csg_get_taxonomies() as $key => $tax ) {
+		if( $key > 0 ) echo " | ";
+		$active = ( $key == 0 ) ? 'current' : '';
+		echo "<li><a data-table='table-".$tax."' class='showtable table-".$tax." ".$active."'>".get_taxonomy( $tax )->label."</a></li>";
+	}
+echo "</ul>
+
+<br class='clear'>";
 
 ?>
 
 <form method="POST">
 
-	<script>
+	<script type="text/javascript">
 		jQuery( '.showtable' ).click(function() {
-
 			jQuery( '.showtable' ).removeClass( 'current' );
-			jQuery(this).addClass( 'current' );
-
+			jQuery( this ).addClass( 'current' );
 			var thisClass = jQuery(this).attr( 'data-table' );
-
 			jQuery( '.wp-list-table' ).hide();
 			jQuery( '.'+thisClass ).show();
-
-			console.log( '.wp-list-table .'+thisClass );
-
-
 		});
 	</script>
 
 	<?php 
 
-	submit_button();
-
-	foreach ( $types  as $type => $type_name ) {
-		create_table( $type );
-	}
-
-	function create_table( $type ) { ?>
+	foreach( csg_get_taxonomies() as $key => $type ) { ?>
 
 		<table class="wp-list-table widefat striped table-<?php echo $type; ?> csg-table">
 
@@ -108,11 +78,7 @@ echo "<br class='clear'>";
 					
 				// Get all terms by taxonomy
 				global $wp_version;
-				if ( version_compare( $wp_version, '4.5.0', '>=' ) ) {
-					$terms = get_terms( array( 'taxonomy' => $taxonomie ) );
-				} else {
-					$terms = get_terms( $taxonomie );
-				}
+				$terms = get_terms( array( 'taxonomy' => $taxonomie ) );
 
 				if( !empty( $terms ) ) {
 
@@ -121,12 +87,7 @@ echo "<br class='clear'>";
 						$tid 		= $term->term_id;
 						$catName 	= $term->name;
 						$catLink 	= get_term_link( $tid );
-
-						if( in_array( $tid, csg_exclude_ctam() ) ) {
-							$checked = 'CHECKED';
-						} else {
-							$checked = '';
-						}
+						$checked 	= in_array( $tid, csg_exclude_ctam() ) ? 'CHECKED' : '';
 
 						echo '<tr id="'.$tid.'">
 							<th scope="row" class="check-column">			
@@ -167,4 +128,5 @@ echo "<br class='clear'>";
 	wp_nonce_field( 'csg_save_types' );
 
 	submit_button(); ?>
+	
 </form>

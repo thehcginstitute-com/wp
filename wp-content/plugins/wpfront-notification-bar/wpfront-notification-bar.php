@@ -3,7 +3,7 @@
  * Plugin Name: WPFront Notification Bar
  * Plugin URI: http://wpfront.com/notification-bar-pro/ 
  * Description: Easily lets you create a bar on top or bottom to display a notification.
- * Version: 3.4
+ * Version: 3.4.2
  * Requires at least: 5.0
  * Requires PHP: 7.0
  * Author: Syam Mohan

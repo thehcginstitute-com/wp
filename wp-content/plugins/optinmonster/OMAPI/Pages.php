@@ -93,10 +93,10 @@ class OMAPI_Pages {
 	 *
 	 * @since  2.0.0
 	 *
-	 * @param  string $admin_title
-	 * @param  string $title
+	 * @param  string $admin_title The admin title.
+	 * @param  string $title      The title.
 	 *
-	 * @return string
+	 * @return string             The admin title.
 	 */
 	public function store_admin_title( $admin_title, $title ) {
 		$this->title_tag = str_replace( $title, '{replaceme}', $admin_title );
@@ -125,13 +125,9 @@ class OMAPI_Pages {
 			);
 
 			$this->pages['optin-monster-playbooks'] = array(
-				'name'             => __( 'Playbooks', 'optin-monster-api' ),
-				'app'              => true,
-				'callback'         => array( $this, 'render_app_loading_page' ),
-				'new_badge_period' => array(
-					'start' => '2023-02-02 00:00:00',
-					'end'   => '2023-03-03 59:59:59',
-				),
+				'name'     => __( 'Playbooks', 'optin-monster-api' ),
+				'app'      => true,
+				'callback' => array( $this, 'render_app_loading_page' ),
 			);
 
 			$this->pages['optin-monster-monsterleads'] = array(
@@ -180,21 +176,24 @@ class OMAPI_Pages {
 				'hidden'   => true,
 			);
 
+			$bfcmitem = $this->should_show_bfcf_menu_item();
+
 			// If user upgradeable, add an upgrade link to menu.
 			if ( $this->base->can_show_upgrade() ) {
 				$this->pages['optin-monster-upgrade'] = array(
-					'name'     => 'vbp_pro' === $this->base->get_level()
-						? '<span class="om-menu-highlight">' . __( 'Upgrade to Growth', 'optin-monster-api' ) . '</span>'
-						: '<span class="om-menu-highlight">' . __( 'Upgrade to Pro', 'optin-monster-api' ) . '</span>',
-					'redirect' => esc_url_raw( OMAPI_Urls::upgrade( 'pluginMenu' ) ),
-					'callback' => '__return_null',
+					'name'      => 'vbp_pro' === $this->base->get_level()
+						? esc_html__( 'Upgrade to Growth', 'optin-monster-api' )
+						: esc_html__( 'Upgrade to Pro', 'optin-monster-api' ),
+					'redirect'  => esc_url_raw( OMAPI_Urls::upgrade( 'pluginMenu' ) ),
+					// Only highlight if we don't have a bfcm item to highlight.
+					'highlight' => ! $bfcmitem,
+					'callback'  => '__return_null',
 				);
-				add_filter( 'om_add_inline_script', array( $this, 'addUpgradeUrlToJs' ), 10, 2 );
+				add_filter( 'om_add_inline_script', array( $this, 'add_upgrade_url_to_js' ), 10, 2 );
 			}
 
-			$item = $this->should_show_bfcf_menu_item();
-			if ( $item ) {
-				$this->pages['optin-monster-bfcm'] = $item;
+			if ( $bfcmitem ) {
+				$this->pages['optin-monster-bfcm'] = $bfcmitem;
 			}
 
 			foreach ( $this->pages as $slug => $page ) {
@@ -214,18 +213,24 @@ class OMAPI_Pages {
 	 */
 	public function should_show_bfcf_menu_item() {
 		$now          = new DateTime( 'now', new DateTimeZone( 'America/New_York' ) );
-		$is_bf_window = OMAPI_Utils::date_within( $now, '2022-11-07 00:00:00', '2022-12-06 23:59:59' );
+		$promo_start  = gmdate( 'Y-m-d 10:00:00', strtotime( 'first Monday of November' ) );
+		$bf_end       = gmdate( 'Y-m-d 23:59:59', strtotime( 'first Tuesday of December' ) );
+		$is_bf_window = OMAPI_Utils::date_within( $now, $promo_start, $bf_end );
+		$year         = $now->format( 'Y' );
+
 		if ( $is_bf_window ) {
 
 			$url = OMAPI_Urls::marketing(
 				'black-friday/',
 				array(
 					'utm_medium'   => 'pluginMenu',
-					'utm_campaign' => 'BF2022',
+					'utm_campaign' => "BF{$year}",
 				)
 			);
 
-			$is_pre_sale = OMAPI_Utils::date_before( $now, '2022-11-07 00:00:00' );
+			$thanksgiving = strtotime( 'fourth Thursday of November' );
+			$bf_start     = gmdate( 'Y-m-d 10:00:00', $thanksgiving - ( 3 * DAY_IN_SECONDS ) );
+			$is_pre_sale  = OMAPI_Utils::date_before( $now, $bf_start );
 
 			if ( ! $is_pre_sale && OMAPI_ApiKey::has_credentials() ) {
 				$url = $this->base->is_lite_user()
@@ -233,7 +238,7 @@ class OMAPI_Pages {
 						'pricing-wp/',
 						array(
 							'utm_medium'   => 'pluginMenu',
-							'utm_campaign' => 'BF2022',
+							'utm_campaign' => "BF{$year}",
 						)
 					)
 					: OMAPI_Urls::upgrade(
@@ -241,31 +246,37 @@ class OMAPI_Pages {
 						'',
 						'',
 						array(
-							'utm_campaign' => 'BF2022',
+							'utm_campaign' => "BF{$year}",
 							'feature'      => false,
 						)
 					);
 			}
 
-			$is_cm_window = ! OMAPI_Utils::date_before( $now, '2022-11-28 00:00:00' );
-
+			$cyber_monday = gmdate( 'Y-m-d 10:00:00', $thanksgiving + ( 4 * DAY_IN_SECONDS ) );
+			$is_cm_window = ! OMAPI_Utils::date_before( $now, $cyber_monday );
 			return array(
-				'name'     => $is_cm_window
+				'name'      => $is_cm_window
 					? esc_html__( 'Cyber Monday!', 'optin-monster-api' )
 					: esc_html__( 'Black Friday!', 'optin-monster-api' ),
-				'redirect' => esc_url_raw( $url ),
-				'callback' => '__return_null',
+				'redirect'  => esc_url_raw( $url ),
+				'callback'  => '__return_null',
+				'highlight' => true,
 			);
 		}
 
-		$is_gm_window = OMAPI_Utils::date_within( $now, '2022-12-12 00:00:00', '2022-12-12 23:59:59' );
-		if ( $is_gm_window ) {
+		$green_monday = strtotime( 'second Monday of December' );
+		$is_gm_window = OMAPI_Utils::date_within(
+			$now,
+			gmdate( 'Y-m-d 10:00:00', $green_monday ),
+			gmdate( 'Y-m-d 23:59:59', $green_monday )
+		);
 
+		if ( $is_gm_window ) {
 			$url = OMAPI_Urls::marketing(
 				'pricing-wp/',
 				array(
 					'utm_medium'   => 'pluginMenu',
-					'utm_campaign' => 'BF2022',
+					'utm_campaign' => "BF{$year}",
 				)
 			);
 
@@ -275,16 +286,17 @@ class OMAPI_Pages {
 					'',
 					'',
 					array(
-						'utm_campaign' => 'BF2022',
+						'utm_campaign' => "BF{$year}",
 						'feature'      => false,
 					)
 				);
 			}
 
 			return array(
-				'name'     => esc_html__( 'Green Monday!', 'optin-monster-api' ),
-				'redirect' => esc_url_raw( $url ),
-				'callback' => '__return_null',
+				'name'      => esc_html__( 'Green Monday!', 'optin-monster-api' ),
+				'redirect'  => esc_url_raw( $url ),
+				'callback'  => '__return_null',
+				'highlight' => true,
 			);
 		}
 
@@ -301,7 +313,7 @@ class OMAPI_Pages {
 	 *
 	 * @return $data Array of data for JS.
 	 */
-	public function addUpgradeUrlToJs( $data, $handle ) {
+	public function add_upgrade_url_to_js( $data, $handle ) {
 		if ( $this->base->plugin_slug . '-global' === $handle ) {
 			$data['upgradeUrl'] = esc_url_raw( OMAPI_Urls::upgrade( 'pluginMenu' ) );
 		}
@@ -336,7 +348,7 @@ class OMAPI_Pages {
 	/**
 	 * Registers our submenu pages
 	 *
-	 * @param string $parent_page_name The Parent Page Name
+	 * @param string $parent_page_name The Parent Page Name.
 	 *
 	 * @return array Array of hook ids.
 	 */
@@ -355,9 +367,11 @@ class OMAPI_Pages {
 				$menu_title = ! empty( $page['menu'] ) ? $page['menu'] : $page['name'];
 				if ( $this->maybe_add_new_badge( $page ) ) {
 					$menu_title .= ' <span class="omapi-menu-new">New!<span>';
+				} elseif ( ! empty( $page['highlight'] ) ) {
+					$menu_title = '<span class="om-menu-highlight">' . $menu_title . '</span>';
 				}
 
-				$hooks[] = $hook = add_submenu_page(
+				$hook    = add_submenu_page(
 					$parent_slug, // $parent_slug
 					$page['name'], // $page_title
 					$menu_title,
@@ -365,6 +379,7 @@ class OMAPI_Pages {
 					$page['slug'],
 					$page['callback']
 				);
+				$hooks[] = $hook;
 
 				if ( ! empty( $page['redirect'] ) ) {
 					add_action( 'load-' . $hook, array( $this, 'handle_redirect' ), 999 );
@@ -390,7 +405,8 @@ class OMAPI_Pages {
 			empty( $pages[ $plugin_page ]['redirect'] )
 			|| is_bool( $pages[ $plugin_page ]['redirect'] )
 		) {
-			return $this->base->menu->redirect_to_dashboard();
+			$this->base->menu->redirect_to_dashboard();
+			return;
 		}
 
 		// TODO: wp_redirect() found. Using wp_safe_redirect(), along with the
@@ -405,9 +421,9 @@ class OMAPI_Pages {
 	 *
 	 * @since  2.0.0
 	 *
-	 * @param  string $classes
+	 * @param  string $classes The admin body classes.
 	 *
-	 * @return string
+	 * @return string         The admin body classes.
 	 */
 	public function admin_body_classes( $classes ) {
 		global $plugin_page;
@@ -432,7 +448,7 @@ class OMAPI_Pages {
 	 *
 	 * @since  1.9.10
 	 *
-	 * @param string $parent_page_name The Parent Page Name
+	 * @param string $parent_page_name The Parent Page Name.
 	 * @return void
 	 */
 	public function register_submenu_redirects( $parent_page_name ) {
@@ -455,6 +471,15 @@ class OMAPI_Pages {
 		echo '</div>';
 	}
 
+	/**
+	 * Loads the OptinMonster app scripts.
+	 *
+	 * @since  2.0.0
+	 *
+	 * @param  array $args Array of arguments to pass to the app.
+	 *
+	 * @return OMAPI_AssetLoader|false
+	 */
 	public function load_scripts( $args = array() ) {
 		$path   = 'vue/dist';
 		$loader = new OMAPI_AssetLoader( trailingslashit( dirname( $this->base->file ) ) . $path );
@@ -482,6 +507,7 @@ class OMAPI_Pages {
 
 			$current_user = wp_get_current_user();
 
+			$plugins  = new OMAPI_Plugins();
 			$defaults = array(
 				'key'             => ! empty( $creds['apikey'] ) ? $creds['apikey'] : '',
 				'nonce'           => wp_create_nonce( 'wp_rest' ),
@@ -489,6 +515,7 @@ class OMAPI_Pages {
 				'siteIds'         => $this->base->get_site_ids(),
 				'wpUrl'           => trailingslashit( site_url() ),
 				'adminUrl'        => OMAPI_Urls::admin(),
+				'upgradeParams'   => OMAPI_Urls::upgrade_params( null, null ),
 				'restUrl'         => rest_url(),
 				'adminPath'       => $admin_parts['path'],
 				'apijsUrl'        => OPTINMONSTER_APIJS_URL,
@@ -503,7 +530,7 @@ class OMAPI_Pages {
 				'isItWp'          => true,
 				// 'scriptPath'   => $path,
 				'pages'           => $pages,
-				'titleTag'        => html_entity_decode( $this->title_tag ),
+				'titleTag'        => html_entity_decode( $this->title_tag, ENT_QUOTES, 'UTF-8' ),
 				'isWooActive'     => OMAPI_WooCommerce::is_active(),
 				'isWooConnected'  => OMAPI_WooCommerce::is_connected(),
 				'isEddActive'     => OMAPI_EasyDigitalDownloads::is_active(),
@@ -515,7 +542,7 @@ class OMAPI_Pages {
 				'userLastName'    => esc_attr( $current_user->user_lastname ),
 				'betaVersion'     => $this->base->beta_version(),
 				'pluginVersion'   => $this->base->version,
-				'pluginsInfo'     => ( new OMAPI_Plugins() )->get_active_plugins_header_value(),
+				'pluginsInfo'     => $plugins->get_active_plugins_header_value(),
 				'partnerId'       => OMAPI_Partners::get_id(),
 				'partnerUrl'      => OMAPI_Partners::has_partner_url(),
 				'referredBy'      => OMAPI_Partners::referred_by(),
@@ -529,7 +556,9 @@ class OMAPI_Pages {
 
 			return $loader;
 
+		// phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 		} catch ( \Exception $e ) {
+			// We don't want to throw an exception here, since it will break the output.
 		}
 
 		return false;
@@ -564,6 +593,18 @@ class OMAPI_Pages {
 
 	/**
 	 * Determine if a page should have a "new" badge.
+	 *
+	 * Example:
+	 *
+	 * $this->pages['optin-monster-playbooks'] = [
+	 *  'name'             => __( 'Playbooks', 'optin-monster-api' ),
+	 *  'app'              => true,
+	 *  'callback'         => [ $this, 'render_app_loading_page' ],
+	 *  'new_badge_period' => [
+	 *      'start' => '2023-02-02 00:00:00',
+	 *      'end'   => '2023-03-03 59:59:59',
+	 *  ],
+	 * ];
 	 *
 	 * @param array $page The page data.
 	 *

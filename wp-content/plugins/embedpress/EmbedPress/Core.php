@@ -144,6 +144,7 @@ class Core {
             if ( $plgSettings->enablePluginInAdmin ) {
                 $this->loaderInstance->add_action('admin_enqueue_scripts', $plgHandlerAdminInstance, 'enqueueScripts');
             }
+            
         } else {
             $plgHandlerPublicInstance = new EndHandlerPublic($this->getPluginName(), $this->getPluginVersion());
 

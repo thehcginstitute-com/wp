@@ -1,9 +1,9 @@
 ﻿=== Social Share Icons & Social Share Buttons ===
 Contributors: socialsharepro, socialtech
-Tags: Share, sharing, share buttons, share button, share social media, share icons, social buttons, sharing buttons, sharing icons, social media icons, social share, social sharing
+Tags: Share, sharing, share buttons, share button, share social media
 Requires at least: 3.0
-Tested up to: 6.4
-Stable tag: 3.6.1
+Tested up to: 6.5.3
+Stable tag: 3.6.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -298,6 +298,38 @@ The premium plugin offrs many more social buttons from other social media platfo
 
 == Changelog ==
 
+= 3.6.5 =
+* Added new icons 
+* Improved email filter
+* Tested with WordPress 6.5.3
+* Better calibration of icons  
+* Fixed bugs with icon sizes
+
+= 3.6.4 =
+* Added social network ratItAll
+* Adding social network increasinghappiness
+* Fixed the bug of changing the default color of Twitter to x (blue to black)
+* Change X icon to transparent icon in custom color icons
+* Fixing the bug of icon urls not being empty after saving
+* Fixed a bug in showing the number of Facebook likes and shares
+* Change the default Facebook token
+
+= 3.6.3 =
+* [FIX] Fixed CRS Errors 
+* [FIX] Fixed permissions for settings access, now users with "manage_options" can access the plugin
+* [FIX] Fixed issue with sfsi_plus_hide_admin_forum_notification action. 
+* [NOTE] Tested with WordPress v6.4.3
+
+= 3.6.2 =
+* [NEW] Improved look of Dark X icons and buttons
+* [NEW] Refactored code of facebook share/likes API
+* [FIX] Adjusted text of "Tweet" -> "Post on X" where needed
+* [FIX] Adjusted X icon position on desktop screens
+* [NOTE] Upgraded "TryItOut" module to latest version
+* [NOTE] Upgraded analyst module to latest version
+* [NOTE] Tested with WordPress v6.4.2
+* [NOTE] Tested up to PHP v8.3
+
 = 3.6.1 =
 * Fixed issue with rendering of external module
 
@@ -450,509 +482,11 @@ The premium plugin offrs many more social buttons from other social media platfo
 * Update: Added shortcode support for the custom url.
 * Update: Updated Ping function.
 
-= 3.2.9 =
-* Update: Q3 auto opening and opening of Floating and 'before and after posts' open automatically for new installes.
-* Update: Popup open error fixed.
-* Update: Analyst 5.4.
-* Update: Added the waiting imgage on contact.
-* Update: Sellcodes callback.
-* Update: Removed console.log.
-
-= 3.2.8 =
-* Update: Url encoded for location.href
-* Update: Restructure the section 8 options
-* Update: UI improvements
-* Update: Shortcode updated
-
-= 3.2.7 =
-* Update: Feedback system updated.
-* Update: Banner text for responsive icons updated.
-* Update: CSS Validation issue corrected;
-
-= 3.2.6 =
-* Update: Fixed the text in theme banner.
-* Update: Fixed follow icon and subscription box when Curl is disabled.
-* Update: Fixed cURL errors.
-
-= 3.2.5 =
-* Update: Q4 missing images corrected.
-
-= 3.2.4 =
-* Update: Text changes.
-* Update: Solved widget alignments.
-* Update: Solved php errors.
-
-= 3.2.3 =
-* Update: Text changes.
-* Update: Link for email and action for subscription when request fails.
-
-= 3.2.2 =
-* Update: Feedback system updated
-
-= 3.2.1 =
-* Update: Feedback system updated
-
-= 3.2.0 =
-* Update: SDK.
-* Update: Grammer Errors.
-
-= 3.1.9 =
-* Update: Responsive icons options display logic corrected.
-* Update: Twitter and other external js inclusion logic updated.
-* Solved: Cancel button on banner reapplied.
-* Solved: Validation for section 2 options while section 1 options are checked but not saved corrected.
-* Update: Feedback system updated
-
-= 3.1.8 =
-* New Feature: Responsive icons in the plugin.
-* Solved: Icons not rendering on WooCommerce product page.
-* Solved: Stop loading unused external library code for faster load.
-* Solved: Updated feedback system to next version.
-
-= 3.1.7 =
-* Update: Feedback system added
-
-= 3.1.6 =
-* Update: Removed Google icon.
-* Update: Nonce error in Q6 preview language icons
-
-= 3.1.5 =
-* Update: Corrected typos
-* Update: Updated theme suggestion data
-* Update: Removed Curl error
-* Update: Fixed Facebook and Twitter icons not working on some pages
-* Update: Removed w3 validation errors
-* Update: Removed googleplus icon
-
-= 3.1.4 =
-* Update: Solved the Undefined Notice messages.
-
-= 3.1.3 =
-* Update: Google plus like removed
-* Update: Extra debug log removed
-* Update: Screencast video removed
-* Update: more icons included.
-* Update: White background from icons removed.
-
-= 3.1.2 =
-* Update: updated the new added icons.
-* Update: optimized the extraicons of premium shown to the plugin.
-
-= 3.1.1 =
-* Update: removed unwanted files.
-* Update: included skins for wechat icons.
-* Update: Custom skin for newly added icons.
-* Update: Compatablity Errors corrected.
-
-= 3.1.0 =
-* New Feature: New icons Implemented.
-* Update: Alert for checkbox conflict.
-* Update: Cron implemented for rss count.
-* Update: Custom icons not showing solved.
-
-
-= 3.0.9 =
-* Update: WooCommerce resolved conflict resulted in other conflicts - fixed.
-
-= 3.0.8 =
-* Update: Critical Security Patch.
-* Update: Resolved Conflict with WooCommerce auto update.
-
-= 3.0.7 =
-* Update: Security Patch.
-
-= 3.0.6 =
-* Update: security update.
-* Update: save button not working.
-
-= 3.0.5 =
-* Update: Theme cheker dom error updated.
-* Update: Deprecated Google plus
-* Updated: css changes to make icons more symetric.
-
-= 3.0.4 =
-* Updated: Security patch in freemius.
-
-= 3.0.3 =
-* Update: solved Undefined constant notice resolved.
-* Update: offline chat email validation added.
-* Update: ROUND SHORTCODE sharing error solved.
-* Update: curl errors in backend solved.
-* Update: ajax_object conflict solved and updated sfsi_plus_ajax.
-
-= 3.0.2 =
-* Update: Conflict solved.
-
-= 3.0.1 =
-* Update: design changes in Gutenberg.
-* Update: Dashboard chat updated.
-* Update: Security updates.
-
-= 3.0.0 =
-* Update: Updated gutenberg block to incorporate current changes. Added support for multiple controls on block inspector controls.
-* update: In-admin-pannel chat updated for more user friendly features.
-
-= 2.9.9 =
-* Duplicate IDs removed from icon's link
-* Facebook share counts (rectangle icons) do not show
-* specificfeeds.com links changed to https
-* Remove google like
-* Click on G+ in firefox opens a new window
-
-= 2.9.8 =
-* Update: Display counts can’t be manually updated
-
-= 2.9.7 =
-* New Feature: Direct chat added to the plugins settings page.
-
-= 2.9.6 =
-* Image not showing error fixed for banner in animation section in Question 4 added
-
-= 2.9.5 =
-* Lightbox removed after click on de-activation of plugin
-* Banner for animation section in Question 4 added
-* Different icon for mouseover section pointing in premium in Question 4 added
-* Removed theme icon banner if no match
-
-= 2.9.4 =
-* Optimized footer
-
-= 2.9.3 =
-* Fixed Gutenberg issues which arose for old PHP versions
-* Removed Addthis due to GDPR compliance issues
-
-= 2.9.2 =
-* Issue fixed that click on dismiss for banner didn't dismiss it permanently
-* Gutenberg implemented
-
-= 2.9.1 =
-* Count Error for newer PHP version fixed
-
-= 2.9.0 =
-* Count Error shown for newer php versions fixed.
-
-= 2.8.9 =
-* Language in Question 6 not saving issue fixed
-
-= 2.8.8 =
-* Optimized code for setting value for "adding_plustags" which caused issues on some sites
-
-= 2.8.7 =
-* Various instructions optimized
-
-= 2.8.5 =
-* Cookies don't get set anymore if selected to show pop-up when user scrolls to end of page (relevant for GDPR compliance)
-
-= 2.8.4 =
-* Like count issue fixed
-* Youtube subscribe issue fixed
-
-= 2.8.3 =
-* Instagram followers count issue fixed
-* Twitter count issue fixed
-* Facebook share count issue fixed
-
-= 2.8.2 =
-* Non-numeric value errors fixed
-
-= 2.8.0 =
-* Removed error log files
-* Follow icon sometimes showed too large - fixed
-
-= 2.7.9 =
-* Linkedin-counter after posts corrected
-
-= 2.7.8 =
-* Text changes
-
-= 2.7.7 =
-* New question for referring added
-
-= 2.7.6 =
-* Saving links for custom icons sometimes didn't work. Fixed now.
-
-= 2.7.5 =
-* Links updated
-
-= 2.7.4 =
-* Themed icons notification optimized
-
-= 2.7.3 =
-* Important bug fixed (which caused fatal error on sites with PHP version below 5.5. and sensitive error reporting on server)
-
-= 2.7.2 =
-* Banners modified
-* Spelling mistakes corrected
-
-= 2.7.1 =
-* Added more themed icons banners
-
-= 2.7.0 =
-* There were conflicts when both free USM plugins were installed at the same time, those are now resolved
-
-= 2.6.9 =
-* Notification for possibility to define sharing text and pic added
-
-= 2.6.8 =
-* Link to full list of premium icons added
-
-= 2.6.7 =
-* Info added that url shortener is available in premium plugin
-* Non numeric value warning fixed
-* Templates with no head issue fixed
-
-= 2.6.6 =
-* Incorrect error messages removed
-* Better formatting of socialshare review bar
-
-= 2.6.5 =
-* Updated so that also widget data gets removed when you de-install the plugin, so now everything is completely removed
-
-= 2.6.4 =
-* New CURL error messages to point better to the specific issue
-* Error message if user is using outdated PHP version
-* "Mandatory" removed from email and rss icons
-* Freemius Error (uninstall hook error) fixed
-* Icons not underlined anymore (was a conflict with certain themes such as twentyseventeen)
-* Js removed after de-activating the icons
-* Freemius image added
-* After activation of plugin you're directly taken to the plugin's settings page
-
-= 2.6.3 =
-* Fremius analytics implemented
-
-= 2.6.2 =
-* More strings made translation-ready
-* Better claiming of feed enabled
-
-= 2.6.1 =
-* Issue with Instagram button counters fixed
-
-= 2.5.9 =
-* Issue fixed that sometimes incorrect error-messages showed on front-end
-* Credit link updated
-* More icons added for pro-version
-* SpecificFeeds adjusted for paid option
-* De-installation will now clear database entirely
-* Upgrade to pro-link renamed
-
-= 2.5.7 =
-* New option for tailor-made icons
-
-= 2.5.6 =
-* Activation/de-activation links optimized
-
-= 2.5.5 =
-* Notifications activated
-
-= 2.5.4 =
-* Notifications revised
-
-= 2.5.3 =
-* Notification added
-
-= 2.5.1 =
-* Instructions for troubleshooting optimized
-
-= 2.5.0 =
-* Facebook icon leading to empty pages (in specific cases) fixed
-
-= 2.4.9 =
-* Twitter sharing text issues with forwarded slashes fixed
-* Links to review sites adjusted following WordPress changes in review section
-
-= 2.4.7 =
-* Missing counts for email follow option fixed (when there are no subscribers yet)
-* Extra explanation text added
-
-= 2.4.6 =
-* Corner case vulnerability fixed
-
-= 2.4.5 =
-* Claiming box made nicer
-
-= 2.4.4 =
-* Updated PIN-it button to SAVE
-* Claiming process simplified
-
-= 2.4.3 =
-* jQuery issue fixed
-* Counts for SpecificFeeds-subscribers are back, getting updated once a day
-* Some mouse-over issues for custom icons, fixed now
-
-= 2.4.2 =
-* Cute G+ icon didn't look good on dark backgrounds, fixed now
-* Counts for SpecificFeeds-subscribers disabled due to high server load. We'll try to bring them back in a future plugin version.
-
-= 2.4.1 =
-* Size of custom icons corrected
-* Cute G+ icon too small before, corrected now
-* Better description how to get G+ API key added
-* Unsupported "live" function in jquery fixed
-
-= 2.3.9 =
-* Language issues fixed
-* Counter didn't disappear before/after posts if round icons were selected - fixed now
-
-= 2.3.8 =
-* Language folder added
-* Persian added as first language
-* For round icons before/after posts, the counts now correctly show the counts of the post page, not necessarily the page they are on
-
-= 2.3.7 =
-* Translation errors fixed
-
-= 2.3.6 =
-* Translation errors fixed
-* Icons sometimes on top of each other - fixed
-* New icon function: If user has given the icon a visit-us functionality, then it already works now when clicking on the icon (i.e. no selection in tooltip required)
-
-= 2.3.5 =
-* Errors appearing on front end fixed
-
-= 2.3.4 =
-* Plugin updated for translations
-* E-NOTICE error fixed
-
-= 2.3.3 =
-* Removed the js files from plugin and using the ones provided by WP now
-* POST calls optimized (sanitize, escape, validate)
-* Removed feedback option
-* Tags changed
-
-= 2.3.2 =
-* Feedback mechanism disabled
-* Tags reduced
-
-= 2.3.1 =
-* Added Facebook share button after/before posts
-* G+ design issues on black background fixed
-
-= 2.2.9 =
-* Crashes/content disappearing fixed
-
-= 2.2.7 =
-* Overkill declaration in the CSS fixed
-* Custom icons can now have mailto:-functionality
-* jQuery UI issues fixed
-* Rectangle G+ icon now shown as last one as it takes more space (looks better)
-
-= 2.2.6 =
-* jQuery issues/conflicts fixed
-* Script issues fixed
-* Count issues for icons on homepage fixed
-* Text added on plugin setting's page for easier understanding
-* Issue that dashboard sometimes doesn't load fixed
-* Instagram thin-icon issue fixed (misspelled, therefore didn't show)
-* Custom icon uploads optimized
-
-= 2.2.5 =
-* Facebook changed their API - please upgrade if you want Facebook sharing on mobile to work properly on your site!
-
-= 2.2.4 =
-* Custom icon uploads optimized
-
-= 2.2.3 =
-* Houzz error message fixed
-
-= 2.2.2 =
-* Plugin made ready for translations
-
-= 2.2.1 =
-* Feed claiming optimized
-
-= 2.2 =
-* Shortpixel link updated
-
-= 2.1 =
-* Feed claiming bug fixed
-
-= 2.0 =
-* Houzz-button integrated
-* New G+ button updated
-* Quicker claiming of feed possible
-* Comments to share-button added
-* Credit to shortpixel added
-
-= 1.9 =
-* New feature: Users can now decide where exactly the floating icons will display
-* Internal links corrected
-* Fixed: Targets only labels within the social icons div.
-* Subscriber counts fixed
-* Apostrophe issues fixed
-* Conflicts with Yoast SEO plugin resolved
-* PHP errors fixed
-
-= 1.8 =
-* Plugin also allows a subscription form now (question 8)!
-
-= 1.7 =
-* Count issues fixed - please upgrade!
-* Style constructor updated to PHP 5
-* Text adjustments in admin area
-
-= 1.6 =
-* More explanations added how to fix if counts don't work
-* Icon files are compressed now for faster loading - thank you ShortPixel.com!
-* A typo in the code threw an error message in certain cases, this is fixed now
-
-= 1.5 =
-* jQuery issues fixed
-* Vulnerability issues fixed
-* Twitter-button didn't get displayed in full sometimes, this is fixed now
-* CSS issues (occurred on some templates) fixed
-* Facebook updated API (so counts didn't get displayed correctly anymore), we updated the plugin accordingly
-* Sometimes error messages appeared on the front end, this is fixed now
-
-= 1.4 =
-* New follow-icons added
-* More "rectangle" icons added before/after posts
-* Widget was rendered incorrectly on some templates, fixed now
-* Icons didn't always line up (on some themes), fixed now
-* Youtube API got changed, which made the counts not displayed correctly, this is now adjusted in the plugin
-* Slight layout adjustments in plugin's admin area
-
-
-= 1.3 =
-* Links with "@" in the url (e.g. as in Flickr-links) now get recognized as well
-* Alignment issues of icons in tooltip fixed
-* Layout optimizations in plugin area
-* Users can now select to have the number of likes of their facebook page displayed as counts of the facebook icon on their blogs
-* Typos in admin area corrected
-* Users can now disable auto-scaling feature for mobile devices ("viewport" meta tag)
-
-= 1.2 =
-* Vulnerabilities (AJAX) fixed
-* OG-issues (caused in conjunction with other plugins) fixed
-
-= 1.1 =
-* Og-issues fixed
-* Conflicts with Yoast SEO plugin sorted
-* Alignments under posts didn't work sometimes before, fixed now
-* When user selected icons to shuffle pop-up didn't show up, fixed now
-* Short code corrected
-* On some templates the checkboxes in the admin area couldn't get selected, fixed now
-* Links now to the correct review screen
-* Share-box only displayed partly sometimes, fixed now
-* When sharing from a Facebook business page it returned errors, this should be fixed now (to be observed)
-* Sometimes Facebook share count didn't increase despite liking it, this should be fixed now (to be observed)
-* Template CSS conflicts solved in the plugin
-* Facebook sharing text issues fixed
-
-= 1.0 =
-* First release
-
 == Upgrade Notice ==
 
-= 3.6.1 =
-* Tested with WordPress 6.4-beta & PHP 8.2
-* Now icons are disabled in page builders
-* Replaced twitter icon with X
-* Changed default colors for X
-* Updated promotion module
-* Minor improvements for all icons rendering 
-* Updated carrousel module for PHP 8.2 and resolved conflicts
-* Improved overall compatiblity with PHP 8.2
-* Fixed warnings in PHP 8+ with mastodon icon
-* Now mastodon icon order will be correct
-* Fixed issue with rendering of external module
+= 3.6.5 =
+* Added new icons 
+* Improved email filter
+* Tested with WordPress 6.5.3
+* Better calibration of icons  
+* Fixed bugs with icon sizes

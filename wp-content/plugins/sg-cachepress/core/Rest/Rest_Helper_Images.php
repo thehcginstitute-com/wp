@@ -9,6 +9,14 @@ use SiteGround_Optimizer\Message_Service\Message_Service;
  */
 class Rest_Helper_Images extends Rest_Helper {
 	/**
+	 * Local variables
+	 *
+	 * @var mixed
+	 */
+	public $options;
+	public $images_optimizer;
+
+	/**
 	 * The constructor.
 	 */
 	public function __construct() {
@@ -28,11 +36,14 @@ class Rest_Helper_Images extends Rest_Helper {
 		$selected                = $this->validate_and_get_option_value( $request, 'compression_level' );
 		$maybe_backup            = $this->validate_and_get_option_value( $request, 'backup_media' );
 		$maybe_compress_existing = $this->validate_and_get_option_value( $request, 'compress_existing' );
+		$maybe_overwrite_custom  = $this->validate_and_get_option_value( $request, 'overwrite_custom' );
 
 		update_option( 'siteground_optimizer_compression_level_old', get_option( 'siteground_optimizer_compression_level', 1 ) );
 		update_option( 'siteground_optimizer_compression_level', $selected );
 		update_option( 'siteground_optimizer_backup_media', $maybe_backup );
 		update_option( 'siteground_optimizer_compress_existing', $maybe_compress_existing );
+		update_option( 'siteground_optimizer_overwrite_custom', $maybe_overwrite_custom );
+
 
 		$response_data = array(
 			'compression_level'         => intval( $selected ),
@@ -89,6 +100,7 @@ class Rest_Helper_Images extends Rest_Helper {
 				'compression_level'           => (int) get_option( 'siteground_optimizer_compression_level', 0 ),
 				'backup_media'                => (int) get_option( 'siteground_optimizer_backup_media' ),
 				'compress_existing'           => (int) get_option( 'siteground_optimizer_compress_existing' ),
+				'overwrite_custom'            => (int) get_option( 'siteground_optimizer_overwrite_custom' ),
 				'image_optimization_status'   => (int) get_option( 'siteground_optimizer_image_optimization_completed', 1 ),
 				'has_images_for_optimization' => (int) $unoptimized_images - 1,
 				'total_unoptimized_images'    => (int) get_option( 'siteground_optimizer_total_unoptimized_images' ),
@@ -121,6 +133,7 @@ class Rest_Helper_Images extends Rest_Helper {
 				'compression_level'           => (int) get_option( 'siteground_optimizer_compression_level_old', 1 ),
 				'backup_media'                => (int) get_option( 'siteground_optimizer_backup_media' ),
 				'compress_existing'           => (int) get_option( 'siteground_optimizer_compress_existing' ),
+				'overwrite_custom'            => (int) get_option( 'siteground_optimizer_overwrite_custom' ),
 				'image_optimization_status'   => 1,
 				'image_optimization_stopped'  => 1,
 				'has_images_for_optimization' => (int) $this->options->check_for_unoptimized_images( 'image' ),
@@ -149,6 +162,27 @@ class Rest_Helper_Images extends Rest_Helper {
 			array(
 				'images' => $this->images_optimizer->get_preview_images( $id ),
 			)
+		);
+	}
+
+	/**
+	 * Sets the maximum image width.
+	 *
+	 * @since 7.0.10
+	 *
+	 * @param  object $request Request data.
+	 */
+	public function manage_resize_images( $request ) {
+		// Retrieve the value from the request.
+		$value = $this->validate_and_get_option_value( $request, 'image_resize' );
+
+		// Update the option in the DB.
+		update_option( 'siteground_optimizer_resize_images', intval( $value ) );
+
+		// Check if body of the request is empty, if so - send default response.
+		self::send_json_success(
+			Message_Service::get_response_message( 1, 'resize_images' ),
+			$this->images_optimizer->prepare_max_width_sizes()
 		);
 	}
 }

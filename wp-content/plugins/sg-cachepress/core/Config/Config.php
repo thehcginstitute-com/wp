@@ -1,137 +1,87 @@
 <?php
 namespace SiteGround_Optimizer\Config;
 
-use SiteGround_Optimizer;
-use SiteGround_Optimizer\Helper\Helper;
+use SiteGround_Helper\Helper_Service;
 
 /**
  * Config functions and main initialization class.
  */
 class Config {
+	/**
+	 * The config filename.
+	 *
+	 * @since 7.3.0
+	 */
+	const SGO_CONFIG = \SiteGround_Optimizer\DIR . '/sg-config.json';
 
 	/**
 	 * List of all optimization that we want to keep in the config.
 	 *
-	 * @since 5.3.6
-	 *
 	 * @access public
 	 *
-	 * @var array $main_options List of all options.
+	 * @since 7.3.0
+	 * 
+	 * @var array $config_options List of all options.
 	 */
-	public $main_options = array(
-		'version',
-		'enable_cache',
-		'autoflush_cache',
-		'user_agent_header',
-		'enable_memcached',
-		'ssl_enabled',
-		'fix_insecure_content',
-		'enable_gzip_compression',
-		'enable_browser_caching',
-		'optimize_html',
-		'optimize_javascript',
-		'combine_javascript',
-		'optimize_javascript_async',
-		'optimize_css',
-		'combine_css',
-		'combine_google_fonts',
-		'remove_query_strings',
-		'disable_emojis',
-		'lazyload_images',
-		'lazyload_gravatars',
-		'lazyload_thumbnails',
-		'lazyload_responsive',
-		'lazyload_textwidgets',
-		'lazyload_mobile',
-		'lazyload_woocommerce',
+	public $config_options = array(
+		'version'                   => 'siteground_optimizer_current_version',
+		'enable_cache'              => 'siteground_optimizer_enable_cache',
+		'file_caching'              => 'siteground_optimizer_file_caching',
+		'preheat_cache'             => 'siteground_optimizer_preheat_cache',
+		'logged_in_cache'           => 'siteground_optimizer_logged_in_cache',
+		'enable_memcached'          => 'siteground_optimizer_enable_memcached',
+		'autoflush_cache'           => 'siteground_optimizer_autoflush_cache',
+		'user_agent_header'         => 'siteground_optimizer_user_agent_header',
+		'purge_rest_cache'          => 'siteground_optimizer_purge_rest_cache',
+		'ssl_enabled'               => 'siteground_optimizer_ssl_enabled',
+		'fix_insecure_content'      => 'siteground_optimizer_fix_insecure_content',
+		'optimize_css'              => 'siteground_optimizer_optimize_css',
+		'combine_css'               => 'siteground_optimizer_combine_css',
+		'preload_combined_css'      => 'siteground_optimizer_preload_combined_css',
+		'optimize_javascript'       => 'siteground_optimizer_optimize_javascript',
+		'combine_javascript'        => 'siteground_optimizer_combine_javascript',
+		'optimize_javascript_async' => 'siteground_optimizer_optimize_javascript_async',
+		'optimize_html'             => 'siteground_optimizer_optimize_html',
+		'optimize_web_fonts'        => 'siteground_optimizer_optimize_web_fonts',
+		'remove_query_strings'      => 'siteground_optimizer_remove_query_strings',
+		'disable_emojis'            => 'siteground_optimizer_disable_emojis',
+		'lazyload_images'           => 'siteground_optimizer_lazyload_images',
+		'webp_support'              => 'siteground_optimizer_webp_support',
+		'backup_media'              => 'siteground_optimizer_backup_media',
 	);
 
 	/**
-	 * The config filename.
+	 * Check if the config file needs to be updated.
 	 *
-	 * @var string
+	 * @since 7.3.1
+	 *
+	 * @param string $option Name of the option to add/update.
 	 */
-	public $config_name = '/sg-config.json';
-
-	/**
-	 * WordPress filesystem.
-	 *
-	 * @since 5.3.6
-	 *
-	 * @var object|null WordPress filesystem.
-	 */
-	public $wp_filesystem = null;
-
-	/**
-	 * The constructor.
-	 */
-	public function __construct() {
-		// Setup wp filesystem. - връщам се в конструктора 
-		if ( null === $this->wp_filesystem ) {
-			$this->wp_filesystem = Helper::setup_wp_filesystem();
-		}
-	}
-	/**
-	 * Create the config.
-	 *
-	 * @since  5.3.6
-	 *
-	 * @return bool True if the config exists or if it was successfully create, false otherwise.
-	 */
-	public function create_config() {
-		// Build the config path.
-		$filename = SiteGround_Optimizer\DIR . $this->config_name;
-
-		// Bail if the config already exists.
-		if ( $this->wp_filesystem->exists( $filename ) ) {
-			return true;
+	public function update_config_check( $option ) {
+		// Check if the option matches the once we are setting in the config.
+		if ( ! in_array( $option, $this->config_options, true ) ) {
+			return;
 		}
 
-		// Create the config.
-		return $this->wp_filesystem->touch( $filename );
+		// Update the config file.
+		$this->update_config();
 	}
 
 	/**
 	 * Update the config.
 	 *
-	 * @since  5.3.6
+	 * @since 7.3.0
 	 */
 	public function update_config() {
-		// Bail if we are unable to create the config file.
-		if ( false === $this->create_config() ) {
+		// Check for the helper service method.
+		if (
+			! method_exists( 'SiteGround_Helper\\Helper_Service', 'update_file' ) ||
+			! method_exists( 'SiteGround_Helper\\Helper_Service', 'build_config_content' )
+		) {
 			return;
 		}
 
-		// Build the config from database.
-		$content = $this->build_config_content();
-
-		// Add the new content into the file.
-		$this->wp_filesystem->put_contents(
-			SiteGround_Optimizer\DIR . $this->config_name,
-			json_encode( $content )
-		);
-	}
-
-	/**
-	 * Build the default config content using the option values from database.
-	 *
-	 * @since  5.3.6
-	 *
-	 * @return array The config content.
-	 */
-	public function build_config_content() {
-		// Init the data array.
-		$data = array();
-
-		// Loop through all options and add the value to the data array.
-		foreach ( $this->main_options as $option ) {
-			// Get the optin value.
-			$value = get_option( 'siteground_optimizer_' . $option, 0 );
-			// Add the value to database. Only the plugin version needs to be a string.
-			$data[ $option ] = 'version' === $option ? $value : intval( $value );
-		}
-
-		// Return the data.
-		return $data;
+		// Update the config file.
+		Helper_Service::update_file( self::SGO_CONFIG, Helper_Service::build_config_content( $this->config_options ) );
 	}
 }

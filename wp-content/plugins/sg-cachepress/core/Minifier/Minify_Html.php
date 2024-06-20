@@ -17,6 +17,15 @@ namespace SiteGround_Optimizer\Minifier;
 class Minify_Html {
 
 	/**
+	 * HTML content.
+	 *
+	 * @since 7.5.1
+	 *
+	 * @var string|null
+	 */
+	public $_html;
+
+	/**
 	 * "Minify" an HTML page
 	 *
 	 * @param string $html
@@ -103,6 +112,9 @@ class Minify_Html {
 				,array($this, '_commentCB')
 				,$this->_html);
 		}
+
+		// Remove all inline script comments.
+		$this->_html = preg_replace( '/\n\n/', "\n", $this->_html );
 
 		// replace PREs with placeholders
 		$this->_html = preg_replace_callback('/\\s*(<pre\\b[^>]*?>[\\s\\S]*?<\\/pre>)\\s*/i'

@@ -124,14 +124,17 @@ function sfsi_plus_forum_notification_popup() {
 <?php
 }
 
-add_action( 'wp_ajax_nopriv_sfsi_plus_hide_admin_forum_notification', 'sfsi_plus_hide_admin_forum_notification_callback' );
-add_action( 'wp_ajax_sfsi_plus_hide_admin_forum_notification', 'sfsi_plus_hide_admin_forum_notification_callback' );
+add_action('wp_ajax_sfsi_plus_hide_admin_forum_notification', 'sfsi_plus_hide_admin_forum_notification_callback');
 
 function sfsi_plus_hide_admin_forum_notification_callback() {
+  
+  if (!wp_verify_nonce($_POST['nonce'], 'usm_plus_universal_anonce')) return wp_send_json_error();
+  if (!current_user_can('manage_options')) return wp_send_json_error();
+  
 	$option_name = 'sfsi_plus_hide_admin_forum_notification' ;
 	$new_value = 'yes';
 
-	if ( get_option( $option_name ) !== false ) {
+	if (get_option( $option_name ) !== false) {
 		update_option( $option_name, $new_value );
 	} else {
 		$deprecated = null;
@@ -140,6 +143,7 @@ function sfsi_plus_hide_admin_forum_notification_callback() {
 	}
 	wp_send_json_success();
 	die;
+  
 }
 
 add_action( 'wp_ajax_nopriv_sfsi_plus_default_hide_admin_notification', 'sfsi_plus_default_hide_admin_notification_callback' );

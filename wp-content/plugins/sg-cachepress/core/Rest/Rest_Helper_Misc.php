@@ -3,7 +3,12 @@ namespace SiteGround_Optimizer\Rest;
 
 use SiteGround_Optimizer\Supercacher\Supercacher;
 use SiteGround_Optimizer\Analysis\Analysis;
+use SiteGround_Optimizer\Rest\Rest;
 use SiteGround_Optimizer\Message_Service\Message_Service;
+use SiteGround_Optimizer\File_Cacher\File_Cacher;
+use SiteGround_Optimizer\Options\Options;
+use SiteGround_Optimizer\Performance_Reports\Performance_Reports;
+
 /**
  * Rest Helper class that manages misc rest routes  settings.
  */
@@ -69,6 +74,10 @@ class Rest_Helper_Misc extends Rest_Helper {
 		// Update the option.
 		$result = update_option( 'siteground_optimizer_' . $type, $selected );
 
+		if ( Options::is_enabled( 'siteground_optimizer_file_caching' ) ) {
+			File_Cacher::get_instance()->purge_everything();
+		}
+
 		// Purge the cache.
 		Supercacher::purge_cache();
 
@@ -79,6 +88,84 @@ class Rest_Helper_Misc extends Rest_Helper {
 				$type => array(
 					'default'  => $default,
 					'selected' => array_values( $selected ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Return the popup content.
+	 *
+	 * @since  7.0.0
+	 *
+	 * @param object $request Request data.
+	 */
+	public function feature_popup( $request ) {
+		// Get the popup content.
+		$response = wp_remote_get( 'https://sgwpdemo.com/jsons/sg-cachepress-promo.json' );
+
+		// Bail if the request fails.
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			self::send_json_error( 'Error' );
+		}
+
+		// Get the body of the response.
+		$body = wp_remote_retrieve_body( $response );
+
+		// Get the parameters.
+		$params = $request->get_params( $request );
+
+		$data = json_decode( str_replace( '{{FEATURE_NAME}}', Rest::$popups[ $params['type'] ], $body ) );
+
+		self::send_json_success(
+			'',
+			$data
+		);
+	}
+
+	/**
+	 * Get the emails set to receive performance report email.
+	 *
+	 * @since 7.4.0
+	 *
+	 * @param Object $request The request object.
+	 */
+	public function get_performance_report_recipient( $request ) {
+		// Send the options to react app.
+		return self::send_json_success(
+			'',
+			array(
+				'entry'       => get_option( 'siteground_optimizer_performace_receipient', null ),
+				'max_emails' => 1,
+			)
+		);
+	}
+
+	/**
+	 * Manage the performance report notification email address.
+	 *
+	 * @since 7.4.0
+	 *
+	 * @param Object $request The request object.
+	 */
+	public function manage_notification_email( $request ) {
+		$data = json_decode( $request->get_body(), true );
+
+		if (
+			! isset( $data['entry'] ) ||
+			( ! empty( $data['entry'] ) && ! filter_var( $data['entry'], FILTER_VALIDATE_EMAIL ) )
+		) {
+			self::send_json_error( __( 'Invalid email address.', 'sg-cachepress' ) );
+		}
+
+		// Update the option.
+		update_option( 'siteground_optimizer_performace_receipient', $data['entry'] );
+
+		return self::send_json_success(
+			__( 'Notification email updated.', 'sg-cachepress' ),
+			array(
+				'performanceReports' => array(
+					get_option( 'siteground_optimizer_performace_receipient', null ),
 				),
 			)
 		);

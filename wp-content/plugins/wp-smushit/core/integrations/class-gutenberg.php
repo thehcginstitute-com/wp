@@ -46,9 +46,6 @@ class Gutenberg extends Abstract_Integration {
 			return;
 		}
 
-		// Show submit button when Gutenberg is active.
-		add_filter( 'wp_smush_integration_show_submit', '__return_true' );
-
 		// Register gutenberg block assets.
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_gb' ) );
 	}
@@ -72,8 +69,7 @@ class Gutenberg extends Abstract_Integration {
 			'label'       => esc_html__( 'Show Smush stats in Gutenberg blocks', 'wp-smushit' ),
 			'short_label' => esc_html__( 'Gutenberg Support', 'wp-smushit' ),
 			'desc'        => esc_html__(
-				'Add statistics and the manual smush button to Gutenberg blocks that
-							display images.',
+				'Add statistics and the manual smush button to Gutenberg blocks that display images.',
 				'wp-smushit'
 			),
 		);

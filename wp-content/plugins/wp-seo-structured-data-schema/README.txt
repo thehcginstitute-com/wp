@@ -3,8 +3,8 @@ Contributors: kcseopro
 Donate link:
 Tags: seo, schema, structured data, rich snippets, microdata, json-ld, search engine optimization, local seo, google, sitelinks, schema.org, microformat, serp
 Requires at least: 4.5
-Tested up to: 6.1
-Stable tag: 2.7.8
+Tested up to: 6.4
+Stable tag: 2.7.10
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -129,6 +129,12 @@ You'll find the [FAQ on WPSEMPlugins.com](https://wpsemplugins.com/wordpress-seo
 
 
 == Changelog ==
+
+= 2.7.10 ( November 17, 2023) =
+* Fixed:  Using ${var} in strings is deprecated for PHP 8.2  
+
+= 2.7.9 ( August 14, 2023) =
+* Fixed: PHP 8.2.8 And WP 6.3 Support
 
 = 2.7.8 ( July 11, 2023) =
 * Fixed: Schema Issue;

@@ -47,6 +47,12 @@
 			(isset($option5['sfsi_plus_mastodonIcon_order']))
 			? $option5['sfsi_plus_mastodonIcon_order']
 			: 29 => 'mastodon',
+        (isset($option5['sfsi_plus_riaIcon_order']))
+            ? $option5['sfsi_plus_riaIcon_order']
+            : 30 => 'ria',
+        (isset($option5['sfsi_plus_inhaIcon_order']))
+            ? $option5['sfsi_plus_inhaIcon_order']
+            : 31 => 'inha',
 	);
 	// var_dump($icons_order);
 
@@ -111,6 +117,15 @@
 	$option5['sfsi_plus_instagram_MouseOverText']= 	(isset($option5['sfsi_plus_instagram_MouseOverText']))
 														? sanitize_text_field($option5['sfsi_plus_instagram_MouseOverText'])
 														: '';
+
+$option5['sfsi_plus_ria_MouseOverText']= 	(isset($option5['sfsi_plus_ria_MouseOverText']))
+    ? sanitize_text_field($option5['sfsi_plus_ria_MouseOverText'])
+    : '';
+
+$option5['sfsi_plus_inha_MouseOverText']= 	(isset($option5['sfsi_plus_inha_MouseOverText']))
+    ? sanitize_text_field($option5['sfsi_plus_inha_MouseOverText'])
+    : '';
+
 	//MZ CODE START
 	$option5['sfsi_plus_telegram_MouseOverText']= 	(isset($option5['sfsi_plus_telegram_MouseOverText']))
 														? sanitize_text_field($option5['sfsi_plus_telegram_MouseOverText'])
@@ -440,7 +455,7 @@
 
           <?php case 'twitter' :?>
           		<li class="sfsiplus_twitter_section " data-index="<?php echo $index; ?>" id="sfsi_plus_twitterIcon_order">
-                	<a href="#" title="Twitter" ><img src="<?php echo SFSI_PLUS_PLUGURL; ?>images/twitter.png" alt="Twitter" /></a>
+                	<a href="#" title="X/Twitter" ><img src="<?php echo SFSI_PLUS_PLUGURL; ?>images/twitter.png" alt="Twitter" /></a>
                 </li>
           <?php break; ?>
 
@@ -523,8 +538,18 @@
 				<a href="#" title="Mastodon" ><img src="<?php echo SFSI_PLUS_PLUGURL; ?>images/icons_theme/default/default_mastodon.png" alt="Mastodon"  width="50px" height="50px"  /></a>
 			</li>
 		  <?php break; ?>
+              <!--MZ CODE END-->
+          <?php case 'ria' :?>
+              <li class="sfsiplus_ria_section " data-index="<?php echo $index; ?>" id="sfsi_plus_riaIcon_order">
+                  <a href="#" title="RateItAll" ><img src="<?php echo SFSI_PLUS_PLUGURL; ?>images/icons_theme/default/default_ria.png" alt="RateItAll"  width="50px" height="50px"  /></a>
+              </li>
+              <?php break; ?>
 
-		  <!--MZ CODE END-->
+          <?php case 'inha' :?>
+              <li class="sfsiplus_inha_section " data-index="<?php echo $index; ?>" id="sfsi_plus_inhaIcon_order">
+                  <a href="#" title="IncreasingHappiness" ><img src="<?php echo SFSI_PLUS_PLUGURL; ?>images/icons_theme/default/default_inha.png" alt="IncreasingHappiness"  width="50px" height="50px"  /></a>
+              </li>
+              <?php break; ?>
 
           <?php default   :?>
 
@@ -731,7 +756,7 @@
 		<!-- Twitter «Visit»-icon start here -->
 		<div class="icons_size">
         	<div class="follows-btn">
-        		<span><?php  _e( 'Twitter «Visit»-icon:', 'ultimate-social-media-plus' ); ?></span>
+        		<span><?php  _e( 'X (Twitter) «Visit»-icon:', 'ultimate-social-media-plus' ); ?></span>
         	</div>
 			<div class="field language-field">
 				 <?php selectoption("sfsi_plus_twitter_icons_language" , "Visit_us" , "Visit_me"); ?>
@@ -752,7 +777,7 @@
 		<!-- Like & Share buttons (Facebook, Twitter) start here -->
 		<div class="icons_size">
         	<span>
-        		<?php  _e( 'Language for Like & Share buttons (Facebook, Twitter):', 'ultimate-social-media-plus' ); ?>
+        		<?php  _e( 'Language for Like & Share buttons (Facebook, X (Twitter)):', 'ultimate-social-media-plus' ); ?>
         	</span>
 			<div class="language_field">
 				<select name="sfsi_plus_icons_language" id="sfsi_plus_icons_language" class="language">
@@ -1072,7 +1097,7 @@
             <div class="clear">
             	<div class="mouseover_field sfsiplus_twitter_section">
                 	<label>
-                        Twitter:
+                        X (Twitter):
                     </label>
                     <input name="sfsi_plus_twitter_MouseOverText" value="<?php echo ($option5['sfsi_plus_twitter_MouseOverText']!='') ?  $option5['sfsi_plus_twitter_MouseOverText'] : '' ;?>" type="text" />
                 </div>
@@ -1115,6 +1140,21 @@
                     <input name="sfsi_plus_instagram_MouseOverText" value="<?php echo ($option5['sfsi_plus_instagram_MouseOverText']!='') ?  $option5['sfsi_plus_instagram_MouseOverText'] : '' ;?>" type="text" />
                 </div>
 			</div>
+
+            <div class="clear">
+                <div class="mouseover_field sfsiplus_ria_section">
+                    <label>
+                        RateItAll:
+                    </label>
+                    <input name="sfsi_plus_ria_MouseOverText" value="<?php echo ($option5['sfsi_plus_ria_MouseOverText']!='') ?  $option5['sfsi_plus_ria_MouseOverText'] : '' ;?>" type="text" />
+                </div>
+                <div class="mouseover_field sfsiplus_inha_section">
+                    <label>
+                        IncreasingHappiness:
+                    </label>
+                    <input name="sfsi_plus_inha_MouseOverText" value="<?php echo ($option5['sfsi_plus_inha_MouseOverText']!='') ?  $option5['sfsi_plus_inha_MouseOverText'] : '' ;?>" type="text" />
+                </div>
+            </div>
 
         	<div class="clear">
 

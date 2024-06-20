@@ -45,7 +45,7 @@ if (!class_exists('\WPFront\Notification_Bar\WPFront_Notification_Bar')) {
     class WPFront_Notification_Bar {
 
         //Constants
-        const VERSION = '3.4.01231';
+        const VERSION = '3.4.2.04051';
         const OPTIONS_GROUP_NAME = 'wpfront-notification-bar-options-group';
         const OPTION_NAME = 'wpfront-notification-bar-options';
         const PLUGIN_SLUG = 'wpfront-notification-bar';

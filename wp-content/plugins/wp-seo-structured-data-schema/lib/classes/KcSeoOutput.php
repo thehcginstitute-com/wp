@@ -24,7 +24,7 @@ if (!class_exists('KcSeoOutput')):
             if ($echo === false) {
                 return $marker;
             } else {
-                echo "\n${marker}\n";
+	            echo "\n$marker\n";
             }
         }
 

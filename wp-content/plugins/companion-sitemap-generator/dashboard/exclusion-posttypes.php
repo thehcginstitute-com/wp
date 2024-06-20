@@ -1,106 +1,112 @@
 <?php
 
-$post_types = get_post_types( array( 'public' => true ), 'names', 'and' ); 
+// Post types and Taxonomies
+$post_types 	= csg_get_posttypes(); 
+$taxonomies 	= csg_get_taxonomies();
 
+// Submit
 if( isset( $_POST['submit'] ) ) {
 
 	check_admin_referer( 'csg_save_posttypes' );
 
 	global $wpdb;
-	$table_name 		= $wpdb->prefix . "csg_sitemap";
-
-	$exclPostTypes 		= '';
-	$excludeCounter 	= '0';
+	
+	$table_name 			= $wpdb->prefix . "csg_sitemap";
+	$excludes_post_types 	= array();
 
 	// For all post types
 	foreach ( $post_types  as $post_type ) {
-		if( $post_type != 'attachment' ) {
-			if( isset( $_POST['exclude_'.$post_type] ) == '' ) {
-				$exclPostTypes .= sanitize_text_field( $post_type ).', ';
-				$excludeCounter++;
-			}
+		if( isset( $_POST['exclude_'.$post_type] ) == '' ) {
+			array_push( $excludes_post_types, sanitize_text_field( $post_type ) );
 		}
 	}
 
-	// Add taxonomies 
-	$taxonomies = csg_get_taxonomies();
+	// Media
+	if( isset( $_POST['exclude_media'] ) == '' ) {
+		array_push( $excludes_post_types, 'media' );
+	}
 
-	// Loop trough all
+	// Loop trough all taxonomies
 	foreach( $taxonomies as $taxonomie ) {
 
 		// Get information of current one
 		$thisTaxonomie = get_taxonomy( $taxonomie );
 
 		if( isset( $_POST['exclude_'.$thisTaxonomie->name] ) == '' ) {
-			$exclPostTypes .= sanitize_text_field( $thisTaxonomie->name ).', ';
-			$excludeCounter++;
+			array_push( $excludes_post_types, sanitize_text_field( $thisTaxonomie->name ) );
 		}
 
 	}
 
-	$wpdb->query( $wpdb->prepare( "UPDATE $table_name SET onoroff = %s WHERE name = 'posttypes'", $exclPostTypes ) );
+	$exclude_these 		= implode( ", ", $excludes_post_types );
+	$exclude_counter 	= count( $excludes_post_types );
 
-	csg_select_succes( $excludeCounter );
+	$wpdb->query( $wpdb->prepare( "UPDATE $table_name SET onoroff = %s WHERE name = 'posttypes'", $exclude_these ) );
+
+	csg_select_succes( $exclude_counter );
 }
 
-?>
+echo "<form method='POST'>
 
-<form method="POST">
+	<div id='message' class='info'>".__( 'Remove post types from your sitemap by unchecking the checkbox. You can always add them back by checking it again.' )."</div>
 
-	<table class="form-table">
+	<table class='widefat striped'>
 
-	<?php 
-
-	// Add posttypes
-	foreach ( $post_types  as $post_type ) {
-		if( $post_type != 'attachment' ) {
-			$post_typeO 		= get_post_type_object( $post_type ); 
-			$post_type_name 	= $post_typeO->label;
-			?>
+		<thead>
 			<tr>
-				<th scope="row"><?php echo $post_type_name; ?></th>
-				<td>
-					<fieldset>
-						<input id='exclude_<?php echo $post_type; ?>' name='exclude_<?php echo $post_type; ?>' type='checkbox' <?php if( !in_array( $post_type, csg_exclude_posttypes() ) ) { echo "CHECKED"; } ?> > <label for="exclude_<?php echo $post_type; ?>"><?php _e('Uncheck to exclude.', 'companion-sitemap-generator'); ?></label>
-					</fieldset>
-				</td>
+				<td id='cb' class='manage-column column-cb check-column'><label class='screen-reader-text' for='cb-select-all-1'>Select All</label><input id='cb-select-all-1' type='checkbox' /></td>
+				<th colspan='2' scope='col' id='title' class='manage-column column-title column-primary'>".__( 'Title', 'companion-sitemap-generator' )."</th>
 			</tr>
-		<?php }
-	}
+		</thead>
 
-	// Add taxonomies 
-	$taxonomies = csg_get_taxonomies();
+		<tbody id='the-list'>";
 
-	// If there are any taxonomies
-	if ( $taxonomies ) {
+			// Add posttypes
+			foreach ( $post_types  as $post_type ) {
 
-		// Loop trough all
-		foreach( $taxonomies as $taxonomie ) {
+				$post_typeO 		= get_post_type_object( $post_type ); 
+				$post_type_name 	= $post_typeO->label;
+				$checked 			= !in_array( $post_type, csg_exclude_posttypes() ) ? 'CHECKED' : '';
 
-			// Get information of current one
-			$thisTaxonomie = get_taxonomy( $taxonomie );
+				echo "<tr>
+					<th scope='row' class='check-column'><input id='exclude_{$post_type}' name='exclude_{$post_type}' type='checkbox' {$checked} ></th>
+					<td scope='row' colspan='2'><strong>{$post_type_name}</strong></td>
+				</tr>";
+			}
 
-			?>
+			// Images
+			$checked = !in_array( 'media', csg_exclude_posttypes() ) ? 'CHECKED' : '';
+			echo "<tr>
+				<th scope='row' class='check-column'><input id='exclude_media' name='exclude_media' type='checkbox' {$checked} ></th>
+				<td scope='row' colspan='2'><strong>".__( 'Media' )."</strong></td>
+			</tr>";
 
-			<tr>
-				<th scope="row"><?php echo $thisTaxonomie->label; ?> <p style='opacity: .6; margin: 0; font-size: 14px;'>(<?php echo $thisTaxonomie->name; ?>)</p></th>
-				<td>
-					<fieldset>
-						<input id='exclude_<?php echo $thisTaxonomie->name; ?>' name='exclude_<?php echo $thisTaxonomie->name; ?>' type='checkbox' <?php if( !in_array( $thisTaxonomie->name, csg_exclude_posttypes() ) ) { echo "CHECKED"; } ?> > 
-						<label for="exclude_<?php echo $thisTaxonomie->name; ?>"><?php _e('Uncheck to exclude.', 'companion-sitemap-generator'); ?></label>
-					</fieldset>
-				</td>
-			</tr>
+			// If there are any taxonomies
+			if ( $taxonomies ) {
 
-		<?php } 
-	} 
+				// Loop trough all
+				foreach( $taxonomies as $taxonomie ) {
 
-	?>
+					// Get information of current one
+					$this_taxonomy 		= get_taxonomy( $taxonomie );
+					$taxonomie_label 	= $this_taxonomy->label;
+					$taxonomie_name 	= $this_taxonomy->name;
+					$checked 			= !in_array( $this_taxonomy->name, csg_exclude_posttypes() ) ? 'CHECKED' : '';
 
-	</table>
+					echo "<tr>
+						<th scope='row' class='check-column'><input id='exclude_{$taxonomie_name}' name='exclude_{$taxonomie_name}' type='checkbox' {$checked} ></th>
+						<td scope='row'><strong>{$taxonomie_label}</strong></td>
+						<td scope='row'><span style='opacity: .6;'>{$taxonomie_name}</span></td>
+					</tr>";
 
-	<?php wp_nonce_field( 'csg_save_posttypes' ); ?>	
+				} 
+			} 
 
-	<?php submit_button(); ?>
+	echo "</tbody>
+	</table>";
 
-</form>
+	wp_nonce_field( 'csg_save_posttypes' );
+
+	submit_button();
+
+echo "</form>";

@@ -305,7 +305,7 @@ if(!function_exists('sfsi_plus_generate_other_icon_effect_admin_html')){
             ?>
             <div <?php echo $attrCustomIconIndex;?> <?php echo $attrIconName; ?> class="col-md-3 bottommargin20 <?php echo $displayIconClass.' '.$active_theme; ?>">
 
-                <label <?php echo $attrCustomIconSrNo; ?> class="mouseover_other_icon_label"><?php echo ucfirst($iconNameStr); ?> </label>
+                <label <?php echo $attrCustomIconSrNo; ?> class="mouseover_other_icon_label"><?php  if ($iconNameStr == 'twitter') echo 'X (Twitter)'; else echo ucfirst($iconNameStr); ?> </label>
 
                 <?php if ( $sfsi_plus_flat_theme_flag ) { ?>
                     <span class="sfsiplus_icon_img_wrapper mouseover_sfsi_plus_<?php echo esc_attr( $iconName ); ?>_bgColor" <?php echo esc_html( $sfsi_plus_flat_icon_color ); ?>>
@@ -380,7 +380,7 @@ function sfsi_plus_flat_icon_color( $iconName, $option3 ) {
                 if ( isset( $option3['sfsi_plus_twitter_bgColor'] ) && $option3['sfsi_plus_twitter_bgColor'] != '' ) {
                     $sfsi_plus_icon_bgColor = $option3['sfsi_plus_twitter_bgColor'];
                 } else {
-                    $sfsi_plus_icon_bgColor = '#00ACEC';
+                    $sfsi_plus_icon_bgColor = '#000000';
                 }
             break;
 
@@ -487,6 +487,21 @@ function sfsi_plus_flat_icon_color( $iconName, $option3 ) {
                     $sfsi_plus_icon_bgColor = '#583ED1';
                 }
             break;
+            case "ria":
+                if ( isset( $option3['sfsi_plus_ria_bgColor'] ) && $option3['sfsi_plus_ria_bgColor'] != '' ) {
+                    $sfsi_plus_icon_bgColor = $option3['sfsi_plus_ria_bgColor'];
+                } else {
+                    $sfsi_plus_icon_bgColor = '#36afc1';
+                }
+                break;
+
+            case "inha":
+                if ( isset( $option3['sfsi_plus_inha_bgColor'] ) && $option3['sfsi_plus_inha_bgColor'] != '' ) {
+                    $sfsi_plus_icon_bgColor = $option3['sfsi_plus_inha_bgColor'];
+                } else {
+                    $sfsi_plus_icon_bgColor = '#0ba087';
+                }
+                break;
         }
 
         if ( $sfsi_plus_icon_bgColor ) {

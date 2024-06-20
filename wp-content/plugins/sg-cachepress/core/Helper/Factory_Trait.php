@@ -1,6 +1,7 @@
 <?php
 namespace SiteGround_Optimizer\Helper;
 
+use SiteGround_i18n\i18n_Service;
 /**
  * Trait used for factory pattern in the plugin.
  */

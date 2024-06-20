@@ -5,6 +5,10 @@
  * @package WPCode
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The WPCode_Conditional_Page class.
  */
@@ -31,7 +35,7 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 	 *
 	 * @return void
 	 */
-	protected function load_type_options() {
+	public function load_type_options() {
 		$this->options = array(
 			'type_of_page'  => array(
 				'label'    => __( 'Type of page', 'insert-headers-and-footers' ),
@@ -61,6 +65,10 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 						'label' => __( 'Author page', 'insert-headers-and-footers' ),
 						'value' => 'is_author',
 					),
+					array(
+						'label' => __( 'Blog home', 'insert-headers-and-footers' ),
+						'value' => 'is_home',
+					),
 				),
 				'callback' => array( $this, 'get_type_of_page' ),
 			),
@@ -87,11 +95,22 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 				'options'         => 'wpcode_search_terms',
 				'callback'        => array( $this, 'get_term' ),
 				'labels_callback' => array( $this, 'get_taxonomy_term_labels' ),
+				'multiple'        => true,
 			),
 			'page_url'      => array(
 				'label'    => __( 'Page URL', 'insert-headers-and-footers' ),
 				'type'     => 'text',
 				'callback' => array( $this, 'get_page_url' ),
+			),
+			'post_id'       => array(
+				'label'   => __( 'Post/Page', 'insert-headers-and-footers' ) . ' (PRO)',
+				'type'    => 'select',
+				'options' => array(),
+				'upgrade' => array(
+					'title' => __( 'Post specific rules are a Pro feature', 'insert-headers-and-footers' ),
+					'text'  => __( 'Upgrade today create conditional logic rules for specific pages or posts.', 'insert-headers-and-footers' ),
+					'link'  => wpcode_utm_url( 'https://wpcode.com/lite/', 'edit-snippet', 'conditional-logic', 'post_id' ),
+				),
 			),
 		);
 	}
@@ -147,11 +166,22 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 	 * @return string
 	 */
 	public function get_type_of_page() {
-		if ( is_front_page() || is_home() ) {
+		global $wp_query;
+
+		if ( ! isset( $wp_query ) ) {
+			return '';
+		}
+		if ( is_front_page() ) {
 			return 'is_front_page';
+		}
+		if ( is_home() ) {
+			return 'is_home';
 		}
 		if ( is_singular() ) {
 			return 'is_single';
+		}
+		if ( is_author() ) {
+			return 'is_author';
 		}
 		if ( is_archive() ) {
 			return 'is_archive';
@@ -161,9 +191,6 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 		}
 		if ( is_404() ) {
 			return 'is_404';
-		}
-		if ( is_author() ) {
-			return 'is_author';
 		}
 
 		return '';
@@ -194,6 +221,7 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 	 */
 	public function get_page_url() {
 		global $wp;
+
 		return isset( $wp->request ) ? trailingslashit( home_url( $wp->request ) ) : '';
 	}
 
@@ -203,6 +231,10 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 	 * @return string
 	 */
 	public function get_taxonomy() {
+		global $wp_query;
+		if ( is_null( $wp_query ) ) {
+			return '';
+		}
 		$queried_object = get_queried_object();
 
 		return isset( $queried_object->taxonomy ) ? $queried_object->taxonomy : '';
@@ -214,10 +246,14 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 	 * @return array
 	 */
 	public function get_term() {
-		if ( is_tax() ) {
+		global $wp_query;
+		if ( is_null( $wp_query ) ) {
+			return array();
+		}
+		if ( is_tax() || is_category() || is_tag() ) {
 			$queried_object = get_queried_object();
 
-			return isset( $queried_object->queried_object_id ) ? array( $queried_object->queried_object_id ) : array();
+			return isset( $queried_object->term_id ) ? array( $queried_object->term_id ) : array();
 		}
 		if ( is_singular() ) {
 			return get_terms(
@@ -254,3 +290,5 @@ class WPCode_Conditional_Page extends WPCode_Conditional_Type {
 		return $labels;
 	}
 }
+
+new WPCode_Conditional_Page();

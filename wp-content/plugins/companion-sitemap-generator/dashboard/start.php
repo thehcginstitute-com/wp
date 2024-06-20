@@ -13,15 +13,18 @@
 
 	<?php 
 
+	// Default
 	if( !isset( $_GET['tabbed'] ) ) { 
-		require_once( plugin_dir_path( __FILE__ ).'dashboard.php' );
+		require_once plugin_dir_path( __FILE__ ).'dashboard.php';
+
 	} else {
 
-		$requestedPage 	= $_GET['tabbed'];
+		// Check for allowed pages
+		$requestedPage 	= sanitize_key( $_GET['tabbed'] );
 		$allowedPages 	= array( 'dashboard', 'exclusion', 'additionalpages' );
 
 		if( in_array( $requestedPage, $allowedPages) ) {
-			require_once( plugin_dir_path( __FILE__ ) .''.$requestedPage.'.php' );
+			require_once plugin_dir_path( __FILE__ ) .''.$requestedPage.'.php';
 		} else {
 			wp_die( 'You\'re not allowed to view <strong>'.$requestedPage.'</strong>.' );				
 		}

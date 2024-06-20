@@ -5,8 +5,10 @@
  * Browser Information Class of the plugin.
  *
  * @since   3.2.2
- * @package Wsal
+ * @package wsal
  */
+
+// phpcs:ignoreFile
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -616,7 +618,7 @@ class WSAL_Browser {
 	 * Reset all properties
 	 */
 	public function reset() {
-		$http_user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING );
+		$http_user_agent = \sanitize_text_field( \wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) );
 		$this->_agent = ! empty( $http_user_agent ) ? $http_user_agent : '';
 		$this->_browser_name = $this->BROWSER_UNKNOWN;
 		$this->_version = $this->VERSION_UNKNOWN;

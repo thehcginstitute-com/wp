@@ -1225,8 +1225,9 @@ if ( ! class_exists( 'KcSeoSchemaModel' ) ) :
 					}
 					break;
 				case 'textarea':
+					$textarea_value = $value ?? '';
 					$html .= "<textarea id='{$id}' class='{$class}' {$attr} name='{$name}' >" . wp_kses(
-						$value,
+						$textarea_value,
 						[]
 					) . '</textarea>';
 					break;

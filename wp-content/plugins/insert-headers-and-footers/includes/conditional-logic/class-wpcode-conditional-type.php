@@ -35,19 +35,25 @@ abstract class WPCode_Conditional_Type {
 	 * Constructor.
 	 */
 	public function __construct() {
-		// Add hooks.
+		$this->register_type();
 		$this->hooks();
 	}
 
 	/**
-	 * Add type-specific hooks, if any.
-	 * Here's where we should add admin-ajax handlers that are specific
-	 * to the conditionals.
+	 * Register conditional-logic hooks specific to each type (e.g. ajax callbacks).
 	 *
 	 * @return void
 	 */
-	protected function hooks() {
+	public function hooks() {
+	}
 
+	/**
+	 * Register this instance to the global auto-insert types.
+	 *
+	 * @return void
+	 */
+	private function register_type() {
+		wpcode()->conditional_logic->register_type( $this );
 	}
 
 	/**
@@ -75,7 +81,7 @@ abstract class WPCode_Conditional_Type {
 	 *
 	 * @return void
 	 */
-	abstract protected function load_type_options();
+	abstract public function load_type_options();
 
 	/**
 	 * Get the label.
@@ -102,12 +108,13 @@ abstract class WPCode_Conditional_Type {
 	/**
 	 * Process a rule group specific to the conditions type.
 	 *
-	 * @param array $rule_group An array of rules with keys option,relation and value.
+	 * @param array          $rule_group An array of rules with keys option,relation and value.
+	 * @param WPCode_Snippet $snippet The snippet we are evaluating the rules for.
 	 *
 	 * @return bool
 	 */
-	public function evaluate_rule_row( $rule_group ) {
-		return $this->evaluate_rule( $rule_group['option'], $rule_group['relation'], $rule_group['value'] );
+	public function evaluate_rule_row( $rule_group, $snippet ) {
+		return $this->evaluate_rule( $rule_group['option'], $rule_group['relation'], $rule_group['value'], $snippet );
 	}
 
 	/**
@@ -116,21 +123,29 @@ abstract class WPCode_Conditional_Type {
 	 * options and compares that value to the set value using the operator
 	 * set in the settings.
 	 *
-	 * @param string $option The option to evaluate.
-	 * @param string $relation The comparison relation.
-	 * @param string $value The selected value for this condition.
+	 * @param string         $option The option to evaluate.
+	 * @param string         $relation The comparison relation.
+	 * @param string         $value The selected value for this condition.
+	 * @param WPCode_Snippet $snippet The snippet we are evaluating the rules for.
 	 *
 	 * @return bool
 	 */
-	protected function evaluate_rule( $option, $relation, $value ) {
+	protected function evaluate_rule( $option, $relation, $value, $snippet ) {
 		$options = $this->get_type_options();
 		if ( ! isset( $options [ $option ] ) ) {
 			return true;
 		}
 		$option_details = $options[ $option ];
-		$callback       = $option_details['callback'];
 
-		return $this->get_relation_comparison( $callback(), $value, $relation );
+		if ( ! isset( $option_details['callback'] ) ) {
+			return false;
+		}
+		$callback = $option_details['callback'];
+		if ( ! is_callable( $callback ) ) {
+			return false;
+		}
+
+		return $this->get_relation_comparison( $callback( $snippet ), $value, $relation );
 	}
 
 	/**
@@ -179,14 +194,18 @@ abstract class WPCode_Conditional_Type {
 			if ( is_array( $value2 ) ) {
 				return count( array_intersect( $value1, $value2 ) ) > 0;
 			}
+
 			return in_array( $value2, $value1 );
+		}
+		if ( is_array( $value2 ) ) {
+			return in_array( $value1, $value2 );
 		}
 
 		return $value1 == $value2;
 	}
 
 	/**
-	 * Does an does not equal comparison (not strict), also handles arrays to
+	 * Does a "does not equal" comparison (not strict), also handles arrays to
 	 * make it easier to compare things like user roles.
 	 *
 	 * @param mixed $value1 Value 1.
@@ -199,7 +218,12 @@ abstract class WPCode_Conditional_Type {
 			if ( is_array( $value2 ) ) {
 				return count( array_intersect( $value1, $value2 ) ) === 0;
 			}
+
 			return ! in_array( $value2, $value1 );
+		}
+
+		if ( is_array( $value2 ) ) {
+			return ! in_array( $value1, $value2 );
 		}
 
 		return $value1 != $value2;

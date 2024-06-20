@@ -4,9 +4,17 @@
  *
  * WSAL help page.
  *
- * @since 1.0.0
- * @package Wsal
+ * @since      1.0.0
+ * @package    wsal
+ * @subpackage views
  */
+
+use WSAL\Helpers\WP_Helper;
+use WSAL\Controllers\Connection;
+use WSAL\Helpers\Settings_Helper;
+use WSAL\Entities\Metadata_Entity;
+use WSAL\Entities\Occurrences_Entity;
+use WSAL\Helpers\Plugin_Settings_Helper;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +27,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - Plugin Support
  * - Plugin Documentation
  *
- * @package Wsal
+ * @package    wsal
+ * @subpackage views
  */
 class WSAL_Views_Help extends WSAL_AbstractView {
 
@@ -39,6 +48,8 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 
 	/**
 	 * Constructor.
+	 *
+	 * @param WpSecurityAuditLog $plugin Plugin instance.
 	 */
 	public function __construct( $plugin ) {
 		parent::__construct( $plugin );
@@ -49,34 +60,38 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 	 * Setup help page tabs.
 	 */
 	public function setup_help_tabs() {
-		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false; // phpcs:ignore
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false;
 
 		// Verify that the current page is WSAL settings page.
-		if ( empty( $page ) || $this->GetSafeViewName() !== $page ) {
+		if ( empty( $page ) || $this->get_safe_view_name() !== $page ) {
 			return;
 		}
 
 		// Tab links.
 		$wsal_help_tabs = array(
-			'help'        => array(
-				'name'     => __( 'Help', 'wp-security-audit-log' ),
-				'link'     => $this->GetUrl(),
+			'help' => array(
+				'name'     => esc_html__( 'Help', 'wp-security-audit-log' ),
+				'link'     => $this->get_url(),
 				'render'   => array( $this, 'tab_help' ),
 				'priority' => 10,
 			),
-			'contact'    => array(
-				'name'     => __( 'Contact Us', 'wp-security-audit-log' ),
-				'link'     => add_query_arg( 'tab', 'contact', $this->GetUrl() ),
+		);
+
+		if ( Settings_Helper::current_user_can( 'edit' ) ) {
+			$wsal_help_tabs['contact'] = array(
+				'name'     => esc_html__( 'Contact Us', 'wp-security-audit-log' ),
+				'link'     => add_query_arg( 'tab', 'contact', $this->get_url() ),
 				'render'   => array( $this, 'tab_contact_us' ),
 				'priority' => 15,
-			),
-			'system-info' => array(
-				'name'     => __( 'System Info', 'wp-security-audit-log' ),
-				'link'     => add_query_arg( 'tab', 'system-info', $this->GetUrl() ),
+			);
+
+			$wsal_help_tabs['system-info'] = array(
+				'name'     => esc_html__( 'System Info', 'wp-security-audit-log' ),
+				'link'     => add_query_arg( 'tab', 'system-info', $this->get_url() ),
 				'render'   => array( $this, 'tab_system_info' ),
 				'priority' => 20,
-			),
-		);
+			);
+		}
 
 		/**
 		 * Filter: `wsal_help_tabs`
@@ -99,59 +114,60 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 		$this->wsal_help_tabs = $wsal_help_tabs;
 
 		// Get the current tab.
-		$current_tab       = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
+		$current_tab       = ( isset( $_GET['tab'] ) ) ? \sanitize_text_field( \wp_unslash( $_GET['tab'] ) ) : null;
 		$this->current_tab = empty( $current_tab ) ? 'help' : $current_tab;
 	}
 
 	/**
-	 * Method: Get View Title.
+	 * {@inheritDoc}
 	 */
-	public function GetTitle() {
-		return __( 'Help', 'wp-security-audit-log' );
+	public function get_title() {
+		return esc_html__( 'Help', 'wp-security-audit-log' );
 	}
 
 	/**
-	 * Method: Get View Icon.
+	 * {@inheritDoc}
 	 */
-	public function GetIcon() {
+	public function get_icon() {
 		return 'dashicons-sos';
 	}
 
 	/**
-	 * Method: Get View Name.
+	 * {@inheritDoc}
 	 */
-	public function GetName() {
-		return __( 'Help & Contact Us', 'wp-security-audit-log' );
+	public function get_name() {
+		return esc_html__( 'Help & Contact Us', 'wp-security-audit-log' );
 	}
 
 	/**
-	 * Method: Get View Weight.
+	 * {@inheritDoc}
 	 */
-	public function GetWeight() {
-		return 13;
+	public function get_weight() {
+		return 9;
 	}
 
 	/**
-	 * Method: Get View Header.
+	 * {@inheritDoc}
 	 */
-	public function Header() {
+	public function header() {
 		wp_enqueue_style(
 			'extensions',
-			$this->_plugin->GetBaseUrl() . '/css/extensions.css',
+			WSAL_BASE_URL . '/css/extensions.css',
 			array(),
-			filemtime( $this->_plugin->GetBaseDir() . '/css/extensions.css' )
+			WSAL_VERSION
 		);
 	}
 
 	/**
-	 * Method: Get View.
+	 * {@inheritDoc}
 	 */
-	public function Render() {
+	public function render() {
+		$can_current_user_edit = Settings_Helper::current_user_can( 'edit' );
 		?>
 		<nav id="wsal-tabs" class="nav-tab-wrapper">
 			<?php
 			foreach ( $this->wsal_help_tabs as $tab_id => $tab ) :
-				if ( 'system-info' !== $this->current_tab || ( 'system-info' === $this->current_tab && $this->_plugin->settings()->CurrentUserCan( 'edit' ) ) ) :
+				if ( 'system-info' !== $this->current_tab || ( 'system-info' === $this->current_tab && $can_current_user_edit ) ) :
 					?>
 					<a href="<?php echo esc_url( $tab['link'] ); ?>" class="nav-tab <?php echo ( $tab_id === $this->current_tab ) ? 'nav-tab-active' : false; ?>"><?php echo esc_html( $tab['name'] ); ?></a>
 					<?php
@@ -164,7 +180,7 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 			<div class="wsal-help-main">
 				<?php
 				if ( ! empty( $this->current_tab ) && ! empty( $this->wsal_help_tabs[ $this->current_tab ]['render'] ) ) {
-					if ( 'system-info' !== $this->current_tab || ( 'system-info' === $this->current_tab && $this->_plugin->settings()->CurrentUserCan( 'edit' ) ) ) {
+					if ( 'system-info' !== $this->current_tab || ( 'system-info' === $this->current_tab && $can_current_user_edit ) ) {
 						call_user_func( $this->wsal_help_tabs[ $this->current_tab ]['render'] );
 					}
 				}
@@ -192,7 +208,7 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 			</p><p>
 				<a class="button" rel="noopener noreferrer" href="https://wordpress.org/support/plugin/wp-security-audit-log" target="_blank"><?php esc_html_e( 'Free Support Forum', 'wp-security-audit-log' ); ?></a>
 				&nbsp;&nbsp;&nbsp;&nbsp;
-				<a class="button" rel="noopener noreferrer" href="https://wpactivitylog.com/support/submit-ticket/?utm_source=plugin&utm_medium=referral&utm_campaign=WSAL&utm_content=free+support+email" target="_blank"><?php esc_html_e( 'Free Support Email', 'wp-security-audit-log' ); ?></a>
+				<a class="button" rel="noopener noreferrer" href="https://melapress.com/support/submit-ticket/?utm_source=plugins&utm_medium=link&utm_campaign=wsal" target="_blank"><?php esc_html_e( 'Free Support Email', 'wp-security-audit-log' ); ?></a>
 			</p>
 		</div>
 		<div class="wsal-help-section">
@@ -201,11 +217,9 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 				<?php esc_html_e( 'For more technical information about the WP Activity Log plugin please visit the plugin’s knowledge base.', 'wp-security-audit-log' ); ?>
 				<?php esc_html_e( 'Refer to the list of WordPress security events for a complete list of Events and IDs that the plugin uses to keep a log of all the changes in the WordPress activity log.', 'wp-security-audit-log' ); ?>
 			</p><p>
-				<a class="button" rel="noopener noreferrer" href="https://wpactivitylog.com/?utm_source=plugin&utm_medium=referral&utm_campaign=WSAL&utm_content=plugin+website" target="_blank"><?php esc_html_e( 'Plugin Website', 'wp-security-audit-log' ); ?></a>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<a class="button" rel="noopener noreferrer" href="https://wpactivitylog.com/support/kb/?utm_source=plugin&utm_medium=referral&utm_campaign=WSAL&utm_content=knowledge+base" target="_blank"><?php esc_html_e( 'Knowledge Base', 'wp-security-audit-log' ); ?></a>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				<a class="button" rel="noopener noreferrer" href="https://wpactivitylog.com/support/kb/list-wordpress-activity-log-event-ids/?utm_source=plugin&utm_medium=referral&utm_campaign=WSAL&utm_content=list+events" target="_blank"><?php esc_html_e( 'List of activity logs event IDs', 'wp-security-audit-log' ); ?></a>
+				<a class="button" rel="noopener noreferrer" href="https://melapress.com/wordpress-activity-log/?utm_source=plugins&utm_medium=link&utm_campaign=wsal" target="_blank"><?php esc_html_e( 'Plugin Website', 'wp-security-audit-log' ); ?></a>
+				<a class="button" rel="noopener noreferrer" href="https://melapress.com/support/kb/?utm_source=plugins&utm_medium=link&utm_campaign=wsal" target="_blank"><?php esc_html_e( 'Knowledge Base', 'wp-security-audit-log' ); ?></a>
+				<a class="button" rel="noopener noreferrer" href="https://melapress.com/support/kb/wp-activity-log-list-event-ids/?utm_source=plugins&utm_medium=button&utm_campaign=wsal" target="_blank"><?php esc_html_e( 'List of activity logs event IDs', 'wp-security-audit-log' ); ?></a>
 			</p>
 		</div>
 		<div class="wsal-help-section">
@@ -243,13 +257,23 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 				left: 0 !important;
 			}
 			.fs-full-size-wrapper {
-			  margin: 10px 20px 0 2px !important;
+				margin: 10px 20px 0 2px !important;
 			}
 		</style>
 		<?php
-		$freemius_id = wsal_freemius()->get_id();
-		$vars = array( 'id' => $freemius_id );
-		echo fs_get_template( 'contact.php', $vars );
+		if ( $freemius_id = wsal_freemius()->get_id() ) { // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure
+			$vars = array( 'id' => $freemius_id );
+			echo fs_get_template( 'contact.php', $vars ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} else {
+			echo '<p>';
+			printf(
+				/* translators: Link to our contact form */
+				esc_html__( 'Please refer to the Help tab for links and information on how to open a support ticket, or access the database. If you have any other queries, please use our %1$scontact form %2$s', 'wp-security-audit-log' ),
+				'<a style="text-decoration:underline" href="https://melapress.com/contact/?utm_source=plugins&utm_medium=link&utm_campaign=wsal" target="_blank">',
+				'</a>'
+			);
+			echo '</p>';
+		}
 	}
 
 	/**
@@ -274,28 +298,22 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 	private function sidebar() {
 		$plugins_data = array(
 			array(
-				'img'  => trailingslashit( WSAL_BASE_URL ) . 'img/help/password-policy-manager.jpg',
-				'desc' => __( 'Enforce strong password policies on WordPress', 'wp-security-audit-log' ),
-				'alt'  => 'Password Policy Manager',
-				'link' => 'https://www.wpwhitesecurity.com/wordpress-plugins/password-policy-manager-wordpress/?utm_source=plugin&utm_medium=referral&utm_campaign=PPMWP&utm_content=WSAL+banner',
-			),
-			array(
-				'img'  => trailingslashit( WSAL_BASE_URL ) . 'img/help/website-file-changes-monitor.jpg',
-				'desc' => __( 'Automatically identify unauthorized file changes on WordPress', 'wp-security-audit-log' ),
-				'alt'  => 'Website File Changes Monitor',
-				'link' => 'https://www.wpwhitesecurity.com/wordpress-plugins/website-file-changes-monitor/?utm_source=plugin&utm_medium=referral&utm_campaign=WFCM&utm_content=WSAL+banner',
-			),
-			array(
 				'img'  => trailingslashit( WSAL_BASE_URL ) . 'img/help/wp-2fa-img.jpg',
-				'desc' => __( 'Add an extra layer of security to your login pages with 2FA & require your users to use it.', 'wp-security-audit-log' ),
+				'desc' => esc_html__( 'Add an extra layer of security to your login pages with 2FA & require your users to use it.', 'wp-security-audit-log' ),
 				'alt'  => 'WP 2FA',
-				'link' => 'https://www.wpwhitesecurity.com/wordpress-plugins/wp-2fa/?utm_source=plugin&utm_medium=referral&utm_campaign=WP2FA&utm_content=WSAL+banner',
+				'link' => 'https://melapress.com/wordpress-2fa/?utm_source=plugins&utm_medium=link&utm_campaign=wsal',
 			),
 			array(
-				'img'  => trailingslashit( WSAL_BASE_URL ) . 'img/help/activity-log-for-mainwp.jpg',
-				'desc' => __( 'See the child sites activity logs from the central MainWP dashboard', 'wp-security-audit-log' ),
-				'alt'  => 'Activity Log for MainWP',
-				'link' => 'https://wpactivitylog.com/extensions/mainwp-activity-log/?utm_source=plugin&utm_medium=referral&utm_campaign=AL4MWP&utm_content=WSAL+banner',
+				'img'  => trailingslashit( WSAL_BASE_URL ) . 'img/help/c4wp.jpeg',
+				'desc' => esc_html__( 'Protect website forms & login pages from spambots & automated attacks.', 'wp-security-audit-log' ),
+				'alt'  => 'Captcha 4WP',
+				'link' => 'https://melapress.com/wordpress-captcha/?utm_source=plugins&utm_medium=link&utm_campaign=wsal',
+			),
+			array(
+				'img'  => trailingslashit( WSAL_BASE_URL ) . 'img/help/password-policy-manager.jpeg',
+				'desc' => esc_html__( 'Boost WordPress security with login & password policies.', 'wp-security-audit-log' ),
+				'alt'  => 'WPassword',
+				'link' => 'https://melapress.com/wordpress-login-security/?utm_source=plugins&utm_medium=link&utm_campaign=wsal',
 			),
 		);
 		?>
@@ -324,7 +342,6 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 	 * Method: Get system information.
 	 *
 	 * @return string - System information.
-	 * @throws Freemius_Exception
 	 */
 	public function get_sysinfo() {
 		// System info.
@@ -336,7 +353,7 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 		$sysinfo .= '-- Site Info --' . "\n\n";
 		$sysinfo .= 'Site URL (WP Address):    ' . site_url() . "\n";
 		$sysinfo .= 'Home URL (Site Address):  ' . home_url() . "\n";
-		$sysinfo .= 'Multisite:                ' . ( is_multisite() ? 'Yes' : 'No' ) . "\n";
+		$sysinfo .= 'Multisite:                ' . ( WP_Helper::is_multisite() ? 'Yes' : 'No' ) . "\n";
 
 		// Browser information.
 		if ( ! class_exists( 'WSAL_Browser' ) && file_exists( WSAL_BASE_DIR . 'sdk/class-wsal-browser.php' ) ) {
@@ -349,11 +366,11 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 
 		// Get theme info.
 		$theme_data   = wp_get_theme();
-		$theme        = $theme_data->Name . ' ' . $theme_data->Version;
-		$parent_theme = $theme_data->Template;
+		$theme        = $theme_data->Name . ' ' . $theme_data->Version; // phpcs:ignore
+		$parent_theme = $theme_data->Template; // phpcs:ignore
 		if ( ! empty( $parent_theme ) ) {
 			$parent_theme_data = wp_get_theme( $parent_theme );
-			$parent_theme      = $parent_theme_data->Name . ' ' . $parent_theme_data->Version;
+			$parent_theme      = $parent_theme_data->Name . ' ' . $parent_theme_data->Version; // phpcs:ignore
 		}
 
 		// Language information.
@@ -400,18 +417,15 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 		// WordPress active plugins.
 		$sysinfo .= "\n" . '-- WordPress Active Plugins --' . "\n\n";
 
-		$plugins        = get_plugins();
-		$active_plugins = get_option( 'active_plugins', array() );
-
+		$plugins                       = get_plugins();
+		$active_plugins                = get_option( 'active_plugins', array() );
+		$can_use_freemius_premium_code = wsal_freemius()->can_use_premium_code();
 		foreach ( $plugins as $plugin_path => $plugin ) {
-			if ( ! in_array( $plugin_path, $active_plugins ) ) {
+			if ( ! in_array( $plugin_path, $active_plugins ) ) { // phpcs:ignore
 				continue;
 			}
 
-			if (
-				'WP Activity Log' === $plugin['Name']
-				&& wsal_freemius()->can_use_premium_code()
-			) {
+			if ( 'WP Activity Log' === $plugin['Name'] && $can_use_freemius_premium_code ) {
 				$update   = ( array_key_exists( $plugin_path, $updates ) ) ? ' (needs update - ' . $updates[ $plugin_path ]->update->new_version . ')' : '';
 				$sysinfo .= $plugin['Name'] . ' Premium: ' . $plugin['Version'] . $update . "\n";
 			} else {
@@ -424,23 +438,15 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 		$sysinfo .= "\n" . '-- WordPress Inactive Plugins --' . "\n\n";
 
 		foreach ( $plugins as $plugin_path => $plugin ) {
-			if ( in_array( $plugin_path, $active_plugins ) ) {
+			if ( in_array( $plugin_path, $active_plugins ) ) { // phpcs:ignore
 				continue;
 			}
 
-			if (
-				'WP Activity Log' === $plugin['Name']
-				&& wsal_freemius()->can_use_premium_code()
-			) {
-				$update   = ( array_key_exists( $plugin_path, $updates ) ) ? ' (needs update - ' . $updates[ $plugin_path ]->update->new_version . ')' : '';
-				$sysinfo .= $plugin['Name'] . ' Premium: ' . $plugin['Version'] . $update . "\n";
-			} else {
-				$update   = ( array_key_exists( $plugin_path, $updates ) ) ? ' (needs update - ' . $updates[ $plugin_path ]->update->new_version . ')' : '';
-				$sysinfo .= $plugin['Name'] . ': ' . $plugin['Version'] . $update . "\n";
-			}
+			$update   = ( array_key_exists( $plugin_path, $updates ) ) ? ' (needs update - ' . $updates[ $plugin_path ]->update->new_version . ')' : '';
+			$sysinfo .= $plugin['Name'] . ': ' . $plugin['Version'] . $update . "\n";
 		}
 
-		if ( is_multisite() ) {
+		if ( WP_Helper::is_multisite() ) {
 			// WordPress Multisite active plugins.
 			$sysinfo .= "\n" . '-- Network Active Plugins --' . "\n\n";
 
@@ -454,10 +460,7 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 					continue;
 				}
 
-				if (
-					'WP Activity Log' === $plugin['Name']
-					&& wsal_freemius()->can_use_premium_code()
-				) {
+				if ( 'WP Activity Log' === $plugin['Name'] && $can_use_freemius_premium_code ) {
 					$update   = ( array_key_exists( $plugin_path, $updates ) ) ? ' (needs update - ' . $updates[ $plugin_path ]->update->new_version . ')' : '';
 					$plugin   = get_plugin_data( $plugin_path );
 					$sysinfo .= $plugin['Name'] . ' Premium: ' . $plugin['Version'] . $update . "\n";
@@ -470,7 +473,7 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 		}
 
 		// Server configuration.
-		$server_software = filter_input( INPUT_SERVER, 'SERVER_SOFTWARE', FILTER_SANITIZE_STRING );
+		$server_software = \sanitize_text_field( \wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) );
 		$sysinfo        .= "\n" . '-- Webserver Configuration --' . "\n\n";
 		$sysinfo        .= 'PHP Version:              ' . PHP_VERSION . "\n";
 		$sysinfo        .= 'MySQL Version:            ' . $wpdb->db_version() . "\n";
@@ -493,12 +496,32 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 
 		// WSAL options.
 		$sysinfo .= "\n" . '-- WSAL Options --' . "\n\n";
-		$options  = $this->_plugin->settings()->get_plugin_settings();
+		$options  = Plugin_Settings_Helper::get_plugin_settings();
 
 		if ( ! empty( $options ) && is_array( $options ) ) {
 			foreach ( $options as $option ) {
 				$sysinfo .= 'Option: ' . $option->option_name . "\n";
 				$sysinfo .= 'Value: ' . $option->option_value . "\n\n";
+			}
+		}
+
+		$sysinfo .= 'Occurrences table rows: ' . Occurrences_Entity::count() . "\n";
+		$sysinfo .= 'Occurrences table size: ' . Occurrences_Entity::get_table_size() . "Mb\n";
+		$sysinfo .= 'Meta table rows: ' . Metadata_Entity::count() . "\n";
+		$sysinfo .= 'Meta table size: ' . Metadata_Entity::get_table_size() . "Mb\n\n";
+
+		if ( Settings_Helper::is_archiving_enabled() ) {
+			$connection_name = Settings_Helper::get_option_value( 'archive-connection' );
+
+			$wsal_db = Connection::get_connection( $connection_name );
+
+			if ( null !== $wsal_db && isset( $wsal_db::$error_string ) && null !== $wsal_db::$error_string ) {
+				$sysinfo .= $wsal_db::$error_string . "\n";
+			} else {
+				$sysinfo .= 'Archive Occurrences table rows: ' . Occurrences_Entity::count( '%d', array( 1 ), $wsal_db ) . "\n";
+				$sysinfo .= 'Archive Occurrences table size: ' . Occurrences_Entity::get_table_size( $wsal_db ) . "Mb\n";
+				$sysinfo .= 'Archive Meta table rows: ' . Metadata_Entity::count( '%d', array( 1 ), $wsal_db ) . "\n";
+				$sysinfo .= 'Archive Meta table size: ' . Metadata_Entity::get_table_size( $wsal_db ) . "Mb\n\n";
 			}
 		}
 
@@ -508,10 +531,10 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 	}
 
 	/**
-	 * Method: Render footer content.
+	 * {@inheritDoc}
 	 */
-	public function Footer() {
-		if ( 'system-info' === $this->current_tab && $this->_plugin->settings()->CurrentUserCan( 'edit' ) ) :
+	public function footer() {
+		if ( 'system-info' === $this->current_tab && Settings_Helper::current_user_can( 'edit' ) ) :
 			?>
 			<script>
 				/**
@@ -530,7 +553,7 @@ class WSAL_Views_Help extends WSAL_AbstractView {
 					element.style.display = 'none';
 					document.body.appendChild(element);
 
-					// Simlate click on the element.
+					// Simulate click on the element.
 					element.click();
 
 					// Remove temporary element.

@@ -72,6 +72,8 @@
     padding: 2px;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
 }
 
 #wpfront-notification-bar-options input.post-id-list

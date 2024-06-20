@@ -25,13 +25,6 @@ class News_Sitemap {
 	use Hooker;
 
 	/**
-	 * NEWS Publication.
-	 *
-	 * @var string
-	 */
-	protected $news_publication = null;
-
-	/**
 	 * Holds the Sitemap slug.
 	 *
 	 * @var string
@@ -157,7 +150,7 @@ class News_Sitemap {
 		$output .= $renderer->newline( '<loc>' . $renderer->encode_url_rfc3986( htmlspecialchars( $url['loc'] ) ) . '</loc>', 2 );
 
 		$output .= $renderer->newline( '<news:news>', 2 );
-		$output .= $this->get_news_publication( $renderer );
+		$output .= $this->get_news_publication( $renderer, $url );
 
 		$output .= empty( $date ) ? '' : $renderer->newline( '<news:publication_date>' . htmlspecialchars( $date ) . '</news:publication_date>', 3 );
 		$output .= $renderer->add_cdata( $url['title'], 'news:title', 3 );
@@ -234,24 +227,29 @@ class News_Sitemap {
 	/**
 	 * Get News Pub Tags.
 	 *
-	 * @param  Renderer $renderer Sitemap renderer class object.
+	 * @param Renderer $renderer Sitemap renderer class object.
+	 * @param array    $entity   Array of parts that make up this entry.
 	 * @return string
 	 */
-	private function get_news_publication( $renderer ) {
-		if ( ! is_null( $this->news_publication ) ) {
-			return $this->news_publication;
-		}
-
+	private function get_news_publication( $renderer, $entity ) {
 		$lang = Locale::get_site_language();
+
+		/**
+		 * Filter: 'rank_math/sitemap/news/language' - Allow changing the news language based on the entity.
+		 *
+		 * @param string $lang   Language code.
+		 * @param array  $entity Array of parts that make up this entry.
+		 */
+		$lang = $this->do_filter( 'sitemap/news/language', $lang, $entity );
 		$name = Helper::get_settings( 'sitemap.news_sitemap_publication_name' );
 		$name = $name ? $name : get_bloginfo( 'name' );
 
-		$this->news_publication  = '';
-		$this->news_publication .= $renderer->newline( '<news:publication>', 3 );
-		$this->news_publication .= $renderer->newline( '<news:name>' . esc_html( $name ) . '</news:name>', 4 );
-		$this->news_publication .= $renderer->newline( '<news:language>' . $lang . '</news:language>', 4 );
-		$this->news_publication .= $renderer->newline( '</news:publication>', 3 );
+		$news_publication  = '';
+		$news_publication .= $renderer->newline( '<news:publication>', 3 );
+		$news_publication .= $renderer->newline( '<news:name>' . esc_html( $name ) . '</news:name>', 4 );
+		$news_publication .= $renderer->newline( '<news:language>' . $lang . '</news:language>', 4 );
+		$news_publication .= $renderer->newline( '</news:publication>', 3 );
 
-		return $this->news_publication;
+		return $news_publication;
 	}
 }

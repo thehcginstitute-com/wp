@@ -62,8 +62,11 @@
 }
 
 /* Welcome screen */
+.csg_content .welcome-panel::before {
+	display: none;
+}
 .welcome-to-csg {
-    background: #FFF;
+    background-color: #FFF;
     border: 1px solid #CCD0D4;
     margin: 25px 0;
     padding: 30px;

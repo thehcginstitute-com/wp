@@ -18,7 +18,6 @@ if ( ! class_exists( 'Mega_Menu_General' ) ) :
 		 */
 		public function __construct() {
 			add_action( 'admin_post_megamenu_save_settings', array( $this, 'save_settings' ) );
-			add_action( 'admin_post_megamenu_delete_data', array( $this, 'delete_data' ) );
 
 			add_filter( 'megamenu_menu_tabs', array( $this, 'add_general_tab' ), 4 );
 			add_action( 'megamenu_page_general_settings', array( $this, 'general_settings_page' ) );
@@ -141,27 +140,6 @@ if ( ! class_exists( 'Mega_Menu_General' ) ) :
 									<div class='fail'><?php esc_html_e( 'Selecting this option will effectively disable the theme editor and many of the features available in Max Mega Menu and Max Mega Menu Pro. Only enable this option if you fully understand the consequences.', 'megamenu' ); ?>
 								</div>
 							</div>
-						</td>
-					</tr>
-					<tr>
-						<td class='mega-name'>
-							<?php esc_html_e( 'More options', 'megamenu' ); ?>
-							<div class='mega-description'>
-							</div>
-						</td>
-						<td class='mega-value'>
-
-							<?php
-								$locations_url = add_query_arg(
-									array(
-										'page'           => 'maxmegamenu',
-									),
-									admin_url( 'admin.php' )
-								);
-							?>
-
-							<p>Looking for the <b>Click Event Behaviour</b>, <b>Mobile Menu Behaviour</b>, <b>Menu Item Descriptions</b>, <b>Unbind JavaScript Events</b>, <b>Prefix Menu Item Classes</b> or <b>Active Menu Instance</b> options?</p>
-							<p>These can now be defined <em>per menu location</em> on the <em><a href='<?php echo esc_attr( $locations_url ); ?>'>Mega Menu > Menu Locations</a></em> page (expand a menu location and look within the 'Advanced' tab).</p>
 						</td>
 					</tr>
 					<!--tr>

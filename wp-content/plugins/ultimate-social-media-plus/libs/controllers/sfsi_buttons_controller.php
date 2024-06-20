@@ -20,6 +20,8 @@ function sfsi_plus_options_updater1()
 	$sfsi_plus_youtube_display  = isset($_POST["sfsi_plus_youtube_display"]) ? sanitize_text_field($_POST["sfsi_plus_youtube_display"]) : 'no';
 	$sfsi_plus_pinterest_display = isset($_POST["sfsi_plus_pinterest_display"]) ? sanitize_text_field($_POST["sfsi_plus_pinterest_display"]) : 'no';
 	$sfsi_plus_instagram_display = isset($_POST["sfsi_plus_instagram_display"]) ? sanitize_text_field($_POST["sfsi_plus_instagram_display"]) : 'no';
+	$sfsi_plus_ria_display = isset($_POST["sfsi_plus_ria_display"]) ? sanitize_text_field($_POST["sfsi_plus_ria_display"]) : 'no';
+	$sfsi_plus_inha_display = isset($_POST["sfsi_plus_inha_display"]) ? sanitize_text_field($_POST["sfsi_plus_inha_display"]) : 'no';
 	$sfsi_plus_houzz_display	= isset($_POST["sfsi_plus_houzz_display"]) ? sanitize_text_field($_POST["sfsi_plus_houzz_display"]) : 'no';
 	$sfsi_plus_telegram_display = isset($_POST["sfsi_plus_telegram_display"]) ? sanitize_text_field($_POST["sfsi_plus_telegram_display"]) : 'no';
 	$sfsi_plus_vk_display = isset($_POST["sfsi_plus_vk_display"]) ? sanitize_text_field($_POST["sfsi_plus_vk_display"]) : 'no';
@@ -42,6 +44,8 @@ function sfsi_plus_options_updater1()
 		'sfsi_plus_pinterest_display'	=> sanitize_text_field($sfsi_plus_pinterest_display),
 		'sfsi_plus_linkedin_display'	=> sanitize_text_field($sfsi_plus_linkedin_display),
 		'sfsi_plus_instagram_display'	=> sanitize_text_field($sfsi_plus_instagram_display),
+		'sfsi_plus_ria_display'	=> sanitize_text_field($sfsi_plus_ria_display),
+		'sfsi_plus_inha_display'	=> sanitize_text_field($sfsi_plus_inha_display),
 		'sfsi_plus_ok_display'	        => sanitize_text_field($sfsi_plus_ok_display),
 		'sfsi_plus_telegram_display'	=> sanitize_text_field($sfsi_plus_telegram_display),
 		'sfsi_plus_vk_display'	        => sanitize_text_field($sfsi_plus_vk_display),
@@ -154,6 +158,12 @@ function sfsi_plus_options_updater2()
 	$sfsi_plus_mastodon_pageUrl   = isset($_POST["sfsi_plus_mastodon_pageUrl"]) ? esc_url($_POST["sfsi_plus_mastodon_pageUrl"]) : '';
 	$sfsi_plus_mastodonVisit_option      = isset($_POST["sfsi_plus_mastodonVisit_option"]) ? sanitize_text_field($_POST["sfsi_plus_mastodonVisit_option"]) : 'no';
 
+    $sfsi_plus_ria_pageUrl   = isset($_POST["sfsi_plus_ria_pageUrl"]) ? esc_url($_POST["sfsi_plus_ria_pageUrl"]) : '';
+    $sfsi_plus_riaVisit_option      = isset($_POST["sfsi_plus_riaVisit_option"]) ? sanitize_text_field($_POST["sfsi_plus_riaVisit_option"]) : 'no';
+
+    $sfsi_plus_inha_pageUrl   = isset($_POST["sfsi_plus_inha_pageUrl"]) ? esc_url($_POST["sfsi_plus_inha_pageUrl"]) : '';
+    $sfsi_plus_inhaVisit_option      = isset($_POST["sfsi_plus_inhaVisit_option"]) ? sanitize_text_field($_POST["sfsi_plus_inhaVisit_option"]) : 'no';
+
 	/*
 	 * Escape custom icons url
 	 */
@@ -247,6 +257,14 @@ function sfsi_plus_options_updater2()
 		'sfsi_plus_mastodon_pageUrl' => sanitize_text_field($sfsi_plus_mastodon_pageUrl),
 		'sfsi_plus_mastodonVisit_option' => sanitize_text_field($sfsi_plus_mastodonVisit_option),
 
+        /** Ria */
+        'sfsi_plus_ria_pageUrl' => sanitize_text_field($sfsi_plus_ria_pageUrl),
+        'sfsi_plus_riaVisit_option' => sanitize_text_field($sfsi_plus_riaVisit_option),
+
+        /** Inha */
+        'sfsi_plus_inha_pageUrl' => sanitize_text_field($sfsi_plus_inha_pageUrl),
+        'sfsi_plus_inhaVisit_option' => sanitize_text_field($sfsi_plus_inhaVisit_option),
+
 		//MZ CODE END
 		/* linkedIn options */
 		'sfsi_plus_linkedin_page'			=> sanitize_text_field($sfsi_plus_linkedin_page),
@@ -333,6 +351,8 @@ function sfsi_plus_options_updater3()
     $sfsi_plus_weibo_bgColor    = isset( $_POST["sfsi_plus_weibo_bgColor"] ) ? sanitize_text_field( $_POST["sfsi_plus_weibo_bgColor"] ) : '';
 	$sfsi_plus_copylink_bgColor    = isset( $_POST["sfsi_plus_copylink_bgColor"] )? sanitize_text_field( $_POST["sfsi_plus_copylink_bgColor"] ): '';
 	$sfsi_plus_mastodon_bgColor    = isset( $_POST["sfsi_plus_mastodon_bgColor"] ) ? sanitize_text_field( $_POST["sfsi_plus_mastodon_bgColor"] ) : '';
+	$sfsi_plus_ria_bgColor    = isset( $_POST["sfsi_plus_ria_bgColor"] ) ? sanitize_text_field( $_POST["sfsi_plus_ria_bgColor"] ) : '';
+	$sfsi_plus_inha_bgColor    = isset( $_POST["sfsi_plus_inha_bgColor"] ) ? sanitize_text_field( $_POST["sfsi_plus_inha_bgColor"] ) : '';
 
 	/* Design and animation option  */
 	$up_option3 = array(
@@ -370,6 +390,8 @@ function sfsi_plus_options_updater3()
 		'sfsi_plus_weibo_bgColor'				=> sanitize_text_field($sfsi_plus_weibo_bgColor),
         'sfsi_plus_copylink_bgColor'            => sanitize_text_field( $sfsi_plus_copylink_bgColor ),
 		'sfsi_plus_mastodon_bgColor'			=> sanitize_text_field($sfsi_plus_mastodon_bgColor),
+		'sfsi_plus_ria_bgColor'			=> sanitize_text_field($sfsi_plus_ria_bgColor),
+		'sfsi_plus_inha_bgColor'			=> sanitize_text_field($sfsi_plus_inha_bgColor),
 	);
 	update_option('sfsi_plus_section3_options', serialize($up_option3));
 	header('Content-Type: application/json');
@@ -399,6 +421,7 @@ function sfsi_plus_options_updater4()
 
 	$sfsi_plus_facebook_countsDisplay    = isset($_POST["sfsi_plus_facebook_countsDisplay"]) ? sanitize_text_field($_POST["sfsi_plus_facebook_countsDisplay"]) : 'no';
 	$sfsi_plus_facebook_countsFrom       = isset($_POST["sfsi_plus_facebook_countsFrom"]) ? sanitize_text_field($_POST["sfsi_plus_facebook_countsFrom"]) : 'manual';
+    $sfsi_plus_facebook_enableCache      = isset( $_POST["sfsi_plus_facebook_enableCache"] ) && ($_POST["sfsi_plus_facebook_enableCache"] === true || $_POST["sfsi_plus_facebook_enableCache"] == "true") ? 'yes' : 'no';
 	$sfsi_plus_facebook_mypageCounts     = isset($_POST["sfsi_plus_facebook_mypageCounts"]) ? sanitize_text_field(trim($_POST["sfsi_plus_facebook_mypageCounts"])) : '';
 	$sfsi_plus_facebook_manualCounts     = isset($_POST["sfsi_plus_facebook_manualCounts"]) ? intval(trim($_POST["sfsi_plus_facebook_manualCounts"])) : '';
 	$sfsi_plus_facebook_PageLink         = isset($_POST["sfsi_plus_facebook_PageLink"]) ? sanitize_text_field(trim($_POST["sfsi_plus_facebook_PageLink"])) : '';
@@ -464,8 +487,14 @@ function sfsi_plus_options_updater4()
 	$sfsi_plus_weibo_manualCounts        = isset($_POST["sfsi_plus_weibo_manualCounts"]) ? intval(trim($_POST["sfsi_plus_weibo_manualCounts"])) : '';
 	
 	$sfsi_plus_mastodon_countsDisplay       = isset($_POST["sfsi_plus_mastodon_countsDisplay"]) ? sanitize_text_field($_POST["sfsi_plus_mastodon_countsDisplay"]) : 'no';
-	$sfsi_plus_mastodon_manualCounts        = isset($_POST["sfsi_plus_mastodon_manualCounts"]) ? intval(trim($_POST["sfsi_plus_mastodon_manualCounts"])) : ''; 
-	
+	$sfsi_plus_mastodon_manualCounts        = isset($_POST["sfsi_plus_mastodon_manualCounts"]) ? intval(trim($_POST["sfsi_plus_mastodon_manualCounts"])) : '';
+
+    $sfsi_plus_ria_countsDisplay       = isset($_POST["sfsi_plus_ria_countsDisplay"]) ? sanitize_text_field($_POST["sfsi_plus_ria_countsDisplay"]) : 'no';
+    $sfsi_plus_ria_manualCounts        = isset($_POST["sfsi_plus_ria_manualCounts"]) ? intval(trim($_POST["sfsi_plus_ria_manualCounts"])) : '';
+
+    $sfsi_plus_inha_countsDisplay       = isset($_POST["sfsi_plus_inha_countsDisplay"]) ? sanitize_text_field($_POST["sfsi_plus_inha_countsDisplay"]) : 'no';
+    $sfsi_plus_inha_manualCounts        = isset($_POST["sfsi_plus_inha_manualCounts"]) ? intval(trim($_POST["sfsi_plus_inha_manualCounts"])) : '';
+
 	$sfsi_plus_round_counts = isset($_POST["sfsi_plus_round_counts"]) ? sanitize_text_field($_POST["sfsi_plus_round_counts"]) : 'no';
 	$sfsi_plus_original_counts = isset($_POST["sfsi_plus_original_counts"]) ? sanitize_text_field($_POST["sfsi_plus_original_counts"]) : 'no';
 	$sfsi_plus_responsive_share_count = isset($_POST["sfsi_plus_responsive_share_count"]) ? sanitize_text_field($_POST["sfsi_plus_responsive_share_count"]) : 'no';
@@ -484,6 +513,7 @@ function sfsi_plus_options_updater4()
 
 		'sfsi_plus_facebook_countsDisplay'	=> sanitize_text_field($sfsi_plus_facebook_countsDisplay),
 		'sfsi_plus_facebook_countsFrom'	 	=> sanitize_text_field($sfsi_plus_facebook_countsFrom),
+        'sfsi_plus_facebook_enableCache'  => sanitize_text_field($sfsi_plus_facebook_enableCache),
 		'sfsi_plus_facebook_mypageCounts' 	=> sfsi_plus_sanitize_field($sfsi_plus_facebook_mypageCounts),
 		'sfsi_plus_facebook_manualCounts' 	=> intval($sfsi_plus_facebook_manualCounts),
 		//'sfsi_plus_facebook_PageLink'	 	=> $sfsi_plus_facebook_PageLink,
@@ -543,6 +573,12 @@ function sfsi_plus_options_updater4()
 		'sfsi_plus_mastodon_countsDisplay'	=> sanitize_text_field($sfsi_plus_mastodon_countsDisplay),
 		'sfsi_plus_mastodon_manualCounts' 	=> intval($sfsi_plus_mastodon_manualCounts),
 
+        'sfsi_plus_ria_countsDisplay'	=> sanitize_text_field($sfsi_plus_ria_countsDisplay),
+        'sfsi_plus_ria_manualCounts' 	=> intval($sfsi_plus_ria_manualCounts),
+
+        'sfsi_plus_inha_countsDisplay'	=> sanitize_text_field($sfsi_plus_inha_countsDisplay),
+        'sfsi_plus_inha_manualCounts' 	=> intval($sfsi_plus_inha_manualCounts),
+
 		'sfsi_plus_wechat_countsDisplay'	=> sanitize_text_field($sfsi_plus_wechat_countsDisplay),
 		'sfsi_plus_wechat_manualCounts' 	=> intval($sfsi_plus_wechat_manualCounts),
 		'sfsi_plus_round_counts'            => sanitize_text_field($sfsi_plus_round_counts),
@@ -576,7 +612,7 @@ function sfsi_plus_options_updater5()
 	$sfsi_plus_icons_Alignment           = isset($_POST["sfsi_plus_icons_Alignment"]) ? sanitize_text_field($_POST["sfsi_plus_icons_Alignment"]) : 'center';
 	$sfsi_plus_icons_perRow              = isset($_POST["sfsi_plus_icons_perRow"]) 	  ? intval($_POST["sfsi_plus_icons_perRow"]) : '5';
 
-	$sfsi_plus_icons_language            = isset($_POST["sfsi_plus_icons_language"]) 	  ? sanitize_text_field($_POST["sfsi_plus_icons_language"]) : 'en_US';
+	$sfsi_plus_icons_language            = isset($_POST["sfsi_plus_icons_language"]) 	  ? esc_js(sanitize_text_field($_POST["sfsi_plus_icons_language"])) : 'en_US';
 	$sfsi_plus_icons_ClickPageOpen       = isset($_POST["sfsi_plus_icons_ClickPageOpen"]) ? sanitize_text_field($_POST["sfsi_plus_icons_ClickPageOpen"]) : 'no';
 	$sfsi_plus_icons_AddNoopener         = isset( $_POST["sfsi_plus_icons_AddNoopener"] ) ? sanitize_text_field($_POST["sfsi_plus_icons_AddNoopener"] ) : 'no';
 	$sfsi_plus_icons_float               = isset($_POST["sfsi_plus_icons_float"]) 		  ? sanitize_text_field($_POST["sfsi_plus_icons_float"]) : 'no';
@@ -588,6 +624,8 @@ function sfsi_plus_options_updater5()
 	$sfsi_plus_email_MouseOverText       = isset($_POST["sfsi_plus_email_MouseOverText"]) ? sanitize_text_field($_POST["sfsi_plus_email_MouseOverText"]) : '';
 
 	$sfsi_plus_twitter_MouseOverText     = isset($_POST["sfsi_plus_twitter_MouseOverText"])   ? sanitize_text_field($_POST["sfsi_plus_twitter_MouseOverText"]) : '';
+	$sfsi_plus_ria_MouseOverText     = isset($_POST["sfsi_plus_ria_MouseOverText"])   ? sanitize_text_field($_POST["sfsi_plus_ria_MouseOverText"]) : '';
+	$sfsi_plus_inha_MouseOverText     = isset($_POST["sfsi_plus_inha_MouseOverText"])   ? sanitize_text_field($_POST["sfsi_plus_inha_MouseOverText"]) : '';
 	$sfsi_plus_facebook_MouseOverText    = isset($_POST["sfsi_plus_facebook_MouseOverText"])  ? sanitize_text_field($_POST["sfsi_plus_facebook_MouseOverText"]) : '';
 	$sfsi_plus_linkedIn_MouseOverText    = isset($_POST["sfsi_plus_linkedIn_MouseOverText"])  ? sanitize_text_field($_POST["sfsi_plus_linkedIn_MouseOverText"]) : '';
 	$sfsi_plus_pinterest_MouseOverText   = isset($_POST["sfsi_plus_pinterest_MouseOverText"]) ? sanitize_text_field($_POST["sfsi_plus_pinterest_MouseOverText"]) : '';
@@ -623,6 +661,8 @@ function sfsi_plus_options_updater5()
 	$sfsi_plus_whatsappIcon_order   = isset( $_POST["sfsi_plus_whatsappIcon_order"] ) ? intval( $_POST["sfsi_plus_whatsappIcon_order"] ) : '27';
 	$sfsi_plus_copylinkIcon_order   = isset( $_POST["sfsi_plus_copylinkIcon_order"] ) ? intval( $_POST["sfsi_plus_copylinkIcon_order"] ) : '30';
 	$sfsi_plus_mastodonIcon_order   = isset( $_POST["sfsi_plus_mastodonIcon_order"] ) ? intval( $_POST["sfsi_plus_mastodonIcon_order"] ) : '28'; 
+	$sfsi_plus_riaIcon_order   = isset( $_POST["sfsi_plus_riaIcon_order"] ) ? intval( $_POST["sfsi_plus_riaIcon_order"] ) : '31';
+	$sfsi_plus_inhaIcon_order   = isset( $_POST["sfsi_plus_inhaIcon_order"] ) ? intval( $_POST["sfsi_plus_inhaIcon_order"] ) : '32';
 
 	if ( isset( $_POST["sfsi_plus_custom_MouseOverTexts"] ) ) {
 		$sfsi_plus_custom_MouseOverTexts = array();
@@ -631,9 +671,9 @@ function sfsi_plus_options_updater5()
 		}
 	}
 	$sfsi_plus_custom_MouseOverTexts = isset( $sfsi_plus_custom_MouseOverTexts ) ? serialize( $sfsi_plus_custom_MouseOverTexts ) : '';
-	$sfsi_plus_follow_icons_language = isset( $_POST["sfsi_plus_follow_icons_language"] ) ? sanitize_text_field( $_POST["sfsi_plus_follow_icons_language"] ) : 'Follow_en_US';
-	$sfsi_plus_facebook_icons_language = isset( $_POST["sfsi_plus_facebook_icons_language"] ) ? sanitize_text_field( $_POST["sfsi_plus_facebook_icons_language"] ) : 'Visit_us_en_US';
-	$sfsi_plus_twitter_icons_language = isset( $_POST["sfsi_plus_twitter_icons_language"] ) ? sanitize_text_field( $_POST["sfsi_plus_twitter_icons_language"] ) : 'Visit_us_en_US';
+	$sfsi_plus_follow_icons_language = isset( $_POST["sfsi_plus_follow_icons_language"] ) && sfsi_verify_language_values($_POST["sfsi_plus_follow_icons_language"]) ? esc_js(sanitize_text_field( $_POST["sfsi_plus_follow_icons_language"] )) : 'Follow_en_US';
+	$sfsi_plus_facebook_icons_language = isset( $_POST["sfsi_plus_facebook_icons_language"] ) && sfsi_verify_language_values($_POST["sfsi_plus_facebook_icons_language"])  ? esc_js(sanitize_text_field( $_POST["sfsi_plus_facebook_icons_language"] ) ): 'Visit_us_en_US';
+	$sfsi_plus_twitter_icons_language = isset( $_POST["sfsi_plus_twitter_icons_language"] ) && sfsi_verify_language_values($_POST["sfsi_plus_twitter_icons_language"]) ? esc_js(sanitize_text_field( $_POST["sfsi_plus_twitter_icons_language"] )) : 'Visit_us_en_US';
 
 	$sfsi_plus_custom_social_hide = isset( $_POST["sfsi_plus_custom_social_hide"] ) ? sanitize_text_field( $_POST["sfsi_plus_custom_social_hide"] ) : 'no';
 	$sfsi_pplus_icons_suppress_errors = isset( $_POST["sfsi_pplus_icons_suppress_errors"] ) ? sanitize_text_field( $_POST["sfsi_pplus_icons_suppress_errors"] ) : 'no';
@@ -663,6 +703,8 @@ function sfsi_plus_options_updater5()
 		'sfsi_plus_rss_MouseOverText'		=> sanitize_text_field($sfsi_plus_rss_MouseOverText),
 		'sfsi_plus_email_MouseOverText'		=> sanitize_text_field($sfsi_plus_email_MouseOverText),
 		'sfsi_plus_twitter_MouseOverText'	=> sanitize_text_field($sfsi_plus_twitter_MouseOverText),
+		'sfsi_plus_ria_MouseOverText'	=> sanitize_text_field($sfsi_plus_ria_MouseOverText),
+		'sfsi_plus_inha_MouseOverText'	=> sanitize_text_field($sfsi_plus_inha_MouseOverText),
 		'sfsi_plus_facebook_MouseOverText'	=> sanitize_text_field($sfsi_plus_facebook_MouseOverText),
 		'sfsi_plus_linkedIn_MouseOverText'	=> sanitize_text_field($sfsi_plus_linkedIn_MouseOverText),
 		'sfsi_plus_pinterest_MouseOverText'	=> sanitize_text_field($sfsi_plus_pinterest_MouseOverText),
@@ -688,6 +730,8 @@ function sfsi_plus_options_updater5()
 		'sfsi_plus_copylinkIcon_order'			=> intval($sfsi_plus_copylinkIcon_order),
 		'sfsi_plus_linkedinIcon_order'		=> intval($sfsi_plus_linkedinIcon_order),
 		'sfsi_plus_mastodonIcon_order'		=> intval($sfsi_plus_mastodonIcon_order),
+		'sfsi_plus_riaIcon_order'		=> intval($sfsi_plus_riaIcon_order),
+		'sfsi_plus_inhaIcon_order'		=> intval($sfsi_plus_inhaIcon_order),
 
 		'sfsi_plus_custom_MouseOverTexts'	=> $sfsi_plus_custom_MouseOverTexts,
 		'sfsi_plus_custom_social_hide'		=> $sfsi_plus_custom_social_hide,
@@ -1075,6 +1119,8 @@ function sfsi_plus_getCounts($for_resposive = false)
 		'wechat_count' => '',
 		'whatsapp_count' => '',
 		'mastodon_count' => '',
+		'ria_count' => '',
+		'inha_count' => '',
 	);
 	/* get rss count */
 	if (isset($option4['sfsi_plus_rss_manualCounts']) && !empty($option4['sfsi_plus_rss_manualCounts'])) {
@@ -1101,12 +1147,12 @@ function sfsi_plus_getCounts($for_resposive = false)
 			$url = home_url();
 			$fb_data = $socialObj->sfsi_get_fb($url);
 
-			$scounts['fb_count'] = $socialObj->format_num($fb_data['like_count']);
+			$scounts['fb_count'] = $socialObj->format_num($fb_data);
 		} else if ($option4['sfsi_plus_facebook_countsFrom'] == "followers") {
 			$url = home_url();
 			$fb_data = $socialObj->sfsi_get_fb($url);
-			$scounts['fb_count'] = format_num($fb_data['share_count']);
-			if (empty($scounts['fb_count'])) {
+			$scounts['fb_count'] = $socialObj->format_num($fb_data);
+			if (!($scounts['fb_count'])) {
 				$scounts['fb_count'] = (string) "0";
 			}
 		} else if ($option4['sfsi_plus_facebook_countsFrom'] == "mypage") {
@@ -1225,6 +1271,12 @@ function sfsi_plus_getCounts($for_resposive = false)
 		if (isset($option4['sfsi_plus_mastodon_manualCounts']) && !empty($option4['sfsi_plus_mastodon_manualCounts'])) {
 			$scounts['mastodon_count'] =  $option4['sfsi_plus_mastodon_manualCounts'];
 		}
+        if (isset($option4['sfsi_plus_ria_manualCounts']) && !empty($option4['sfsi_plus_ria_manualCounts'])) {
+            $scounts['ria_count'] =  $option4['sfsi_plus_ria_manualCounts'];
+        }
+        if (isset($option4['sfsi_plus_inha_manualCounts']) && !empty($option4['sfsi_plus_inha_manualCounts'])) {
+            $scounts['inha_count'] =  $option4['sfsi_plus_inha_manualCounts'];
+        }
 	}
 	return $scounts;
 	exit;
@@ -1926,4 +1978,180 @@ function sfsi_plus_banner_global_upgrade()
     update_option('sfsi_plus_banner_global_upgrade',  serialize($sfsi_plus_banner_global_upgrade));
     echo  json_encode(array("success"));
     exit;
+}
+
+if ( !function_exists( 'sfsi_verify_language_values' ) ) {
+  function sfsi_verify_language_values( $locale_code ) {
+    $sfsi_map_language_values = array(
+       "Follow_ar",
+       "Subscribe_ar",
+       "Follow_bg_BG",
+       "Subscribe_bg_BG",
+       "Follow_zh_CN",
+       "Subscribe_zh_CN",
+       "Follow_cs_CZ",
+       "Subscribe_cs_CZ",
+       "Follow_da_DK",
+       "Subscribe_da_DK",
+       "Follow_nl_NL",
+       "Subscribe_nl_NL",
+       "Follow_fi",
+       "Subscribe_fi",
+       "Follow_fr_FR",
+       "Subscribe_fr_FR",
+       "Follow_de_DE",
+       "Subscribe_de_DE",
+       "Follow_en_US",
+       "Subscribe_en_US",
+       "Follow_el",
+       "Subscribe_el",
+       "Follow_hu_HU",
+       "Subscribe_hu_HU",
+       "Follow_id_ID",
+       "Subscribe_id_ID",
+       "Follow_it_IT",
+       "Subscribe_it_IT",
+       "Follow_ja",
+       "Subscribe_ja",
+       "Follow_ko_KR",
+       "Subscribe_ko_KR",
+       "Follow_nb_NO",
+       "Subscribe_nb_NO",
+       "Follow_fa_IR",
+       "Subscribe_fa_IR",
+       "Follow_pl_PL",
+       "Subscribe_pl_PL",
+       "Follow_pt_PT",
+       "Subscribe_pt_PT",
+       "Follow_ro_RO",
+       "Subscribe_ro_RO",
+       "Follow_ru_RU",
+       "Subscribe_ru_RU",
+       "Follow_sk_SK",
+       "Subscribe_sk_SK",
+       "Follow_es_ES",
+       "Subscribe_es_ES",
+       "Follow_sv_SE",
+       "Subscribe_sv_SE",
+       "Follow_th",
+       "Subscribe_th",
+       "Follow_tr_TR",
+       "Subscribe_tr_TR",
+       "Follow_vi",
+       "Subscribe_vi",
+
+       "Visit_us_ar",
+       "Visit_me_ar",
+       "Visit_us_bg_BG",
+       "Visit_me_bg_BG",
+       "Visit_us_zh_CN",
+       "Visit_me_zh_CN",
+       "Visit_us_cs_CZ",
+       "Visit_me_cs_CZ",
+       "Visit_us_da_DK",
+       "Visit_me_da_DK",
+       "Visit_us_nl_NL",
+       "Visit_me_nl_NL",
+       "Visit_us_fi",
+       "Visit_me_fi",
+       "Visit_us_fr_FR",
+       "Visit_me_fr_FR",
+       "Visit_us_de_DE",
+       "Visit_me_de_DE",
+       "Visit_us_en_US",
+       "Visit_me_en_US",
+       "Visit_us_el",
+       "Visit_me_el",
+       "Visit_us_hu_HU",
+       "Visit_me_hu_HU",
+       "Visit_us_id_ID",
+       "Visit_me_id_ID",
+       "Visit_us_it_IT",
+       "Visit_me_it_IT",
+       "Visit_us_ja",
+       "Visit_me_ja",
+       "Visit_us_ko_KR",
+       "Visit_me_ko_KR",
+       "Visit_us_nb_NO",
+       "Visit_me_nb_NO",
+       "Visit_us_fa_IR",
+       "Visit_me_fa_IR",
+       "Visit_us_pl_PL",
+       "Visit_me_pl_PL",
+       "Visit_us_pt_PT",
+       "Visit_me_pt_PT",
+       "Visit_us_ro_RO",
+       "Visit_me_ro_RO",
+       "Visit_us_ru_RU",
+       "Visit_me_ru_RU",
+       "Visit_us_sk_SK",
+       "Visit_me_sk_SK",
+       "Visit_us_es_ES",
+       "Visit_me_es_ES",
+       "Visit_us_sv_SE",
+       "Visit_me_sv_SE",
+       "Visit_us_th",
+       "Visit_me_th",
+       "Visit_us_tr_TR",
+       "Visit_me_tr_TR",
+       "Visit_us_vi",
+       "Visit_me_vi",
+
+       "ar_AR",
+       "az_AZ",
+       "af_ZA",
+       "bg_BG",
+       "ms_MY",
+       "bn_IN",
+       "bs_BA",
+       "ca_ES",
+       "cy_GB",
+       "da_DK",
+       "de_DE",
+       "en_US",
+       "el_GR",
+       "eo_EO",
+       "es_ES",
+       "et_EE",
+       "eu_ES",
+       "fa_IR",
+       "fi_FI",
+       "fr_FR",
+       "gl_ES",
+       "he_IL",
+       "hi_IN",
+       "hr_HR",
+       "hu_HU",
+       "hy_AM",
+       "id_ID",
+       "is_IS",
+       "it_IT",
+       "ja_JP",
+       "ko_KR",
+       "lt_LT",
+       "my_MM",
+       "nl_NL",
+       "nn_NO",
+       "pl_PL",
+       "ps_AF",
+       "pt_BR",
+       "ro_RO",
+       "ru_RU",
+       "sk_SK",
+       "sl_SI",
+       "sq_AL",
+       "sr_RS",
+       "sv_SE",
+       "th_TH",
+       "tl_PH",
+       "tr_TR",
+       "ug_CN",
+       "uk_UA",
+       "vi_VN",
+       "zh_CN",
+       "cs_CZ",
+       "ur_PK"
+    );
+    return in_array($locale_code, $sfsi_map_language_values);
+  }
 }

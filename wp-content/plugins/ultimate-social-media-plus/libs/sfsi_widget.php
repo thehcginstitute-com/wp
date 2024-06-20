@@ -254,35 +254,6 @@ class Sfsi_Plus_Widget extends WP_Widget
 					$icons_list = $sfsi_plus_section1_options['sfsi_custom_files'];
 				}
 			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_houzzIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_houzzIcon_order'] = 11;
-			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_okIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_okIcon_order'] = 22;
-			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_telegramIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_telegramIcon_order'] = 23;
-			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_vkIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_vkIcon_order'] = 24;
-			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_wechatIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_wechatIcon_order'] = 26;
-			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_weiboIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_weiboIcon_order'] = 25;
-			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_whatsappIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_whatsappIcon_order'] = 27;
-			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_copylinkIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_copylinkIcon_order'] = 28;
-        $sfsi_section5['sfsi_plus_copylinkIcon_order'] = 28;
-			}
-			if (!isset($sfsi_plus_section5_options['sfsi_plus_mastodonIcon_order'])) {
-				$sfsi_plus_section5_options['sfsi_plus_mastodonIcon_order'] = 29;
-                $sfsi_section5['sfsi_plus_mastodonIcon_order'] = 29;
-			}
 
 			//    $icons_list = (isset($sfsi_plus_section1_options['sfsi_custom_files']))?(!is_string($sfsi_plus_section1_options['sfsi_custom_files'])?maybe_unserialize($sfsi_plus_section1_options['sfsi_custom_files'],false):$sfsi_plus_section1_options['sfsi_custom_files']):(array());
 			$icons_order = array(
@@ -304,6 +275,8 @@ class Sfsi_Plus_Widget extends WP_Widget
 				$sfsi_section5['sfsi_plus_copylinkIcon_order'] => 'copylink',
 				$sfsi_section5['sfsi_plus_whatsappIcon_order'] => 'whatsapp',
 				$sfsi_section5['sfsi_plus_mastodonIcon_order'] => 'mastodon',
+				$sfsi_section5['sfsi_plus_riaIcon_order'] => 'ria',
+				$sfsi_section5['sfsi_plus_inhaIcon_order'] => 'inha',
 			);
 			if (!is_array($custom_icons_order)) {
 				$custom_icons_order = array();
@@ -333,16 +306,14 @@ class Sfsi_Plus_Widget extends WP_Widget
 			/* built the main widget div */
 			$icons_main = '<div class="sfsiplus_norm_row sfsi_plus_wDiv"  style="' . (isset($main_width) ? 'width:' . $main_width . ';' . $position1 : '') . ';text-align:' . $icons_alignment . '">';
 			$icons = "";
-			// var_dump($icons_order);
+
 			/* loop through icons and bulit the icons with all settings applied in admin */
 			foreach ($icons_order  as $index => $icn) {
-				// var_dump($icn);
 				if (is_array($icn)) {
 					$icon_arry = $icn;
 					$icn = "custom";
 				}
-				// print_r($icn);
-				// echo '<br>';
+
 				switch ($icn) {
 					case 'rss':
 						if ($sfsi_plus_section1_options['sfsi_plus_rss_display'] == 'yes')  $icons .= sfsi_plus_prepairIcons('rss', 0, "no", null, $share_url);
@@ -369,6 +340,12 @@ class Sfsi_Plus_Widget extends WP_Widget
 					case 'instagram':
 						if ($sfsi_plus_section1_options['sfsi_plus_instagram_display'] == 'yes')    $icons .= sfsi_plus_prepairIcons('instagram', 0, "no", null, $share_url);
 						break;
+                    case 'ria':
+                        if ($sfsi_plus_section1_options['sfsi_plus_ria_display'] == 'yes')    $icons .= sfsi_plus_prepairIcons('ria', 0, "no", null, $share_url);
+                        break;
+                    case 'inha':
+                        if ($sfsi_plus_section1_options['sfsi_plus_inha_display'] == 'yes')    $icons .= sfsi_plus_prepairIcons('inha', 0, "no", null, $share_url);
+                        break;
 					case 'houzz':
 						if (
 							isset($sfsi_plus_section1_options['sfsi_plus_houzz_display']) &&
@@ -573,7 +550,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						$alt_text = 'RSS';
 					}
 
-					//Custom Skin Support {Monad}	 
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_rss_skin")) {
 							$icon = get_option("plus_rss_skin");
@@ -624,7 +601,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						$alt_text = 'EMAIL';
 					}
 
-					//Custom Skin Support {Monad}	 
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_email_skin")) {
 							$icon = get_option("plus_email_skin");
@@ -720,8 +697,8 @@ class Sfsi_Plus_Widget extends WP_Widget
 						$sfsi_plus_section4_options['sfsi_plus_round_counts'] == "yes"
 					) {
 						$fb_data = $socialObj->sfsi_get_fb($current_url);
-						$counts = $socialObj->format_num($fb_data['total_count']);
-						if (empty($counts)) {
+						$counts = $socialObj->format_num($fb_data);
+						if (!($counts)) {
 							$counts = (string) "0";
 						}
 					} else {
@@ -733,14 +710,14 @@ class Sfsi_Plus_Widget extends WP_Widget
 							if ($sfsi_plus_section4_options['sfsi_plus_facebook_countsFrom'] == "manual") {
 								$counts = $socialObj->format_num($sfsi_plus_section4_options['sfsi_plus_facebook_manualCounts']);
 							} else if ($sfsi_plus_section4_options['sfsi_plus_facebook_countsFrom'] == "likes") {
-								$fb_data = $socialObj->sfsi_get_fb($current_url);
+								$fb_data = $socialObj->sfsi_get_fb(trailingslashit($current_url));
 								$counts = $socialObj->format_num($fb_data);
 								if (empty($counts)) {
 									$counts = (string) "0";
 								}
 							} else if ($sfsi_plus_section4_options['sfsi_plus_facebook_countsFrom'] == "followers") {
-								$fb_data = $socialObj->sfsi_get_fb($current_url);
-								$counts = $socialObj->format_num($fb_data['share_count']);
+								$fb_data = $socialObj->sfsi_get_fb(trailingslashit($current_url));
+								$counts = $socialObj->format_num($fb_data);
 							} else if ($sfsi_plus_section4_options['sfsi_plus_facebook_countsFrom'] == "mypage") {
 								$current_url = $sfsi_plus_section4_options['sfsi_plus_facebook_mypageCounts'];
 								$fb_data = $socialObj->sfsi_get_fb_pagelike($current_url);
@@ -749,7 +726,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						}
 					}
 
-					//Custom Skin Support {Monad}	 
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_facebook_skin")) {
 							$icon = get_option("plus_facebook_skin");
@@ -801,7 +778,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 
 					if ($sfsi_plus_section2_options['sfsi_plus_twitter_followme'] == "yes" || $sfsi_plus_section2_options['sfsi_plus_twitter_aboutPage'] == "yes") {
 						$hoverSHow = 1;
-						//Visit twitter page {Monad}	 
+						//Visit twitter page {Monad}
 						if ($sfsi_plus_section2_options['sfsi_plus_twitter_page'] == "yes") {
 							$hoverdiv .= "<style>#sfsi_plus_floater .sfsi_plus_twt_tool_bdr .sfsi_plus_inside{margin-top: -18px;}</style><div  class='cstmicon1'><a href='" . $url . "' " . sfsi_plus_checkNewWindow($url) . "><img class='sfsi_plus_wicon' alt='Visit Us' title='Visit Us' src='" . $visit_icon . "'  /></a></div>";
 						}
@@ -837,14 +814,14 @@ class Sfsi_Plus_Widget extends WP_Widget
 						}
 					}
 
-					//Giving alternative text to image 	 
+					//Giving alternative text to image
 					if (!empty($sfsi_plus_section5_options['sfsi_plus_twitter_MouseOverText'])) {
 						$alt_text = $sfsi_plus_section5_options['sfsi_plus_twitter_MouseOverText'];
 					} else {
 						$alt_text = "TWITTER";
 					}
 
-					//Custom Skin Support {Monad}	 
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_twitter_skin")) {
 							$icon = get_option("plus_twitter_skin");
@@ -862,7 +839,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						if ( isset( $sfsi_plus_section3_options['sfsi_plus_twitter_bgColor'] ) && $sfsi_plus_section3_options['sfsi_plus_twitter_bgColor'] != '' ) {
 							$sfsi_plus_icon_bgColor = $sfsi_plus_section3_options['sfsi_plus_twitter_bgColor'];
 						} else {
-							$sfsi_plus_icon_bgColor = '#00ACEC';
+							$sfsi_plus_icon_bgColor = '#000000';
 						}
 					}
 					break;
@@ -916,7 +893,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						}
 					}
 
-					//Custom Skin Support {Monad}	 
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_youtube_skin")) {
 							$icon = get_option("plus_youtube_skin");
@@ -996,7 +973,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						}
 					}
 
-					//Custom Skin Support {Monad}	 
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_pintrest_skin")) {
 							$icon = get_option("plus_pintrest_skin");
@@ -1050,7 +1027,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						}
 					}
 
-					//Custom Skin Support {Monad}	 
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_instagram_skin")) {
 							$icon = get_option("plus_instagram_skin");
@@ -1100,7 +1077,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						$alt_text = 'Houzz';
 					}
 
-					//Custom Skin Support {Monad}	 
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_houzz_skin")) {
 							$icon = get_option("plus_houzz_skin");
@@ -1150,7 +1127,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 							$linkedin_share_icon = SFSI_PLUS_PLUGURL . "images/share_icons/Linkedin_Share/" . $linkedIn_icons_lang . "_share.svg";
 							// $current_url = $socialObj->sfsi_get_custom_share_link('linkedin');
 							$hoverdiv .= "<div  class='icon2'><a href='https://www.linkedin.com/shareArticle?url=" . $current_url . "'><img class='sfsi_premium_wicon' nopin=nopin alt='Share' title='Share' src='" . $linkedin_share_icon . "'  /></a></div>";
-							// $hoverdiv.="<div  class='icon2'>".$socialObj->sfsi_LinkedInShare($current_url)."</div>";  
+							// $hoverdiv.="<div  class='icon2'>".$socialObj->sfsi_LinkedInShare($current_url)."</div>";
 						}
 						if ($sfsi_plus_section2_options['sfsi_plus_linkedin_recommendBusines'] == "yes") {
 							$hoverdiv .= "<div  class='icon3'>" . $socialObj->sfsi_LinkedInRecommend($linkedIn_compay, $linkedIn_ProductId) . "</div>";
@@ -1193,7 +1170,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 						$alt_text = "LINKEDIN";
 					}
 
-					//Custom Skin Support {Monad}	  
+					//Custom Skin Support {Monad}
 					if ($active_theme == 'custom_support') {
 						if (get_option("plus_linkedin_skin")) {
 							$icon = get_option("plus_linkedin_skin");
@@ -1478,7 +1455,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 
 						$counts = $sfsi_plus_section4_options['sfsi_plus_whatsapp_manualCounts'];
 					}
-					
+
 					global $wp;
 
 					if ( !is_null( $post ) && ! empty($wp->request) ) {
@@ -1510,9 +1487,9 @@ class Sfsi_Plus_Widget extends WP_Widget
 					$class = "sfsi_copylink";
 					$hoverdiv = '';
 					$arsfsiplus_row_class = "bot_copylink_arow";
-		
+
 					$alt_text = sfsi_plus_get_icon_mouseover_text( "copylink" );
-		
+
 					$icon = sfsi_plus_get_icon_image( "copylink" );
 					/* For Flat icons bg color */
 					if( $active_theme == 'flat' ) {
@@ -1522,9 +1499,9 @@ class Sfsi_Plus_Widget extends WP_Widget
 							$sfsi_plus_icon_bgColor = 'linear-gradient(180deg, #C295FF 0%, #4273F7 100%)';
 						}
 					}
-		
+
 					break;
-					
+
 				case "mastodon":
 					$toolClass = "sfsi_plus_mastodon_tool_bdr";
 					$hoverdiv = '';
@@ -1567,6 +1544,87 @@ class Sfsi_Plus_Widget extends WP_Widget
 					break;
 
 					///MZ CODE END
+                case "ria":
+                    $toolClass = "sfsi_plus_ria_tool_bdr";
+                    $hoverdiv = '';
+                    $arsfsiplus_row_class = "bot_rss_arow";
+                    if (
+                        isset($sfsi_plus_section4_options['sfsi_plus_ria_countsDisplay']) &&
+                        "yes" == $sfsi_plus_section4_options['sfsi_plus_ria_countsDisplay'] &&
+                        "yes" == $sfsi_plus_section4_options['sfsi_plus_display_counts'] &&
+                        $sfsi_plus_section4_options['sfsi_plus_round_counts'] == "yes"
+                    ) {
+
+                        $counts = $sfsi_plus_section4_options['sfsi_plus_ria_manualCounts'];
+                    }
+
+                    $alt_text = sfsi_plus_get_icon_mouseover_text("ria");
+                    $icon 	   = sfsi_plus_get_icon_image("ria");
+
+                    $url = "#";
+
+                    $hoverSHow = 0;
+                    if (isset($sfsi_plus_section2_options['sfsi_plus_ria_pageUrl']) && !empty($sfsi_plus_section2_options['sfsi_plus_ria_pageUrl'])) {
+                        $url = $sfsi_plus_section2_options['sfsi_plus_ria_pageUrl'];
+                    } else {
+                        $url = "#";
+                        $sfsi_onclick = "event.preventDefault();";
+                    }
+
+                    if ($active_theme == "glossy") {
+                        $glossy_theme_adjustment = 4;
+                    }
+
+                    /* For Flat icons bg color */
+                    if( $active_theme == 'flat' ) {
+                        if ( isset( $sfsi_plus_section3_options['sfsi_plus_ria_bgColor'] ) && $sfsi_plus_section3_options['sfsi_plus_ria_bgColor'] != '' ) {
+                            $sfsi_plus_icon_bgColor = $sfsi_plus_section3_options['sfsi_plus_ria_bgColor'];
+                        } else {
+                            $sfsi_plus_icon_bgColor = '#583ED1';
+                        }
+                    }
+                    break;
+
+                case "inha":
+                    $toolClass = "sfsi_plus_inha_tool_bdr";
+                    $hoverdiv = '';
+                    $arsfsiplus_row_class = "bot_rss_arow";
+                    if (
+                        isset($sfsi_plus_section4_options['sfsi_plus_inha_countsDisplay']) &&
+                        "yes" == $sfsi_plus_section4_options['sfsi_plus_inha_countsDisplay'] &&
+                        "yes" == $sfsi_plus_section4_options['sfsi_plus_display_counts'] &&
+                        $sfsi_plus_section4_options['sfsi_plus_round_counts'] == "yes"
+                    ) {
+
+                        $counts = $sfsi_plus_section4_options['sfsi_plus_inha_manualCounts'];
+                    }
+
+                    $alt_text = sfsi_plus_get_icon_mouseover_text("inha");
+                    $icon 	   = sfsi_plus_get_icon_image("inha");
+
+                    $url = "#";
+
+                    $hoverSHow = 0;
+                    if (isset($sfsi_plus_section2_options['sfsi_plus_inha_pageUrl']) && !empty($sfsi_plus_section2_options['sfsi_plus_inha_pageUrl'])) {
+                        $url = $sfsi_plus_section2_options['sfsi_plus_inha_pageUrl'];
+                    } else {
+                        $url = "#";
+                        $sfsi_onclick = "event.preventDefault();";
+                    }
+
+                    if ($active_theme == "glossy") {
+                        $glossy_theme_adjustment = 4;
+                    }
+
+                    /* For Flat icons bg color */
+                    if( $active_theme == 'flat' ) {
+                        if ( isset( $sfsi_plus_section3_options['sfsi_plus_inha_bgColor'] ) && $sfsi_plus_section3_options['sfsi_plus_inha_bgColor'] != '' ) {
+                            $sfsi_plus_icon_bgColor = $sfsi_plus_section3_options['sfsi_plus_inha_bgColor'];
+                        } else {
+                            $sfsi_plus_icon_bgColor = '#583ED1';
+                        }
+                    }
+                    break;
 
 				default:
 					$border_radius = "";
@@ -1667,7 +1725,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 
 				$icons .= "<div class='sfsiplus_inerCnt'>";
 
-				$icons .= "<a class='" . $class . " sficn1' data-effect='" . $mouse_hover_effect . "' $new_window  href='" . $url . "'  style='width:" . $icon_width . "px; height:" . $icon_width . "px;opacity:" . $icon_opacity . ";".$sfsi_plus_icon_bgColor_style."' " . (isset($sfsi_onclick) ? 'onclick="' . $sfsi_onclick . '"' : '') . ">";
+				$icons .= "<a class='" . $class . "sficn1' data-effect='" . $mouse_hover_effect . "' $new_window  href='" . $url . "'  style='width:" . $icon_width . "px; height:" . $icon_width . "px;opacity:" . $icon_opacity . ";".$sfsi_plus_icon_bgColor_style."' " . (isset($sfsi_onclick) ? 'onclick="' . $sfsi_onclick . '"' : '') . ">";
 
 				$icons .= "<img alt='" . $alt_text . "' title='" . $alt_text . "' src='" . $icon . "' width='" . $icons_size . "' height='" . $icons_size . "' style='" . $border_radius . $padding_top . "' class='sfcm sfsi_wicon sfsiplusid_round_icon_" . $icon_name . "' data-effect='" . $mouse_hover_effect . "'  />";
 
@@ -1698,12 +1756,12 @@ class Sfsi_Plus_Widget extends WP_Widget
 			$sfsi_plus_section5_options =  maybe_unserialize(get_option('sfsi_plus_section5_options', false));
 			if ($sfsi_plus_section5_options['sfsi_plus_icons_ClickPageOpen'] == "yes") {
 				$new_window = "target='_blank'";
-
-				if($sfsi_plus_section5_options['sfsi_plus_icons_AddNoopener'] == "yes") {
-					$new_window .= " rel='noopener'";
-				}
-
-				return  $new_window;
+                if (isset($sfsi_plus_section5_options['sfsi_plus_icons_AddNoopener'])){
+                  if($sfsi_plus_section5_options['sfsi_plus_icons_AddNoopener'] == "yes") {
+                    $new_window .= " rel='noopener'";
+                  }
+                }
+                return  $new_window;
 			} else {
 				return '';
 			}
@@ -1746,6 +1804,8 @@ class Sfsi_Plus_Widget extends WP_Widget
 				$sfsi_section5['sfsi_plus_wechatIcon_order'] => 'wechat',
 				$sfsi_section5['sfsi_plus_whatsappIcon_order'] => 'whatsapp',
 				$sfsi_section5['sfsi_plus_mastodonIcon_order'] => 'mastodon',
+				$sfsi_section5['sfsi_plus_riaIcon_order'] => 'ria',
+				$sfsi_section5['sfsi_plus_inhaIcon_order'] => 'inha',
 				(isset($sfsi_section5['sfsi_plus_houzzIcon_order']))
 					? $sfsi_section5['sfsi_plus_houzzIcon_order']
 					: 12 => 'houzz'
@@ -1755,7 +1815,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 					$icons_order[$data['order']] = $data;
 				}
 			}
-			ksort($icons_order);
+            ksort($icons_order);
 
 			/* built the main widget div */
 			$icons_main = '<div class="sfsiplus_norm_row sfsi_plus_wDivothr">';
@@ -1830,6 +1890,16 @@ class Sfsi_Plus_Widget extends WP_Widget
 							$icons .= sfsi_plus_prepairIcons('instagram');
 						}
 						break;
+                    case 'ria':
+                        if ($sfsi_plus_section1_options['sfsi_plus_ria_display'] == 'yes') {
+                            $icons .= sfsi_plus_prepairIcons('ria');
+                        }
+                        break;
+                    case 'inha':
+                        if ($sfsi_plus_section1_options['sfsi_plus_inha_display'] == 'yes') {
+                            $icons .= sfsi_plus_prepairIcons('inha');
+                        }
+                        break;
 					case 'houzz':
 						if (
 							isset($sfsi_plus_section1_options['sfsi_plus_houzz_display']) &&
@@ -1937,7 +2007,7 @@ class Sfsi_Plus_Widget extends WP_Widget
 
 	add_filter( 'body_class', 'sfsi_plus_body_class' );
 	function sfsi_plus_body_class( $classes ) {
-		
+
 		/* Add class for theme style */
 		$option3 = maybe_unserialize( get_option( 'sfsi_plus_section3_options', false ) );
 		if ( isset( $option3['sfsi_plus_actvite_theme'] ) ) {

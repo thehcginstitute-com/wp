@@ -1,21 +1,17 @@
 <?php
-    $method = $_SERVER['REQUEST_METHOD'];
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $submitted = $_POST['ldsubmit'];
+define( 'ZOHO_SALESIQ_IMG_URL', plugin_dir_url( __FILE__ ) . 'logo.png' );
+    $method = sanitize_text_field($_SERVER['REQUEST_METHOD']);
+    if ($method === 'POST') {
+        $submitted = sanitize_text_field($_POST['ldsubmit']);
         $nonce_key = $_POST['_wpnonce'];
         $ldcodesnippet = $_POST['ldcodesnippet'];
 
         if(isset($submitted)){
             if(isset($nonce_key) && isset($ldcodesnippet)){
                 if(wp_verify_nonce($_POST['_wpnonce'],"_zoho_salesiq_plugin")){
-                    if ( preg_match( "/^<script[^>]*>\s*.+\s*(float\.ls|.+widgetcode.+\/widget)\s*.+\s*<\/script>$/s", $ldcodesnippet ) )
+                    if(preg_match("/^(https:\/\/salesiq\.)(zoho\.|unionbankofindia\.|zohopublic\.)(([a-z]{1,3}\.)?[a-z]{1,3})(\/widget\?(widgetcode|wc)\=)([a-z0-9]{10,200})$/s", $ldcodesnippet ))
                     {
-                        if(!strpos($ldcodesnippet, "/widget?plugin_source")){
-                            $ldcodesnippet = str_replace("/widget","/widget?plugin_source=wordpress",$ldcodesnippet);
-                        }
-                        update_option('ldcode',stripslashes($ldcodesnippet));
-                        $hidecodevalue = !empty($_POST['hidecode']) ? $_POST['hidecode'] : 0;
-                        update_option('hidecode',stripslashes($hidecodevalue));
+                        update_option('ldwidgetcodeurl', sanitize_url($ldcodesnippet));
                     }
                 }
             }
@@ -91,7 +87,7 @@
 <div class="main">
 
 <h3 class="lvd_tit" style=" font-size:23px; font-weight:normal">
-    <img src="<?php echo plugins_url(); ?>/zoho-salesiq/logo.png" height="57" width="57" style="vertical-align:middle; margin-right:5px"  />
+    <img src="<?php echo ZOHO_SALESIQ_IMG_URL; ?>" height="57" width="57" style="vertical-align:middle; margin-right:5px"  />
     <span>Zoho SalesIQ</span></h3>
     <div class="lvd_note" id="info_bar">Chat with your visitors proactively, engage them effectively and close more deals.</div>
     
@@ -103,33 +99,32 @@
 
 <form method="post" action="">
 <?php wp_nonce_field( '_zoho_salesiq_plugin');?>
-<textarea id="ldcodesnippet" onclick="this.select()" name="ldcodesnippet" style="height:100px;width:400px"><?php  echo htmlentities(get_option('ldcode')) ?></textarea>
+<textarea id="ldcodesnippet" placeholder="Paste the SalesIQ link" onclick="this.select()" name="ldcodesnippet" style="height:100px;width:400px"><?php  echo esc_url(get_option('ldwidgetcodeurl')) ?></textarea>
+<br>
+Note: Zoho SalesIQ JS APIs are not supported for WordPress sites.
 
-<?php $var = get_option('ldcode'); if ( !empty($var) && !preg_match( "/^<script[^>]*>\s*.+\s*(float\.ls|.+widgetcode.+\/widget)\s*.+\s*<\/script>$/s", $var )){ ?>
-<script>document.getElementById("info_bar").innerHTML = "<b>Please paste valid chat widget code</b>";</script>
+<?php $var = get_option('ldwidgetcodeurl'); if ( !empty($var) && !preg_match("/^(https:\/\/salesiq\.)(zoho\.|unionbankofindia\.|zohopublic\.)(([a-z]{1,3}\.)?[a-z]{1,3})(\/widget\?(widgetcode|wc)\=)([a-z0-9]{10,200})$/s", $var )){ ?> 
+<script>document.getElementById("info_bar").innerHTML = "<b>Please paste valid url</b>";</script>
 <?php } ?>
 
-<div style = "margin-top: 10px; width: 600px;">
-         <input type = "checkbox" id = "hidecode" name = "hidecode" value = "1" <?php if(get_option('hidecode') == 1) echo 'checked';?>/> Hide Chat widget ( The chat widget on your website will be disabled, and only the visitor tracking will work)
-         </div>
 
             </div>
             <div class="lvd_embdmid">→</div>
-            <div class="lvd_embdlft">Just paste the SalesIQ code snippet here. <div class="">And have your Zoho SalesIQ up and running in no time! <br> Incase you don't have an account. <br>Just <span><a target="_blank" href="https://salesiq.zoho.com/register.sas?source=WordPress.salesiqplugin">Register here</a></span>    
+            <div class="lvd_embdlft">Just paste the SalesIQ WordPress link here. <div class="">And have your Zoho SalesIQ up and running in no
+time! <br> Don't have an account yet?  <br><span><a target="_blank" href="https://salesiq.zoho.com/register.sas?source=WordPress.salesiqplugin">Register Here</a></span>    
             </div>
         </div>
     </div>
     </div>
    
 <div class="lvd_sbdata">
-        <h3 class="lvd_tit">How to get Chat Widget code snippet for Wordpress?</h3>
+        <h3 class="lvd_tit">How to get the SalesIQ WordPress snippet? </h3>
         
         <ul>
-            <li><span>Log-in to your <a target="_blank" href="https://salesiq.zoho.com/login">Zoho SalesIQ</a> account.</span></li>
-            <li><span>Go to Settings -> Websites and click on the Website's name.</span></li>
-        <li><span>Choose your preferred platform to engage with visitors, copy the code snippet and paste it here.</span></li>
-        <li><span>And, voila! You're finally done adding Live chat widget to your Wordpress.</span></li>
-        <li><span>You can also refer our <a target="_blank" href="http://www.zoho.com/salesiq/help/getting-started-with-live-chat.html">User Guides</a> for more information.</span></li>
+            <li><span>Log in to your <a target="_blank" href="https://salesiq.zoho.com/login">Zoho SalesIQ</a> account.</span></li>
+            <li><span>In the SalesIQ dashboard, navigate to Settings > Brands > {Your brand} > Installation > Website.</span></li>
+            <li><span>Copy the WordPress link and paste it into the above input field.</span></li>
+            <li><span>For more detailed steps, check out our <a target="_blank" href="https://help.zoho.com/portal/en/kb/salesiq-2-0/installation-guides/articles/wordpressinsalesiq#WordPress_in_SalesIQ">SalesIQ-WordPress installation guide.</a></span></li>
 
         </ul>
 </div>

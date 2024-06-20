@@ -2,6 +2,8 @@
 namespace SiteGround_Optimizer\Admin;
 
 use SiteGround_Optimizer\Supercacher\Supercacher;
+use SiteGround_Optimizer\File_Cacher\File_Cacher;
+use SiteGround_Optimizer\Options\Options;
 
 /**
  * Add purge button functionality to admin bar.
@@ -82,6 +84,11 @@ class Admin_Bar {
 		Supercacher::purge_cache();
 		Supercacher::flush_memcache();
 		Supercacher::delete_assets();
+
+		// Flush File-Based cache if enabled.
+		if ( Options::is_enabled( 'siteground_optimizer_file_caching' ) ) {
+			File_Cacher::get_instance()->purge_everything();
+		}
 
 		wp_safe_redirect( $_SERVER['HTTP_REFERER'] );
 		exit;

@@ -42,9 +42,6 @@ final class MonsterInsights_API_Auth {
 		add_filter( 'monsterinsights_maybe_authenticate_siteurl', array( $this, 'before_redirect' ) );
 
 		add_action( 'wp_ajax_nopriv_monsterinsights_push_mp_token', array( $this, 'handle_relay_mp_token_push' ) );
-        //  GA property swap action cron
-        //  TODO Remove this action for x.18 release
-        add_action( 'monsterinsights_v4_property_swap', array( $this, 'property_swap_cron_action' ) );
 	}
 
 	public function get_tt() {
@@ -123,7 +120,7 @@ final class MonsterInsights_API_Auth {
 			// Translators: Support link tag starts with url, Support link tag ends.
 			$message = sprintf(
 				__( 'Oops! There has been an error authenticating. Please try again in a few minutes. If the problem persists, please %1$scontact our support%2$s team.', 'google-analytics-for-wordpress' ),
-				'<a target="_blank href="' . monsterinsights_get_url( 'notice', 'error-authenticating', 'https://www.monsterinsights.com/my-account/support/' ) . '">',
+				'<a target="_blank" href="' . monsterinsights_get_url( 'notice', 'error-authenticating', 'https://www.monsterinsights.com/my-account/support/' ) . '">',
 				'</a>'
 			);
 			wp_send_json_error( array( 'message' => $message ) );
@@ -131,16 +128,20 @@ final class MonsterInsights_API_Auth {
 
 		$sitei = $this->get_sitei();
 
-		$siteurl = add_query_arg( array(
-			'tt'        => $this->get_tt(),
-			'sitei'     => $sitei,
-			'miversion' => MONSTERINSIGHTS_VERSION,
-			'ajaxurl'   => admin_url( 'admin-ajax.php' ),
-			'network'   => is_network_admin() ? 'network' : 'site',
-			'siteurl'   => is_network_admin() ? network_admin_url() : site_url(),
-			'return'    => is_network_admin() ? network_admin_url( 'admin.php?page=monsterinsights_network' ) : admin_url( 'admin.php?page=monsterinsights_settings' ),
-			'testurl'   => 'https://' . monsterinsights_get_api_url() . 'test/',
-		), $this->get_route( 'https://' . monsterinsights_get_api_url() . 'auth/new/{type}' ) );
+        $auth_request_args = array(
+            'tt'        => $this->get_tt(),
+            'sitei'     => $sitei,
+            'miversion' => MONSTERINSIGHTS_VERSION,
+            'ajaxurl'   => admin_url( 'admin-ajax.php' ),
+            'network'   => is_network_admin() ? 'network' : 'site',
+            'siteurl'   => is_network_admin() ? network_admin_url() : home_url(),
+            'return'    => is_network_admin() ? network_admin_url( 'admin.php?page=monsterinsights_network' ) : admin_url( 'admin.php?page=monsterinsights_settings' ),
+            'testurl'   => 'https://' . monsterinsights_get_api_url() . 'test/',
+        );
+
+        $auth_request_args = apply_filters('monsterinsights_auth_request_body', $auth_request_args);
+
+		$siteurl = add_query_arg($auth_request_args, $this->get_route( 'https://' . monsterinsights_get_api_url() . 'auth/new/{type}' ) );
 
 		if ( monsterinsights_is_pro_version() ) {
 			$key     = is_network_admin() ? MonsterInsights()->license->get_network_license_key() : MonsterInsights()->license->get_site_license_key();
@@ -237,7 +238,7 @@ final class MonsterInsights_API_Auth {
 			'a'             => sanitize_text_field( $_REQUEST['a'] ), // AccountID
 			'w'             => sanitize_text_field( $_REQUEST['w'] ), // PropertyID
 			'p'             => sanitize_text_field( $_REQUEST['p'] ), // View ID
-			'siteurl'       => site_url(),
+			'siteurl'       => home_url(),
 			'neturl'        => network_admin_url(),
 		);
 
@@ -322,18 +323,22 @@ final class MonsterInsights_API_Auth {
 			wp_send_json_error( array( 'message' => $message ) );
 		}
 
-		$siteurl = add_query_arg( array(
-			'tt'        => $this->get_tt(),
-			'sitei'     => $this->get_sitei(),
-			'miversion' => MONSTERINSIGHTS_VERSION,
-			'ajaxurl'   => admin_url( 'admin-ajax.php' ),
-			'network'   => is_network_admin() ? 'network' : 'site',
-			'siteurl'   => is_network_admin() ? network_admin_url() : site_url(),
-			'key'       => is_network_admin() ? MonsterInsights()->auth->get_network_key() : MonsterInsights()->auth->get_key(),
-			'token'     => is_network_admin() ? MonsterInsights()->auth->get_network_token() : MonsterInsights()->auth->get_token(),
-			'return'    => is_network_admin() ? network_admin_url( 'admin.php?page=monsterinsights_network' ) : admin_url( 'admin.php?page=monsterinsights_settings' ),
-			'testurl'   => 'https://' . monsterinsights_get_api_url() . 'test/',
-		), $this->get_route( 'https://' . monsterinsights_get_api_url() . 'auth/reauth/{type}' ) );
+        $auth_request_args = array(
+            'tt'        => $this->get_tt(),
+            'sitei'     => $this->get_sitei(),
+            'miversion' => MONSTERINSIGHTS_VERSION,
+            'ajaxurl'   => admin_url( 'admin-ajax.php' ),
+            'network'   => is_network_admin() ? 'network' : 'site',
+            'siteurl'   => is_network_admin() ? network_admin_url() : home_url(),
+            'key'       => is_network_admin() ? MonsterInsights()->auth->get_network_key() : MonsterInsights()->auth->get_key(),
+            'token'     => is_network_admin() ? MonsterInsights()->auth->get_network_token() : MonsterInsights()->auth->get_token(),
+            'return'    => is_network_admin() ? network_admin_url( 'admin.php?page=monsterinsights_network' ) : admin_url( 'admin.php?page=monsterinsights_settings' ),
+            'testurl'   => 'https://' . monsterinsights_get_api_url() . 'test/',
+        );
+
+        $auth_request_args = apply_filters('monsterinsights_auth_request_body', $auth_request_args);
+
+		$siteurl = add_query_arg( $auth_request_args, $this->get_route( 'https://' . monsterinsights_get_api_url() . 'auth/reauth/{type}' ) );
 
 		if ( monsterinsights_is_pro_version() ) {
 			$key     = is_network_admin() ? MonsterInsights()->license->get_network_license_key() : MonsterInsights()->license->get_site_license_key();
@@ -392,7 +397,7 @@ final class MonsterInsights_API_Auth {
 			'w'             => sanitize_text_field( $_REQUEST['w'] ),
 			'p'             => sanitize_text_field( $_REQUEST['p'] ),
 			'v4'            => $existing['v4'],
-			'siteurl'       => site_url(),
+			'siteurl'       => home_url(),
 			'neturl'        => network_admin_url(),
 		);
 
@@ -620,7 +625,7 @@ final class MonsterInsights_API_Auth {
 				return true;
 			}
 		} else {
-			$siteurl = site_url();
+			$siteurl = home_url();
 			if ( ! empty( $creds['siteurl'] ) && $creds['siteurl'] !== $siteurl ) {
 				MonsterInsights()->auth->delete_analytics_profile( true );
 
@@ -642,10 +647,9 @@ final class MonsterInsights_API_Auth {
 			return false;
 		} else {
 			if ( $this->is_network_admin() ) {
-				MonsterInsights()->auth->delete_network_analytics_profile( false );
+				MonsterInsights()->auth->delete_network_analytics_profile( true );
 			} else {
-				MonsterInsights()->auth->delete_analytics_profile( false );
-
+				MonsterInsights()->auth->delete_analytics_profile( true );
 			}
 
 			return true;
@@ -782,29 +786,4 @@ final class MonsterInsights_API_Auth {
 		}
 		wp_send_json_success();
 	}
-
-    /**
-     * @return void
-     * @deprecated
-     * TODO: Remove for x.18 release
-     */
-    public function property_swap_cron_action() {
-        $auth = MonsterInsights()->auth;
-        $profile = is_network_admin() ? $auth->get_network_analytics_profile() : $auth->get_analytics_profile();
-
-        if ( empty($profile['connectedtype']) || $profile['connectedtype'] === 'v4' ) {
-            //  Bail if main property is v4 already.
-            return;
-        }
-
-        if ( $auth->get_network_v4_id() !== '' || $auth->get_v4_id() !== '' ) {
-            if ( $this->is_network_admin() ) {
-                $profile['network_viewname'] = $auth->get_network_v4_id();
-            } else {
-                $profile['viewname'] = $auth->get_v4_id();
-            }
-        }
-
-        $this->is_network_admin() ? $auth->set_network_analytics_profile( $profile ) : $auth->set_analytics_profile( $profile );
-    }
 }

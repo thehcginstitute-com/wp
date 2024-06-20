@@ -665,12 +665,12 @@ class Keywords {
 	/**
 	 * Get keywords graph data.
 	 *
-	 * @param array $keywords Keywords to get data for.
+	 * @param array  $keywords Keywords to get data for.
 	 * @param string $sub_query Database sub-query.
 	 *
 	 * @return array
 	 */
-	public function get_graph_data_for_keywords( $keywords, $sub_query = ''  ) {
+	public function get_graph_data_for_keywords( $keywords, $sub_query = '' ) {
 		global $wpdb;
 
 		$intervals     = Stats::get()->get_intervals();
@@ -691,14 +691,15 @@ class Keywords {
 				AND query IN {$keywords}
 				{$sub_query}
 				GROUP BY query, range_group
+				ORDER BY max_created ASC
 			) t
 			ON a.query = t.query AND a.created = t.max_created
-			ORDER BY a.query ASC",
+			ORDER BY a.created ASC",
 			Stats::get()->start_date,
 			Stats::get()->end_date
 		);
-		$data = $wpdb->get_results( $query );
-		$data = Stats::get()->filter_graph_rows( $data );
+		$data  = $wpdb->get_results( $query );
+		$data  = Stats::get()->filter_graph_rows( $data );
 
 		return array_map( [ Stats::get(), 'normalize_graph_rows' ], $data );
 	}

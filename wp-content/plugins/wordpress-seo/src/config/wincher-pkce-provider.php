@@ -2,6 +2,7 @@
 
 namespace Yoast\WP\SEO\Config;
 
+use Exception;
 use UnexpectedValueException;
 use YoastSEO_Vendor\GuzzleHttp\Exception\BadResponseException;
 use YoastSEO_Vendor\League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -71,7 +72,7 @@ class Wincher_PKCE_Provider extends GenericProvider {
 	 *
 	 * @return string
 	 *
-	 * @throws \Exception Throws exception if an invalid value is passed to random_bytes.
+	 * @throws Exception Throws exception if an invalid value is passed to random_bytes.
 	 */
 	protected function getRandomPkceCode( $length = 64 ) {
 		return \substr(
@@ -103,7 +104,7 @@ class Wincher_PKCE_Provider extends GenericProvider {
 	 * @return array The authorization parameters
 	 *
 	 * @throws InvalidArgumentException Throws exception if an invalid PCKE method is passed in the options.
-	 * @throws \Exception               When something goes wrong with generating the PKCE code.
+	 * @throws Exception                When something goes wrong with generating the PKCE code.
 	 */
 	protected function getAuthorizationParameters( array $options ) {
 		if ( empty( $options['state'] ) ) {
@@ -240,7 +241,9 @@ class Wincher_PKCE_Provider extends GenericProvider {
 
 		$this->checkResponse( $response, $parsed );
 
-		if ( ! \is_array( $parsed ) && $parsed === '' ) {
+		// We always expect an array from the API except for on DELETE requests.
+		// We convert to an array here to prevent problems with array_key_exists on PHP8.
+		if ( ! \is_array( $parsed ) ) {
 			$parsed = [ 'data' => [] ];
 		}
 

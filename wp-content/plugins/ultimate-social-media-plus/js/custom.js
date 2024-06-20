@@ -309,12 +309,23 @@ SFSI(document).ready(function (s) {
                 SFSI(this).parentsUntil("div").siblings("div.sfsi_plus_tool_tip_2").find(".sfsi_plus_inside .icon2").append(sfsi_plus_clone);
             }
         }), SFSI(document).on("mouseleave", "div.sfsi_plus_wicons", function () {
-            SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn").attr("data-effect") && "fade_in" == SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn").attr("data-effect") && SFSI(this).children("div.sfsiplus_inerCnt").find("a.sficn").css("opacity", "0.6"),
-                SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn").attr("data-effect") && "scale" == SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn").attr("data-effect") && SFSI(this).children("div.sfsiplus_inerCnt").find("a.sficn").removeClass("scale"),
-                SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn").attr("data-effect") && "combo" == SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn").attr("data-effect") && (SFSI(this).children("div.sfsiplus_inerCnt").find("a.sficn").css("opacity", "0.6"),
-                    SFSI(this).children("div.sfsiplus_inerCnt").find("a.sficn").removeClass("scale"));
-            SFSI(".sfsiplus_inerCnt").find("div.sfsi_plus_tool_tip_2").css("display", "none");
-        }), SFSI("body").on("click", function () {
+
+        SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn1").attr("data-effect")
+        && "fade_in" == SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn1").attr("data-effect")
+        && SFSI(this).children("div.sfsiplus_inerCnt").find("a.sficn1").css("opacity", "0.6"),
+
+        SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn1").attr("data-effect")
+        && "scale" == SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn1").attr("data-effect")
+        && SFSI(this).children("div.sfsiplus_inerCnt").find("a.sficn1").removeClass("scale"),
+
+        SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn1").attr("data-effect")
+        && "combo" == SFSI(this).children("div.sfsiplus_inerCnt").children("a.sficn1").attr("data-effect")
+        && (SFSI(this).children("div.sfsiplus_inerCnt").find("a.sficn1").css("opacity", "0.6"),
+
+            SFSI(this).children("div.sfsiplus_inerCnt").find("a.sficn1").removeClass("scale"));
+        SFSI(".sfsiplus_inerCnt").find("div.sfsi_plus_tool_tip_2").css("display", "none");
+
+    }), SFSI("body").on("click", function () {
             SFSI(".sfsiplus_inerCnt").find("div.sfsi_plus_tool_tip_2").hide();
         }), SFSI(".adminTooltip >a").on("hover", function () {
             SFSI(this).offset().top, SFSI(this).parent("div").find("div.sfsi_plus_tool_tip_2_inr").css("opacity", "1"),
@@ -408,7 +419,10 @@ SFSI(document).ready(function (s) {
             type: "post",
             dataType: "json",
             url: sfsi_plus_ajax_object.ajax_url,
-            data: { action: "sfsi_plus_hide_admin_forum_notification" },
+            data: { 
+              action: "sfsi_plus_hide_admin_forum_notification",
+              nonce: sfsi_plus_ajax_object.anonce
+            },
             success: function () {
                 SFSI('.usm-plus-widget').remove();
             }

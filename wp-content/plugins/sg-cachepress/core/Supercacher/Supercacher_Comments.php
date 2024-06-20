@@ -31,7 +31,7 @@ class Supercacher_Comments {
 		$this->update_queue(
 			array(
 				get_rest_url(),
-				get_permalink( $commentdata->comment_post_ID ),
+				get_permalink( intval( $commentdata->comment_post_ID ) ),
 			)
 		);
 	}

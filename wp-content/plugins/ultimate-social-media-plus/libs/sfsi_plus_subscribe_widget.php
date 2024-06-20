@@ -24,7 +24,7 @@ function sfsi_plus_addStyleFunction() {
 			var feed_id = '<?php echo $sfsi_plus_feediid ?>';
 			var feedtype = 8;
 			var email = jQuery(ref).find('input[name="email"]').val();
-			var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+			var filter = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 			if ((email != "Enter your email") && (filter.test(email))) {
 				if (feedtype == "8") {
 					var url = "<?php echo $url; ?>" + feed_id + "/" + feedtype;

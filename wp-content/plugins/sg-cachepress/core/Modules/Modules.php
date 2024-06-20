@@ -1,14 +1,12 @@
 <?php
 namespace SiteGround_Optimizer\Modules;
 
-require_once \SiteGround_Optimizer\DIR . '/vendor/pear/net_dns2/Net/DNS2.php';
-
 use SiteGround_Optimizer\Multisite\Multisite;
 use SiteGround_Optimizer\Options\Options;
-use SiteGround_Optimizer\Helper\Helper;
+use SiteGround_Helper\Helper_Service;
 
 /**
- * Provide list of SiteGround Optimizer modules.
+ * Provide list of Speed Optimizer by SiteGround modules.
  */
 class Modules {
 	/**
@@ -60,7 +58,7 @@ class Modules {
 		),
 		'hearbeat_control' => array(
 			'title'   => 'WordPress Heartbeat Optimization',
-			'text'    => 'Enable this option to allow SiteGround Optimizer to control the WordPress Heartbeat API.',
+			'text'    => 'Enable this option to allow Speed Optimizer by SiteGround to control the WordPress Heartbeat API.',
 			'weight'  => 80,
 			'tab'     => 'environment',
 			'options' => array(
@@ -259,9 +257,6 @@ class Modules {
 		'analytics'   => array(
 			'title' => 'Speed Test',
 		),
-		'cloudflare'  => array(
-			'title' => 'Cloudflare',
-		),
 	);
 
 	/**
@@ -276,7 +271,6 @@ class Modules {
 	public $multisite_tabs = array(
 		'global'     => 'Global Settings',
 		'defaults'   => 'Per Site Defaults',
-		'cloudflare' => 'CloudFlare',
 	);
 
 	/**
@@ -545,7 +539,7 @@ class Modules {
 		}
 
 		$message = sprintf(
-			__( '<strong>Important message from SiteGround Optimizer plugin</strong>: We have detected that there is duplicate functionality with other plugins installed on your site: <strong>%1$s</strong> and have deactivated the following functions from our plugin: <strong>%2$s</strong>. If you wish to enable them, please do that from the SiteGround Optimizer config page.', 'sg-cachepress' ),
+			__( '<strong>Important message from Speed Optimizer by SiteGround plugin</strong>: We have detected that there is duplicate functionality with other plugins installed on your site: <strong>%1$s</strong> and have deactivated the following functions from our plugin: <strong>%2$s</strong>. If you wish to enable them, please do that from the Speed Optimizer by SiteGround config page.', 'sg-cachepress' ),
 			implode( ', ', $excluded['conflicting_plugins'] ),
 			implode( ', ', $this->get_modules_pretty_names( $excluded['excluded_modules'] ) )
 		);
@@ -580,7 +574,7 @@ class Modules {
 		}
 
 		$message = sprintf(
-			__( '<strong>Important warning from SiteGround Optimizer plugin</strong>: We have detected that there is duplicate functionality with other plugins installed on your site: <strong>%s</strong>. Please note that having two plugins with the same functionality may actually decrease your site\'s performance and hurt your pages loading times so we recommend you to leave only one of the plugins active.', 'sg-cachepress' ),
+			__( '<strong>Important warning from Speed Optimizer by SiteGround plugin</strong>: We have detected that there is duplicate functionality with other plugins installed on your site: <strong>%s</strong>. Please note that having two plugins with the same functionality may actually decrease your site\'s performance and hurt your pages loading times so we recommend you to leave only one of the plugins active.', 'sg-cachepress' ),
 			implode( ', ', $excluded['conflicting_plugins'] )
 		);
 
@@ -693,10 +687,6 @@ class Modules {
 			$active_tabs[ $tab_slug ] = __( $tab['title'], 'sg-cachepress' );
 		}
 
-		if ( ! Options::is_enabled( 'siteground_optimizer_has_cloudflare' ) ) {
-			unset( $active_tabs['cloudflare'] );
-		}
-
 		// Return the tabs.
 		if ( ! is_multisite() ) {
 			// Return the tabs.
@@ -763,7 +753,7 @@ class Modules {
 		// Add the new modules to the response if the optimization is not enabled.
 		if ( ! empty( $new_modules ) ) {
 			foreach ( $new_modules as $index => $card ) {
-				if ( 1 == get_option( 'siteground_optimizer_' . $card['optimization'], 0 ) ) {
+				if ( Options::is_enabled( 'siteground_optimizer_' . $card['optimization'] ) ) {
 					continue;
 				}
 
@@ -784,8 +774,8 @@ class Modules {
 					array(
 						array(
 							'type'       => 'default',
-							'title'      => __( 'Welcome to SiteGround Optimizer', 'sg-cachepress' ),
-							'text'       => __( 'Get the best performance for your WordPress website with our optimization plugin. It handles caching, system settings, and all the necessary configurations for a blazing-fast website. With the SiteGround Optimizer enabled, you’re getting the very best from your hosting environment!', 'sg-cachepress' ),
+							'title'      => __( 'Welcome to Speed Optimizer by SiteGround', 'sg-cachepress' ),
+							'text'       => __( 'Get the best performance for your WordPress website with our optimization plugin. It handles caching, system settings, and all the necessary configurations for a blazing-fast website. With the Speed Optimizer by SiteGround enabled, you’re getting the very best from your hosting environment!', 'sg-cachepress' ),
 							'icon'       => 'presentational-speed-caching',
 							'icon_color' => 'salmon',
 						),
@@ -811,7 +801,7 @@ class Modules {
 	public function get_optimizations() {
 		$optimizations = array();
 		$count         = 3;
-		$is_siteground = Helper::is_siteground();
+		$is_siteground = Helper_Service::is_siteground();
 
 		// Order the modules.
 		$keys = array_column( $this->modules, 'weight' );
@@ -824,7 +814,7 @@ class Modules {
 			}
 
 			// Bail if the optimization is alredy enabled.
-			if ( 1 == get_option( $module['options'][0], 0 ) ) {
+			if ( Options::is_enabled( $module['options'][0] ) ) {
 				continue;
 			}
 
@@ -858,61 +848,5 @@ class Modules {
 		return array();
 	}
 
-	/**
-	 * Check if the current domain has cloudflare.
-	 *
-	 * @since  5.7.0
-	 *
-	 * @return boolean True/False.
-	 */
-	public function has_cloudflare() {
-		$resolver = new \Net_DNS2_Resolver(
-			array(
-				'nameservers' => array( '1.1.1.1', '8.8.8.8' ),
-			)
-		);
-
-		// Parse the url.
-		$url_parts = parse_url( site_url( '/' ) );
-
-		try {
-			// Get the A record info.
-			$dns_resolver_response = $resolver->query( $url_parts['host'], 'A' );
-		} catch ( \Exception $e ) {
-			return;
-		}
-
-		if ( empty( $dns_resolver_response->answer ) ) {
-			return;
-		}
-
-		foreach ( $dns_resolver_response->answer as $record ) {
-			if ( is_a( $record, 'Net_DNS2_RR_A' ) ) {
-				$a_record = $record;
-				break;
-			}
-		}
-
-		if ( empty( $a_record->address ) ) {
-			return;
-		}
-
-		// Make a request to the site url.
-		$response = wp_remote_get( 'http://' . $a_record->address );
-
-		// Retrieve response headers.
-		$headers = wp_remote_retrieve_headers( $response );
-
-		// Check if the server is cloudflare.
-		if (
-			! empty( $headers['server'] ) &&
-			'cloudflare' === $headers['server']
-		) {
-			update_option( 'siteground_optimizer_has_cloudflare', 1 );
-			return;
-		}
-
-		update_option( 'siteground_optimizer_has_cloudflare', 0 );
-	}
 
 }

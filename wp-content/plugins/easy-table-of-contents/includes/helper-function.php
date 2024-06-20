@@ -27,15 +27,27 @@ if( !defined( 'ABSPATH' ) )
  * 
  * @since 1.4.0
  */
+function eztoc_is_plugins_page() {
+
+    if(function_exists('get_current_screen')){
+        $screen = get_current_screen();
+            if(is_object($screen)){
+                if($screen->id == 'plugins' || $screen->id == 'plugins-network'){
+                    return true;
+                }
+            }
+    }
+    return false;
+}
 
 add_filter('admin_footer', 'eztoc_add_deactivation_feedback_modal');
 function eztoc_add_deactivation_feedback_modal() {
-    global $pagenow;
 
-    if(  is_admin() && 'plugins.php' == $pagenow ) 
-    {
-        require_once EZ_TOC_PATH ."/includes/deactivate-feedback.php";
+    if( !is_admin() && !eztoc_is_plugins_page()) {
+        return;
     }
+    
+    require_once EZ_TOC_PATH ."/includes/deactivate-feedback.php";
 
 }
 
@@ -52,6 +64,9 @@ function eztoc_send_feedback() {
     
     if( !isset( $form['eztoc_security_nonce'] ) || isset( $form['eztoc_security_nonce'] ) && !wp_verify_nonce( sanitize_text_field( $form['eztoc_security_nonce'] ), 'eztoc_ajax_check_nonce' ) ) {
         echo 'security_nonce_not_verified';
+        die();
+    }
+    if ( !current_user_can( 'manage_options' ) ) {
         die();
     }
     
@@ -72,6 +87,7 @@ function eztoc_send_feedback() {
 
     if($subject == 'technical issue'){
 
+          $subject  = 'Easy Table of Contents '.$subject;
           $text = trim($text);
 
           if(!empty($text)){
@@ -94,7 +110,7 @@ add_action( 'wp_ajax_eztoc_send_feedback', 'eztoc_send_feedback' );
 
 function eztoc_enqueue_makebetter_email_js(){
 
-    if( !is_admin() ) {
+    if( !is_admin() && !eztoc_is_plugins_page()) {
         return;
     }
 
@@ -106,10 +122,12 @@ add_action( 'admin_enqueue_scripts', 'eztoc_enqueue_makebetter_email_js' );
 
 
 add_action('wp_ajax_eztoc_subscribe_newsletter','eztoc_subscribe_for_newsletter');
-add_action('wp_ajax_nopriv_eztoc_subscribe_newsletter','eztoc_subscribe_for_newsletter');
 function eztoc_subscribe_for_newsletter(){
     if( !wp_verify_nonce( sanitize_text_field( $_POST['eztoc_security_nonce'] ), 'eztoc_ajax_check_nonce' ) ) {
         echo 'security_nonce_not_verified';
+        die();
+    }
+    if ( !current_user_can( 'manage_options' ) ) {
         die();
     }
     $api_url = 'http://magazine3.company/wp-json/api/central/email/subscribe';

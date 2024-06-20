@@ -12,6 +12,20 @@ class Rest {
 	const REST_NAMESPACE = 'siteground-optimizer/v1';
 
 	/**
+	 * Local Variables.
+	 *
+	 * @var mixed
+	 */
+	public $rest_helper_webp;
+	public $rest_helper_options;
+	public $rest_helper_cache;
+	public $rest_helper_multisite;
+	public $rest_helper_misc;
+	public $rest_helper_images;
+	public $rest_helper_environment;
+	public $rest_helper_dashboard;
+
+	/**
 	 * Dependencies.
 	 *
 	 * @since 5.9.0
@@ -26,7 +40,6 @@ class Rest {
 		'misc'        => 'rest_helper_misc',
 		'images'      => 'rest_helper_images',
 		'environment' => 'rest_helper_environment',
-		'cloudflare'  => 'rest_helper_cloudflare',
 		'dashboard'   => 'rest_helper_dashboard',
 	);
 
@@ -40,6 +53,10 @@ class Rest {
 	public static $toggle_options = array(
 		// Cache.
 		'purge_rest_cache',
+		'logged_in_cache',
+		// Environment.
+		'enable_gzip_compression',
+		'enable_browser_caching',
 		// Frontend Opitmizations.
 		'optimize_css',
 		'optimize_javascript',
@@ -51,7 +68,6 @@ class Rest {
 		'disable_emojis',
 		// Media Optimization.
 		'lazyload_images',
-		'resize_images',
 		'backup_media',
 	);
 
@@ -82,6 +98,22 @@ class Rest {
 	);
 
 	/**
+	 * All popups endpoints.
+	 *
+	 * @since 7.0.0
+	 *
+	 * @var array
+	 */
+	public static $popups = array(
+		'memcache'            => 'Memcached',
+		'dynamic-cache'       => 'Dynamic Caching',
+		'webp-support'        => 'WebP Optimiztion',
+		'images'              => 'Images Optimization',
+		'optimize-javascript' => 'JavaScript Minification',
+		'optimize-css'        => 'CSS Minification',
+	);
+
+	/**
 	 * The constructor.
 	 */
 	public function __construct() {
@@ -108,7 +140,7 @@ class Rest {
 	 * @return WP_Error|bool
 	 */
 	public function check_permissions( $request ) {
-		return current_user_can( 'activate_plugins' );
+		return current_user_can( 'manage_options' );
 	}
 
 	/**
@@ -231,7 +263,6 @@ class Rest {
 				'args'                => array(
 					'page_id' => array(
 						'validate_callback' => function( $param, $request, $key ) {
-
 							$page_ids = array(
 								'dashboard',
 								'caching',
@@ -329,6 +360,21 @@ class Rest {
 			)
 		);
 
+		register_rest_route(
+			self::REST_NAMESPACE, '/file-caching', array(
+				'methods'             => 'PUT',
+				'callback'            => array( $this->rest_helper_cache, 'manage_file_caching' ),
+				'permission_callback' => array( $this, 'check_permissions' ),
+			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE, '/file-caching-settings', array(
+				'methods'             => 'PUT',
+				'callback'            => array( $this->rest_helper_cache, 'manage_file_caching_settings' ),
+				'permission_callback' => array( $this, 'check_permissions' ),
+			)
+		);
 	}
 
 	/**
@@ -367,6 +413,13 @@ class Rest {
 				'callback'            => array( $this->rest_helper_images, 'get_preview_images' ),
 				'permission_callback' => array( $this, 'check_permissions' ),
 				'args'                => array( array( 'id' ) ),
+			)
+		);
+		register_rest_route(
+			self::REST_NAMESPACE, '/image-resize', array(
+				'methods'             => 'PUT',
+				'callback'            => array( $this->rest_helper_images, 'manage_resize_images' ),
+				'permission_callback' => array( $this, 'check_permissions'),
 			)
 		);
 	}
@@ -426,31 +479,6 @@ class Rest {
 	}
 
 	/**
-	 * Register Cloudflare routes.
-	 *
-	 * @since  5.7
-	 */
-	public function register_cloudflare_rest_routes() {
-
-		register_rest_route(
-			self::REST_NAMESPACE, '/cloudflare/', array(
-				'methods'             => 'PUT',
-				'callback'            => array( $this->rest_helper_cloudflare, 'manage_cloudflare' ),
-				'permission_callback' => array( $this, 'check_permissions' ),
-			)
-		);
-
-		register_rest_route(
-			self::REST_NAMESPACE, '/purge-cloudflare-cache/', array(
-				'methods'             => 'GET',
-				'callback'            => array( $this->rest_helper_cloudflare, 'purge_cloudflare_cache_from_rest' ),
-				'permission_callback' => array( $this, 'check_permissions' ),
-			)
-		);
-
-	}
-
-	/**
 	 * Register misc rest routes.
 	 *
 	 * @since  5.4.0
@@ -480,6 +508,49 @@ class Rest {
 				)
 			);
 		}
+
+		register_rest_route(
+			self::REST_NAMESPACE, '/feature-popup/(?P<type>[^/]+)', array(
+				'methods'             => 'GET',
+				'callback'            => array( $this->rest_helper_misc, 'feature_popup' ),
+				'permission_callback' => array( $this, 'check_permissions' ),
+				'args'                => array(
+					'type' => array(
+						'validate_callback' => function( $param, $request, $key ) {
+							return array_key_exists( $param, str_replace( '_', '-', self::$popups ) );
+						},
+					),
+					'page_id' => array(
+						'validate_callback' => function( $param, $request, $key ) {
+
+							$popup_type = array(
+								'memcache',
+								'dynamic-cache',
+								'images',
+							);
+
+							return array_key_exists( $param, $popup_type );
+						},
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE, '/performance-report/', array(
+				'methods'             => 'GET',
+				'callback'            => array( $this->rest_helper_misc, 'get_performance_report_recipient' ),
+				'permission_callback' => array( $this, 'check_permissions' ),
+			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE, '/perf-notification-email/', array(
+				'methods'             => 'POST',
+				'callback'            => array( $this->rest_helper_misc, 'manage_notification_email' ),
+				'permission_callback' => array( $this, 'check_permissions' ),
+			)
+		);
 	}
 
 	/**

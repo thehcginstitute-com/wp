@@ -91,9 +91,11 @@ function sfsi_plus_social_buttons_below($content)
 				if ($sfsi_section4['sfsi_plus_facebook_countsFrom'] == "manual") {
 					$counts = $sfsi_section4['sfsi_plus_facebook_manualCounts'];
 				} else if ($sfsi_section4['sfsi_plus_facebook_countsFrom'] == "likes") {
-					$counts = $socialObj->sfsi_get_fb($permalink);
+					$counts = $socialObj->sfsi_get_fb($permalink, true);
+                    $counts = intval($counts->share_count);
 				} else if ($sfsi_section4['sfsi_plus_facebook_countsFrom'] == "followers") {
-					$counts = $socialObj->sfsi_get_fb($permalink);
+                    $counts = $socialObj->sfsi_get_fb($permalink, true);
+                    $counts = intval($counts->share_count);
 				} else if ($sfsi_section4['sfsi_plus_facebook_countsFrom'] == "mypage") {
 					$current_url = $sfsi_section4['sfsi_plus_facebook_mypageCounts'];
 					$counts      = $socialObj->sfsi_get_fb_pagelike($current_url);
@@ -317,6 +319,7 @@ function sfsi_plus_footer_script()
 	$sfsi_section1 =  maybe_unserialize(get_option('sfsi_plus_section1_options', false));
 	$sfsi_section6 =  maybe_unserialize(get_option('sfsi_plus_section6_options', false));
 	$sfsi_section8 =  maybe_unserialize(get_option('sfsi_plus_section8_options', false));
+	$sfsi_section4 =  maybe_unserialize(get_option('sfsi_plus_section4_options', false));
 	$sfsi_section2 =  maybe_unserialize(get_option('sfsi_plus_section2_options', false));
 
 	/* filter the content of post */
@@ -583,7 +586,8 @@ function sfsi_plus_footer_script()
 				$icons .= "\t\t" . "<a " . sfsi_plus_checkNewWindow() . " href='" . ($icon_config['url'] == "" ? $share_url : do_shortcode($icon_config['url'])) . "' style='" . ($icon_config['active'] == 'yes' ? ($sfsi_plus_responsive_icons['settings']['icon_width_type'] === "Fixed icon width" ? 'display:inline-flex' : 'display:block') : 'display:none') . ";" . $sfsi_plus_anchor_style . "' class=" . ($sfsi_plus_responsive_icons['settings']['icon_width_type'] === "Fixed icon width" ? 'sfsi_plus_responsive_fixed_width' : 'sfsi_plus_responsive_fluid') . " >" . "\n";
 				$icons .= "\t\t\t<div class='sfsi_plus_responsive_icon_item_container sfsi_plus_responsive_icon_" . strtolower($icon) . "_container sfsi_plus_" . strtolower($sfsi_plus_responsive_icons['settings']['icon_size']) . "_button " . ($sfsi_plus_responsive_icons['settings']['style'] == "Gradient" ? 'sfsi_plus_responsive_icon_gradient' : '') . (" sfsi_plus_" . (strtolower($sfsi_plus_responsive_icons['settings']['text_align']) == "centered" ? 'centered' : 'left-align') . "_icon") . "' style='" . $sfsi_plus_anchor_div_style . " ' >" . "\n";
 				$icons .= "\t\t\t\t<img style='max-height: 25px;display:unset;margin:0' class='sfsi_plus_wicon' src='" . SFSI_PLUS_PLUGURL . "images/responsive-icon/" . $icon . ('Follow' === $icon ? '.png' : '.svg') . "'>" . "\n";
-				$icons .= "\t\t\t\t<span style='color:#fff' >" . ($icon_config["text"]) . "</span>" . "\n";
+                $icon = $icon_config['text'] == 'Tweet' ? 'Post on X' : $icon_config["text"];
+				$icons .= "\t\t\t\t<span style='color:#fff' >" . $icon . "</span>" . "\n";
 				$icons .= "\t\t\t</div>" . "\n";
 				$icons .= "\t\t</a>" . "\n\n";
 			}

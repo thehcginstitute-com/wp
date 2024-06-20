@@ -5,6 +5,14 @@ namespace SiteGround_Optimizer\Lazy_Load;
  * SG Lazy_Load_Images main plugin class
  */
 class Lazy_Load {
+	/**
+	 * Local variables
+	 *
+	 * @var mixed
+	 */
+	public $lazyload_iframes;
+	public $lazyload_videos;
+	public $lazyload_images;
 
 	/**
 	 * Children classes.
@@ -33,6 +41,10 @@ class Lazy_Load {
 			array(
 				'option' => 'textwidgets',
 				'hook'   => 'widget_text',
+			),
+			array(
+				'option' => 'textwidgets',
+				'hook'   => 'widget_block_content',
 			),
 			array(
 				'option' => 'thumbnails',

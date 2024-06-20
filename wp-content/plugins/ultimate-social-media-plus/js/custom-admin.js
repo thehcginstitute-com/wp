@@ -240,6 +240,8 @@ function sfsi_plus_depened_sections() {
         SFSI("input[name='sfsi_plus_youtube_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_youtube_section", "show") : sfsi_plus_section_Display("sfsiplus_youtube_section", "hide"),
         SFSI("input[name='sfsi_plus_pinterest_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_pinterest_section", "show") : sfsi_plus_section_Display("sfsiplus_pinterest_section", "hide"),
         SFSI("input[name='sfsi_plus_instagram_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_instagram_section", "show") : sfsi_plus_section_Display("sfsiplus_instagram_section", "hide"),
+        SFSI("input[name='sfsi_plus_ria_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_ria_section", "show") : sfsi_plus_section_Display("sfsiplus_ria_section", "hide"),
+        SFSI("input[name='sfsi_plus_inha_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_inha_section", "show") : sfsi_plus_section_Display("sfsiplus_inha_section", "hide"),
         SFSI("input[name='sfsi_plus_houzz_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_houzz_section", "show") : sfsi_plus_section_Display("sfsiplus_houzz_section", "hide"),
         SFSI("input[name='sfsi_plus_linkedin_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_linkedin_section", "show") : sfsi_plus_section_Display("sfsiplus_linkedin_section", "hide"),
         SFSI("input[name='sfsi_plus_telegram_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_telegram_section", "show") : sfsi_plus_section_Display("sfsiplus_telegram_section", "hide"),
@@ -321,7 +323,11 @@ function SFSI_plus_done(nonce) {
         data: e,
         success: function(msg) {
             jQuery("li.cstomskins_upload").children(".sfsiplus_icns_tab_3").html(msg);
-            SFSI("input[name='sfsi_plus_rss_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_rss_section", "show") : sfsi_plus_section_Display("sfsiplus_rss_section", "hide"), SFSI("input[name='sfsi_plus_email_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_email_section", "show") : sfsi_plus_section_Display("sfsiplus_email_section", "hide"), SFSI("input[name='sfsi_plus_facebook_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_facebook_section", "show") : sfsi_plus_section_Display("sfsiplus_facebook_section", "hide"), SFSI("input[name='sfsi_plus_twitter_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_twitter_section", "show") : sfsi_plus_section_Display("sfsiplus_twitter_section", "hide"), SFSI("input[name='sfsi_plus_youtube_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_youtube_section", "show") : sfsi_plus_section_Display("sfsiplus_youtube_section", "hide"), SFSI("input[name='sfsi_plus_pinterest_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_pinterest_section", "show") : sfsi_plus_section_Display("sfsiplus_pinterest_section", "hide"), SFSI("input[name='sfsi_plus_instagram_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_instagram_section", "show") : sfsi_plus_section_Display("sfsiplus_instagram_section", "hide"), SFSI("input[name='sfsi_plus_houzz_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_houzz_section", "show") : sfsi_plus_section_Display("sfsiplus_houzz_section", "hide"), SFSI("input[name='sfsi_plus_linkedin_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_linkedin_section", "show") : sfsi_plus_section_Display("sfsiplus_linkedin_section", "hide"), SFSI("input[name='sfsi_plus_mastodon_display']") ? sfsi_plus_section_Display("sfsiplus_mastodon_section", "show") : sfsi_plus_section_Display("sfsiplus_mastodon_section", "hide"), SFSI("input[element-type='sfsiplus-cusotm-icon']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_custom_section", "show") : sfsi_plus_section_Display("sfsiplus_custom_section", "hide");
+            SFSI("input[name='sfsi_plus_rss_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_rss_section", "show") : sfsi_plus_section_Display("sfsiplus_rss_section", "hide"), SFSI("input[name='sfsi_plus_email_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_email_section", "show") : sfsi_plus_section_Display("sfsiplus_email_section", "hide"), SFSI("input[name='sfsi_plus_facebook_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_facebook_section", "show") : sfsi_plus_section_Display("sfsiplus_facebook_section", "hide"), SFSI("input[name='sfsi_plus_twitter_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_twitter_section", "show") : sfsi_plus_section_Display("sfsiplus_twitter_section", "hide"), SFSI("input[name='sfsi_plus_youtube_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_youtube_section", "show") : sfsi_plus_section_Display("sfsiplus_youtube_section", "hide"), SFSI("input[name='sfsi_plus_pinterest_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_pinterest_section", "show") : sfsi_plus_section_Display("sfsiplus_pinterest_section", "hide"),
+                SFSI("input[name='sfsi_plus_instagram_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_instagram_section", "show") : sfsi_plus_section_Display("sfsiplus_instagram_section", "hide"),
+                SFSI("input[name='sfsi_plus_ria_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_ria_section", "show") : sfsi_plus_section_Display("sfsiplus_ria_section", "hide"),
+                SFSI("input[name='sfsi_plus_inha_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_inha_section", "show") : sfsi_plus_section_Display("sfsiplus_inha_section", "hide"),
+                SFSI("input[name='sfsi_plus_houzz_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_houzz_section", "show") : sfsi_plus_section_Display("sfsiplus_houzz_section", "hide"), SFSI("input[name='sfsi_plus_linkedin_display']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_linkedin_section", "show") : sfsi_plus_section_Display("sfsiplus_linkedin_section", "hide"), SFSI("input[name='sfsi_plus_mastodon_display']") ? sfsi_plus_section_Display("sfsiplus_mastodon_section", "show") : sfsi_plus_section_Display("sfsiplus_mastodon_section", "hide"), SFSI("input[element-type='sfsiplus-cusotm-icon']").prop("checked") ? sfsi_plus_section_Display("sfsiplus_custom_section", "show") : sfsi_plus_section_Display("sfsiplus_custom_section", "hide");
             SFSI(".cstmskins-overlay").hide("slow");
             sfsi_plus_update_step3() && sfsipluscollapse(this);
         }
@@ -365,6 +371,8 @@ function sfsi_plus_update_step1() {
         c = SFSI("input[name='sfsi_plus_pinterest_display']:checked").val(),
         p = SFSI("input[name='sfsi_plus_linkedin_display']:checked").val(),
         _ = SFSI("input[name='sfsi_plus_instagram_display']:checked").val(),
+        ria = SFSI("input[name='sfsi_plus_ria_display']:checked").val(),
+        inha = SFSI("input[name='sfsi_plus_inha_display']:checked").val(),
         telegram = SFSI("input[name='sfsi_plus_telegram_display']:checked").val(),
         vk = SFSI("input[name='sfsi_plus_vk_display']:checked").val(),
         ok = SFSI("input[name='sfsi_plus_ok_display']:checked").val(),
@@ -390,6 +398,8 @@ function sfsi_plus_update_step1() {
             sfsi_plus_pinterest_display: c,
             sfsi_plus_linkedin_display: p,
             sfsi_plus_instagram_display: _,
+            sfsi_plus_ria_display: ria,
+            sfsi_plus_inha_display: inha,
             sfsi_plus_telegram_display: telegram,
             sfsi_plus_vk_display: vk,
             sfsi_plus_ok_display: ok,
@@ -510,6 +520,12 @@ function sfsi_plus_update_step2() {
         mastodonVisitChk = SFSI("input[name='sfsi_plus_mastodonVisit_option']:checked").val(),
         mas = SFSI("input[name='sfsi_plus_mastodon_pageUrl']").val(),
 
+        riaVisitChk = SFSI("input[name='sfsi_plus_riaVisit_option']:checked").val(),
+        ria = SFSI("input[name='sfsi_plus_ria_pageUrl']").val(),
+
+        inhaVisitChk = SFSI("input[name='sfsi_plus_inhaVisit_option']:checked").val(),
+        inha = SFSI("input[name='sfsi_plus_inha_pageUrl']").val(),
+
         SFSI("input[name='sfsi_plus_CustomIcon_links[]']").each(function() {
             P[SFSI(this).attr("file-id")] = this.value;
         });
@@ -574,6 +590,12 @@ function sfsi_plus_update_step2() {
         sfsi_plus_mastodon_pageUrl: mas,
         sfsi_plus_mastodonVisit_option: mastodonVisitChk,
 
+        sfsi_plus_ria_pageUrl: ria,
+        sfsi_plus_riaVisit_option: riaVisitChk,
+
+        sfsi_plus_inha_pageUrl: inha,
+        sfsi_plus_inhaVisit_option: inhaVisitChk,
+
         sfsi_plus_custom_links: P,
         nonce: nonce
     };
@@ -634,8 +656,10 @@ function sfsi_plus_update_step3() {
         sfsi_plus_vk_bgColor = SFSI("input[name='sfsi_plus_vk_bgColor']").val(),
         sfsi_plus_wechat_bgColor = SFSI("input[name='sfsi_plus_wechat_bgColor']").val(),
         sfsi_plus_whatsapp_bgColor = SFSI("input[name='sfsi_plus_whatsapp_bgColor']").val(),
-        sfsi_plus_weibo_bgColor = SFSI("input[name='sfsi_plus_weibo_bgColor']").val();
+        sfsi_plus_weibo_bgColor = SFSI("input[name='sfsi_plus_weibo_bgColor']").val(),
         sfsi_plus_copylink_bgColor = SFSI("input[name='sfsi_plus_copylink_bgColor']").val(),
+        sfsi_plus_ria_bgColor = SFSI("input[name='sfsi_plus_ria_bgColor']").val(),
+        sfsi_plus_inha_bgColor = SFSI("input[name='sfsi_plus_inha_bgColor']").val(),
         sfsi_plus_mastodon_bgColor = SFSI("input[name='sfsi_plus_mastodon_bgColor']").val();
 
     var mouseover_effect_type = 'same_icons'; //SFSI("input[name='sfsi_plus_mouseOver_effect_type']:checked").val();
@@ -674,6 +698,8 @@ function sfsi_plus_update_step3() {
         sfsi_plus_weibo_bgColor: sfsi_plus_weibo_bgColor,
         sfsi_plus_copylink_bgColor: sfsi_plus_copylink_bgColor,
         sfsi_plus_mastodon_bgColor: sfsi_plus_mastodon_bgColor,
+        sfsi_plus_ria_bgColor: sfsi_plus_ria_bgColor,
+        sfsi_plus_inha_bgColor: sfsi_plus_inha_bgColor,
 
         nonce: nonce
     };
@@ -779,6 +805,10 @@ function sfsi_plus_update_step4() {
         wbm = SFSI("input[name='sfsi_plus_weibo_manualCounts']").val(),
         mtc = SFSI("input[name='sfsi_plus_mastodon_countsDisplay']:checked").val() || 'no',
         mtm = SFSI("input[name='sfsi_plus_mastodon_manualCounts']").val(),
+        riac = SFSI("input[name='sfsi_plus_ria_countsDisplay']:checked").val() || 'no',
+        riam = SFSI("input[name='sfsi_plus_ria_manualCounts']").val(),
+        inhac = SFSI("input[name='sfsi_plus_inha_countsDisplay']:checked").val() || 'no',
+        inham = SFSI("input[name='sfsi_plus_inha_manualCounts']").val(),
         ric = SFSI("input[name='sfsi_plus_round_counts']:checked").val() || 'no',
         oic = SFSI("input[name='sfsi_plus_original_counts']:checked").val() || 'no',
         rpic = SFSI("input[name='sfsi_plus_responsive_share_count']:checked").val() || 'no',
@@ -795,6 +825,7 @@ function sfsi_plus_update_step4() {
             sfsi_plus_rss_manualCounts: c,
             sfsi_plus_facebook_countsDisplay: p,
             sfsi_plus_facebook_countsFrom: _,
+            sfsi_plus_facebook_enableCache: SFSI("input[name='sfsi_plus_facebook_enableCache']").is(":checked") ,
             sfsi_plus_facebook_mypageCounts: mp,
             sfsi_plus_facebook_manualCounts: l,
             sfsi_plus_twitter_countsDisplay: S,
@@ -845,6 +876,12 @@ function sfsi_plus_update_step4() {
 
             sfsi_plus_mastodon_countsDisplay: mtc,
             sfsi_plus_mastodon_manualCounts: mtm,
+
+            sfsi_plus_ria_countsDisplay: riac,
+            sfsi_plus_ria_manualCounts: riam,
+
+            sfsi_plus_inha_countsDisplay: inhac,
+            sfsi_plus_inha_manualCounts: inham,
 
             sfsi_plus_wechat_countsDisplay: wcc,
             sfsi_plus_wechat_manualCounts: wcm,
@@ -916,6 +953,8 @@ function sfsi_plus_update_step5() {
         F = SFSI("#sfsi_plus_linkedinIcon_order").attr("data-index"),
         houzzOrder = SFSI("#sfsi_plus_houzzIcon_order").attr("data-index"),
         mastodonOrder = SFSI("#sfsi_plus_mastodonIcon_order").attr("data-index"),
+        riaOrder = SFSI("#sfsi_plus_riaIcon_order").attr("data-index"),
+        inhaOrder = SFSI("#sfsi_plus_inhaIcon_order").attr("data-index"),
         h = new Array();
 
     SFSI(".sfsiplus_custom_iconOrder").each(function() {
@@ -927,6 +966,8 @@ function sfsi_plus_update_step5() {
     var v = 1 == SFSI("input[name='sfsi_plus_rss_MouseOverText']").prop("disabled") ? "" : SFSI("input[name='sfsi_plus_rss_MouseOverText']").val(),
         g = 1 == SFSI("input[name='sfsi_plus_email_MouseOverText']").prop("disabled") ? "" : SFSI("input[name='sfsi_plus_email_MouseOverText']").val(),
         k = 1 == SFSI("input[name='sfsi_plus_twitter_MouseOverText']").prop("disabled") ? "" : SFSI("input[name='sfsi_plus_twitter_MouseOverText']").val(),
+        ria = 1 == SFSI("input[name='sfsi_plus_ria_MouseOverText']").prop("disabled") ? "" : SFSI("input[name='sfsi_plus_ria_MouseOverText']").val(),
+        inha = 1 == SFSI("input[name='sfsi_plus_inha_MouseOverText']").prop("disabled") ? "" : SFSI("input[name='sfsi_plus_inha_MouseOverText']").val(),
         y = 1 == SFSI("input[name='sfsi_plus_facebook_MouseOverText']").prop("disabled") ? "" : SFSI("input[name='sfsi_plus_facebook_MouseOverText']").val(),
         w = 1 == SFSI("input[name='sfsi_plus_linkedIn_MouseOverText']").prop("disabled") ? "" : SFSI("input[name='sfsi_plus_linkedIn_MouseOverText']").val(),
         x = 1 == SFSI("input[name='sfsi_plus_youtube_MouseOverText']").prop("disabled") ? "" : SFSI("input[name='sfsi_plus_youtube_MouseOverText']").val(),
@@ -967,6 +1008,8 @@ function sfsi_plus_update_step5() {
         sfsi_plus_rss_MouseOverText: v,
         sfsi_plus_email_MouseOverText: g,
         sfsi_plus_twitter_MouseOverText: k,
+        sfsi_plus_ria_MouseOverText: ria,
+        sfsi_plus_inha_MouseOverText: inha,
         sfsi_plus_facebook_MouseOverText: y,
         sfsi_plus_youtube_MouseOverText: x,
         sfsi_plus_linkedIn_MouseOverText: w,
@@ -999,6 +1042,8 @@ function sfsi_plus_update_step5() {
         sfsi_plus_icons_sharing_and_traffic_tips: st,
         sfsi_plus_whatsappIcon_order: whatsapp,
         sfsi_plus_mastodonIcon_order: mastodonOrder,
+        sfsi_plus_riaIcon_order: riaOrder,
+        sfsi_plus_inhaIcon_order: inhaOrder,
         sfsi_plus_featured_image_rss: sfsi_plus_featured_image_rss,
         nonce: nonce
     };
@@ -1562,7 +1607,8 @@ function sfsi_plus_selectText(containerid) {
  * @param {*} input
  * @returns
  */
-function escapeHtml(unsafe) {
+function escapeHtml(unsafe = '') {
+  if (typeof unsafe != 'string') unsafe = '';
     return unsafe
          .replace(/&/g, "&amp;")
          .replace(/</g, "&lt;")
@@ -1807,7 +1853,7 @@ SFSI(document).ready(function(s) {
     });
 
     /* Flat icon BG color */
-    SFSI('#sfsi_plus_rss_bgColor, #sfsi_plus_email_bgColor, #sfsi_plus_facebook_bgColor, #sfsi_plus_twitter_bgColor, #sfsi_plus_linkedin_bgColor, #sfsi_plus_pinterest_bgColor, #sfsi_plus_houzz_bgColor,    #sfsi_plus_telegram_bgColor, #sfsi_plus_vk_bgColor, #sfsi_plus_ok_bgColor, #sfsi_plus_wechat_bgColor, #sfsi_plus_weibo_bgColor, #sfsi_plus_whatsapp_bgColor, #sfsi_plus_mastodon_bgColor').wpColorPicker({
+    SFSI('#sfsi_plus_rss_bgColor, #sfsi_plus_email_bgColor, #sfsi_plus_facebook_bgColor, #sfsi_plus_twitter_bgColor, #sfsi_plus_linkedin_bgColor, #sfsi_plus_pinterest_bgColor, #sfsi_plus_houzz_bgColor,    #sfsi_plus_telegram_bgColor, #sfsi_plus_vk_bgColor, #sfsi_plus_ok_bgColor, #sfsi_plus_wechat_bgColor, #sfsi_plus_weibo_bgColor, #sfsi_plus_whatsapp_bgColor, #sfsi_plus_mastodon_bgColor,#sfsi_plus_ria_bgColor,#sfsi_plus_inha_bgColor').wpColorPicker({
         defaultColor: true,
         hide: true,
         palettes: true,

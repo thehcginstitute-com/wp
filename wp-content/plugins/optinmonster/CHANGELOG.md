@@ -1,6 +1,65 @@
 # Changelog
 All notable changes to the OptinMonster plugin will be documented in this file.
 
+### 2.16.2 - 2024-05-16
+* Improved browser coverage.
+
+### 2.16.1 - 2024-04-23
+* Improved About Us page.
+* Updates and improvements to our Gutenberg block.
+* Various npm package updates used for generating our JavaScript code.
+
+### 2.16.0 - 2024-02-22
+* Added integration with Uncanny Automator.
+* Improved University page.
+* Improved security check for dismiss pointer.
+* Update dependencies for security and performance improvements.
+
+### 2.15.3 - 2024-01-03
+* Updates to onboarding.
+
+### 2.15.2 - 2024-01-02
+* Improved onboarding for new users.
+
+### 2.15.1 - 2023-12-06
+* Updates and improvements to our Gutenberg block.
+* Improved connection flow.
+
+### 2.15.0 - 2023-11-15
+* Improved connection flow and onboarding for new/existing users.
+* Fixed filtering bug on Playbooks page.
+* Improved process for those intending to upgrade.
+* Various npm package updates used for generating our JavaScript code.
+
+### 2.14.1 - 2023-10-12
+
+* Updates to the OptinMonster submenu.
+* Removed code related to the output and retrieval of legacy campaigns.
+* Fixed issue where the display rule summary could be blank.
+* Transitioned "Pardot" to "Salesforce Marketing Cloud Account Engagement" to reflect their rebranding.
+* Various npm package updates used for generating our JavaScript code.
+
+### 2.14.0 - 2023-09-28
+* UI updates and improvements to template filtering.
+* Update to allow a new integrations to be set as the default integration during creation.
+* Fixed an issue where an integration using Google Analytics 4 could not be created from within the plugin.
+* Fixed an issue where negative numbers could be entered for cookie duration values.
+
+### 2.13.8 - 2023-08-25
+* Declares compatibility with WooCommerce High-Performance Order Storage
+* Improvements to campaign template searching and filtering
+* Various improvements and updates to copy
+
+### 2.13.7 - 2023-07-27
+* Fixed PHP error with previous release
+
+### 2.13.6 - 2023-07-26
+* Improvements to campaign Output Settings page.
+* Transitioned SendInBlue to Brevo to reflect their rebranding.
+* Fixed a scenario where the campaign type filter could switch the a campaign status filter when clearing the field
+* Improved compatibility with PHP 8.1 and PHP 8.2.
+* Updates to npm packages used to build JS.
+
 ### 2.13.5 - 2023-06-22
 * Improvements to onboarding flow.
 * Improvements MemberPress integration.

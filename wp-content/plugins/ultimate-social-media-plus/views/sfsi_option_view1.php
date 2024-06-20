@@ -30,6 +30,12 @@ $option1['sfsi_plus_linkedin_display']     = (isset($option1['sfsi_plus_linkedin
 $option1['sfsi_plus_instagram_display'] = (isset($option1['sfsi_plus_instagram_display']))
     ? sanitize_text_field($option1['sfsi_plus_instagram_display'])
     : '';
+$option1['sfsi_plus_ria_display'] = (isset($option1['sfsi_plus_ria_display']))
+    ? sanitize_text_field($option1['sfsi_plus_ria_display'])
+    : '';
+$option1['sfsi_plus_inha_display'] = (isset($option1['sfsi_plus_inha_display']))
+    ? sanitize_text_field($option1['sfsi_plus_inha_display'])
+    : '';
 $option1['sfsi_plus_houzz_display']     = (isset($option1['sfsi_plus_houzz_display']))
     ? sanitize_text_field($option1['sfsi_plus_houzz_display'])
     : '';
@@ -157,7 +163,7 @@ $option1['sfsi_plus_mastodon_display'] = (isset($option1['sfsi_plus_mastodon_dis
                     <input name="sfsi_plus_twitter_display" <?php echo ( $option1['sfsi_plus_twitter_display'] == 'yes' ) ? 'checked="true"' : ''; ?> id="sfsi_plus_twitter_display" type="checkbox" value="yes" class="styled" />
                 </div>
                 <span class="sfsicls_twt">
-                    Twitter
+                    X (Twitter)
                 </span>
             </div>
             <div class="sfsiplus_right_info">
@@ -166,7 +172,7 @@ $option1['sfsi_plus_mastodon_display'] = (isset($option1['sfsi_plus_mastodon_dis
                     <?php _e('Can have a strong promotional effect.', 'ultimate-social-media-plus'); ?>
 
                     <label class="expanded-area">
-                        <?php _e('If you have a Twitter-account then adding this icon is a no-brainer. However, similar as with Facebook, even if you don’t have one you should still show this icon so that Twitter-users can share your site.', 'ultimate-social-media-plus'); ?>
+                        <?php _e('If you have a X (Twitter)-account then adding this icon is a no-brainer. However, similar as with Facebook, even if you don’t have one you should still show this icon so that X (Twitter)-users can share your site.', 'ultimate-social-media-plus'); ?>
                     </label>
                 </p>
 
@@ -250,6 +256,47 @@ $option1['sfsi_plus_mastodon_display'] = (isset($option1['sfsi_plus_mastodon_dis
             </div>
         </li>
         <!-- END INSTAGRAM ICON -->
+
+        <!-- RIA ICON -->
+        <li class="vertical-align">
+            <div>
+                <div class="radio_section tb_4_ck"><input name="sfsi_plus_ria_display" <?php echo ($option1['sfsi_plus_ria_display'] == 'yes') ? 'checked="true"' : ''; ?> id="sfsi_plus_ria_display" type="checkbox" value="yes" class="styled" /></div>
+                <span class="sfsicls_ria">
+                    <?php _e( 'RateItAll', 'ultimate-social-media-plus' ); ?>
+                </span>
+            </div>
+            <div class="sfsiplus_right_info">
+                <p>
+                    <span><?php _e('It depends:', 'ultimate-social-media-plus');?></span>
+                    <?php _e('You want people to rate, discuss or comment on your website or products? ', 'ultimate-social-media-plus');
+                    echo '<a href="https://rateitall.com/">';
+                    _e('Create a topic page on RateItAll', 'ultimate-social-media-plus');
+                    echo '</a>';
+                    _e(' and link to it.', 'ultimate-social-media-plus'); ?>
+                </p>
+            </div>
+        </li>
+        <!-- END RIA ICON -->
+
+        <!-- INHA ICON -->
+        <li class="vertical-align">
+            <div>
+                <div class="radio_section tb_4_ck"><input name="sfsi_plus_inha_display" <?php echo ($option1['sfsi_plus_inha_display'] == 'yes') ? 'checked="true"' : ''; ?> id="sfsi_plus_inha_display" type="checkbox" value="yes" class="styled" /></div>
+                <span class="sfsicls_inha">
+                    <?php _e( 'IncreasingHappiness', 'ultimate-social-media-plus' ); ?>
+                </span>
+            </div>
+            <div class="sfsiplus_right_info">
+                <p>
+                    <?php _e("<span>It depends:</span> If you're a charity or contributor for good causes, link here to your profile on ", 'ultimate-social-media-plus');
+                    echo '<a href="https://increasinghappiness.org/">';
+                    _e(' IncreasingHappiness.org. ', 'ultimate-social-media-plus');
+                    echo '</a>';
+                    ?>
+                </p>
+            </div>
+        </li>
+        <!-- END INHA ICON -->
 
         <!-- Houzz ICON -->
         <li class="vertical-align">
@@ -408,7 +455,7 @@ $option1['sfsi_plus_mastodon_display'] = (isset($option1['sfsi_plus_mastodon_dis
 
             <div class="sfsiplus_right_info">
                 <p>
-                    <?php _e( 'Mastodon is the largest decentralized social network on the internet that functions much like Twitter.', 'ultimate-social-media-plus' ); ?>
+                    <?php _e( 'Mastodon is the largest decentralized social network on the internet that functions much like X (Twitter).', 'ultimate-social-media-plus' ); ?>
                 </p>
             </div>
         </li>

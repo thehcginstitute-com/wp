@@ -5,7 +5,7 @@
  * Helper class used for tracking various bits of network wide data.
  *
  * @since   3.5.2
- * @package Wsal
+ * @package wsal
  */
 
 namespace WSAL\Multisite\NetworkWide;
@@ -125,6 +125,11 @@ final class CPTsTracker extends AbstractTracker {
 		$network_data    = get_network_option( null, self::STORAGE_KEY );
 		$current_blog_id = get_current_blog_id();
 		$data_updated    = false;
+
+		if ( false === $network_data ) {
+			$network_data         = array();
+			$network_data['site'] = array();
+		}
 		if (
 			! isset( $network_data['site'][ $current_blog_id ] )
 			|| ( isset( $network_data['site'][ $current_blog_id ] ) && $network_data['site'][ get_current_blog_id() ] !== $this->data )
@@ -165,5 +170,4 @@ final class CPTsTracker extends AbstractTracker {
 		$list = ( 0 !== $site_id && isset( $network_data['site'][ $site_id ] ) ) ? $network_data['site'][ $site_id ] : $network_data['list'];
 		return ( ! empty( $list ) ) ? $list : array();
 	}
-
 }

@@ -99,6 +99,19 @@ class OMAPI_Urls {
 	}
 
 	/**
+	 * Get the contextual OM university url.
+	 *
+	 * @since 2.13.8
+	 *
+	 * @param  array $args Array of query args.
+	 *
+	 * @return string
+	 */
+	public static function university( $args = array() ) {
+		return self::om_admin( 'university', $args );
+	}
+
+	/**
 	 * Get the campaign output settings edit url.
 	 *
 	 * @since 2.2.0
@@ -204,14 +217,33 @@ class OMAPI_Urls {
 	 * @since 2.4.0
 	 *
 	 * @param  string $utm_medium The utm_medium query param.
+	 * @param  string $feature    The feature to pass to the upgrade page.
 	 * @param  string $return_url Url to return. Will default to wp_get_referer().
 	 * @param  array  $args       Additional query args.
 	 *
 	 * @return string        The upgrade url.
 	 */
 	public static function upgrade( $utm_medium, $feature = 'none', $return_url = '', $args = array() ) {
-		$args = wp_parse_args(
-			$args,
+		$args = self::upgrade_params( $utm_medium, $feature, $args );
+		$path = add_query_arg( $args, 'account/wp-upgrade/' );
+
+		return self::om_app( $path, $return_url );
+	}
+
+	/**
+	 * Get the query args for the upgrade url.
+	 *
+	 * @since 2.15.0
+	 *
+	 * @param  string $utm_medium The utm_medium query param.
+	 * @param  string $feature    The feature to pass to the upgrade page.
+	 * @param  array  $args       Additional query args.
+	 *
+	 * @return array              The query args.
+	 */
+	public static function upgrade_params( $utm_medium, $feature = 'none', $args = array() ) {
+		$defaults = wp_parse_args(
+			self::get_partner_params( OPTINMONSTER_APP_URL . '/account/wp-upgrade/' ),
 			array(
 				'utm_source'   => 'WordPress',
 				'utm_medium'   => $utm_medium,
@@ -220,9 +252,13 @@ class OMAPI_Urls {
 			)
 		);
 
-		$path = add_query_arg( $args, 'account/wp-upgrade/' );
+		foreach ( $defaults as $key => $value ) {
+			if ( null === $value ) {
+				unset( $defaults[ $key ] );
+			}
+		}
 
-		return self::om_app( $path, $return_url );
+		return wp_parse_args( $args, $defaults );
 	}
 
 	/**
@@ -236,16 +272,18 @@ class OMAPI_Urls {
 	 * @return string        The marketing url.
 	 */
 	public static function marketing( $path = '', $args = array() ) {
-		$args = wp_parse_args(
-			$args,
+		$url      = sprintf( OPTINMONSTER_URL . '/%1$s', $path );
+		$defaults = wp_parse_args(
+			self::get_partner_params( $url ),
 			array(
 				'utm_source'   => 'WordPress',
 				'utm_medium'   => '',
 				'utm_campaign' => 'Plugin',
 			)
 		);
+		$args     = wp_parse_args( $args, $defaults );
 
-		return add_query_arg( $args, sprintf( OPTINMONSTER_URL . '/%1$s', $path ) );
+		return add_query_arg( $args, $url );
 	}
 
 	/**
@@ -258,5 +296,75 @@ class OMAPI_Urls {
 	public static function om_api() {
 		$custom_api_url = OMAPI::get_instance()->get_option( 'customApiUrl' );
 		return ! empty( $custom_api_url ) ? $custom_api_url : OPTINMONSTER_APIJS_URL;
+	}
+
+	/**
+	 * Sets the partner id param if found, and parses the partner url for additional args to set.
+	 *
+	 * @since 2.15.0
+	 *
+	 * @param  string $destination_url The destination url to compare against.
+	 *
+	 * @return array                   The additional args.
+	 */
+	protected static function get_partner_params( $destination_url = '' ) {
+		$args = array();
+
+		// Add the partner id attribution query arg, if it exists.
+		$id = OMAPI_Partners::get_id();
+		if ( ! empty( $id ) ) {
+			$args['sscid'] = $id;
+		}
+
+		// Next, let's parse the partner url for additional query args
+		// stuffed on the urllink query arg redirect url.
+		$partner_url = OMAPI_Partners::has_partner_url();
+		if (
+			! $partner_url
+			|| false === strpos( $partner_url, 'urllink' )
+		) {
+			return $args;
+		}
+
+		// No params, no problem.
+		$parsed = parse_url( $partner_url );
+		if ( empty( $parsed['query'] ) ) {
+			return $args;
+		}
+
+		// No urllink param, do not pass go, do not collect $200.
+		$query = wp_parse_args( $parsed['query'] );
+		if ( empty( $query['urllink'] ) ) {
+			return $args;
+		}
+
+		// Normalize the url.
+		$url = urldecode( $query['urllink'] );
+		$url = false === strpos( $url, 'http' )
+			? 'https://' . $url
+			: str_replace( 'http://', 'https://', $url );
+
+		// Now let's make sure the url matches the destination url,
+		// before we go attaching its query args.
+		if (
+			$destination_url
+			&& rtrim( $destination_url, '/' ) && 0 !== stripos( $url, $destination_url )
+		) {
+			return $args;
+		}
+
+		// No args, do not pass go, do not collect $200.
+		$bits = parse_url( $url );
+		if ( empty( $bits['query'] ) ) {
+			return $args;
+		}
+
+		$query = wp_parse_args( $bits['query'] );
+		if ( ! empty( $query ) ) {
+			// Ok, let's add the found query args to the args array.
+			$args = wp_parse_args( $query, $args );
+		}
+
+		return $args;
 	}
 }

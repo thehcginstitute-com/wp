@@ -23,6 +23,15 @@ class MonsterInsights_Report {
 	public $name;
 	public $version = '1.0.0';
 	public $source = 'reports';
+	public $start_date;
+	public $end_date;
+
+	/**
+	 * We will use this value if we are not using the same value for report store and relay path.
+	 *
+	 * @var string
+	 */
+	protected $api_path;
 
 	/**
 	 * Primary class constructor.
@@ -199,6 +208,10 @@ class MonsterInsights_Report {
 			) );
 		}
 
+		// These values are going to use on child classes.
+		$this->start_date = $start;
+		$this->end_date   = $end;
+
 		$check_cache       = ( $start === $this->default_start_date() && $end === $this->default_end_date() ) || apply_filters( 'monsterinsights_report_use_cache', false, $this->name );
 		$site_auth         = MonsterInsights()->auth->get_viewname();
 		$ms_auth           = is_multisite() && MonsterInsights()->auth->get_network_viewname();
@@ -241,7 +254,10 @@ class MonsterInsights_Report {
 				$api_options['network'] = true;
 			}
 
-			$api = new MonsterInsights_API_Request( 'analytics/reports/' . $this->name . '/', $api_options, 'GET' );
+			// Get the path of the relay.
+			$api_path = empty( $this->api_path ) ? $this->name : $this->api_path;
+
+			$api = new MonsterInsights_API_Request( 'analytics/reports/' . $api_path . '/', $api_options, 'GET' );
 
 			// Use a report source indicator for requests.
 			if ( ! empty( $this->source ) ) {
@@ -300,8 +316,12 @@ class MonsterInsights_Report {
 
 			return array(
 				'success' => false,
-				'error'   => sprintf( __( 'You must be properly authenticated with MonsterInsights to use our reports. Please use our %1$ssetup wizard%2$s to get started.', 'google-analytics-for-wordpress' ), '<a href=" ' . $url . ' ">', '</a>' ),
-				// Translators: Wizard link tag starts with url, Wizard link tag ends.
+				'error'   => sprintf(
+					/* translators: Placeholders add a link to the Setup Wizard page. */
+					__( 'You must be properly authenticated with MonsterInsights to use our reports. Please use our %1$ssetup wizard%2$s to get started.', 'google-analytics-for-wordpress' ),
+					'<a href=" ' . $url . ' ">',
+					'</a>'
+				),
 				'data'    => array(),
 			);
 		}

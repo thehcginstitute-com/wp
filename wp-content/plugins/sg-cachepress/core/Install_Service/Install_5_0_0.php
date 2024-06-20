@@ -6,6 +6,13 @@ use SiteGround_Optimizer\Htaccess\Htaccess;
 use SiteGround_Optimizer\Ssl\Ssl;
 
 class Install_5_0_0 extends Install {
+	/**
+	 * Local variables
+	 *
+	 * @var mixed
+	 */
+	public $htaccess;
+	public $ssl;
 
 	/**
 	 * The default install version. Overridden by the installation packages.
@@ -117,8 +124,8 @@ class Install_5_0_0 extends Install {
 		if ( empty( $options ) ) {
 			// The plugin version is old, so return the old options.
 			$options = array(
-				'enable_cache'     => get_option( 'SGCP_Use_SG_Cache', 1 ),
-				'autoflush_cache'  => get_option( 'SGCP_Autoflush', 1 ),
+				'enable_cache'     => get_option( 'SGCP_Use_SG_Cache', 0 ),
+				'autoflush_cache'  => get_option( 'SGCP_Autoflush', 0 ),
 				'enable_memcached' => get_option( 'SGCP_Memcached', 0 ),
 				'show_notice'      => get_option( 'SGCP_ShowNotice', 0 ),
 				'is_nginx'         => get_option( 'SGCP_IsNginx', 0 ),

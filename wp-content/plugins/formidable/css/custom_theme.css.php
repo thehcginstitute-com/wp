@@ -41,6 +41,7 @@ $important     = empty( $defaults['important_style'] ) ? '' : ' !important';
 	text-align:var(--form-align)<?php echo esc_html( $important ); ?>;
 }
 
+/* Keep this. This is used for Honeypot */
 input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0 30px white inset;
 }
@@ -233,7 +234,8 @@ legend.frm_hidden{
 .frm_form_fields_error_style,
 .with_frm_style .frm-card-element.StripeElement,
 .with_frm_style .chosen-container-multi .chosen-choices,
-.with_frm_style .chosen-container-single .chosen-single{
+.with_frm_style .chosen-container-single .chosen-single,
+.with_frm_style .frm_slimselect.ss-main {
 	color:<?php echo esc_html( $defaults['text_color'] ); ?>;
 	color:var(--text-color)<?php echo esc_html( $important ); ?>;
 	background-color:<?php echo esc_html( $defaults['bg_color'] . $important ); ?>;
@@ -244,8 +246,6 @@ legend.frm_hidden{
 	border-width:var(--field-border-width)<?php echo esc_html( $important ); ?>;
 	border-style:<?php echo esc_html( $defaults['field_border_style'] ); ?>;
 	border-style:var(--field-border-style)<?php echo esc_html( $important ); ?>;
-	-moz-border-radius:<?php echo esc_html( $defaults['border_radius'] . $important ); ?>;
-	-webkit-border-radius:<?php echo esc_html( $defaults['border_radius'] . $important ); ?>;
 	border-radius:<?php echo esc_html( $defaults['border_radius'] ); ?>;
 	border-radius:var(--border-radius)<?php echo esc_html( $important ); ?>;
 	width:<?php echo esc_html( $defaults['field_width'] ); ?>;
@@ -255,8 +255,6 @@ legend.frm_hidden{
 	font-size:var(--field-font-size)<?php echo esc_html( $important ); ?>;
 	padding:<?php echo esc_html( $defaults['field_pad'] ); ?>;
 	padding:var(--field-pad)<?php echo esc_html( $important ); ?>;
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing:border-box;
 	box-sizing:border-box;
 	outline:none<?php echo esc_html( $important ); ?>;
 	font-weight:<?php echo esc_html( $defaults['field_weight'] ); ?>;
@@ -486,6 +484,11 @@ legend.frm_hidden{
 }
 
 /* These do not work if they are combined */
+.with_frm_style input::placeholder,
+.with_frm_style textarea::placeholder {
+	font-size: var(--field-font-size)<?php echo esc_html( $important ); ?>;
+}
+
 .with_frm_style .frm_inside_container > input::-moz-placeholder,
 .with_frm_style .frm_inside_container > textarea::-moz-placeholder {
 	opacity: 0 !important;
@@ -526,7 +529,6 @@ legend.frm_hidden{
 	font-weight: normal;
 	font-weight: var(--field-weight);
 
-	-ms-pointer-events: none;
 	pointer-events: none;
 }
 
@@ -618,8 +620,6 @@ legend.frm_hidden{
 	padding:5px;
 <?php } ?>
 <?php if ( ! empty( $defaults['border_radius'] ) ) { ?>
-	-moz-border-radius:<?php echo esc_html( $defaults['border_radius'] . $important ); ?>;
-	-webkit-border-radius:<?php echo esc_html( $defaults['border_radius'] . $important ); ?>;
 	border-radius:<?php echo esc_html( $defaults['border_radius'] . $important ); ?>;
 	border-radius:var(--border-radius)<?php echo esc_html( $important ); ?>;
 <?php } ?>
@@ -772,10 +772,7 @@ legend.frm_hidden{
 	margin-left: -<?php echo absint( $loader_size / 2 ); ?>px;
 	width: <?php echo absint( $loader_size ); ?>px;
 	height: <?php echo absint( $loader_size ); ?>px;
-	-webkit-animation: spin 2s linear infinite;
-	-moz-animation:    spin 2s linear infinite;
-	-o-animation:      spin 2s linear infinite;
-	animation:         spin 2s linear infinite;
+	animation: spin 2s linear infinite;
 }
 
 .with_frm_style .frm_submit.frm_flex {
@@ -789,7 +786,7 @@ legend.frm_hidden{
 
 <?php
 foreach ( $styles as $style ) {
-	include( dirname( __FILE__ ) . '/_single_theme.css.php' );
+	include __DIR__ . '/_single_theme.css.php';
 	unset( $style );
 }
 
@@ -926,7 +923,6 @@ a.frm_save_draft{
 .with_frm_style .frm_scale input[type=radio],
 <?php endif; ?>
 .with_frm_style .frm_checkbox input[type=checkbox]{
-	-webkit-appearance: none;
 	appearance: none;
 	background-color: var(--bg-color);
 	flex: none;
@@ -988,8 +984,6 @@ a.frm_save_draft{
 .with_frm_style .frm_error_style,
 .with_frm_style .frm_message,
 .frm_success_style{
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
 	border-radius:4px;
 	padding:15px;
 }
@@ -1244,7 +1238,7 @@ select.frm_loading_lookup{
 	color: transparent !important;
 }
 
-<?php readfile( dirname( __FILE__ ) . '/frm_grids.css' ); ?>
+<?php readfile( __DIR__ . '/frm_grids.css' ); ?>
 
 .frm_conf_field.frm_left_container .frm_primary_label{
 	display:none;
@@ -1253,8 +1247,6 @@ select.frm_loading_lookup{
 .wp-editor-wrap *,
 .wp-editor-wrap *:after,
 .wp-editor-wrap *:before{
-	-webkit-box-sizing:content-box;
-	-moz-box-sizing:content-box;
 	box-sizing:content-box;
 }
 
@@ -1536,8 +1528,6 @@ select.frm_loading_lookup{
 	border-width:var(--field-border-width);
 	border-style:<?php echo esc_html( $defaults['field_border_style'] ); ?>;
 	border-style:var(--field-border-style);
-	-moz-border-radius:<?php echo esc_html( $defaults['border_radius'] ); ?>;
-	-webkit-border-radius:<?php echo esc_html( $defaults['border_radius'] ); ?>;
 	border-radius:<?php echo esc_html( $defaults['border_radius'] ); ?>;
 	border-radius:var(--border-radius);
 	width:<?php echo esc_html( $defaults['field_width'] ); ?>;
@@ -1547,8 +1537,6 @@ select.frm_loading_lookup{
 	font-size:var(--field-font-size);
 	padding:<?php echo esc_html( $defaults['field_pad'] ); ?>;
 	padding:var(--field-pad);
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing:border-box;
 	box-sizing:border-box;
 	outline:none<?php echo esc_html( $important ); ?>;
 	font-weight:normal;
@@ -1563,8 +1551,6 @@ select.frm_loading_lookup{
 	background-color:transparent !important;
 	border:none !important;
 	font-weight:bold;
-	-moz-box-shadow:none;
-	-webkit-box-shadow:none;
 	width:auto !important;
 	height:auto !important;
 	box-shadow:none !important;
@@ -1586,8 +1572,6 @@ select.frm_loading_lookup{
 .frm_form_field.frm_total textarea:focus{
 	background-color:transparent;
 	border:none;
-	-moz-box-shadow:none;
-	-webkit-box-shadow:none;
 	box-shadow:none;
 }
 
@@ -1614,20 +1598,14 @@ select.frm_loading_lookup{
 	display:block;
 }
 
-.with_frm_style .frm_repeat_sec .frm_form_field.frm_repeat_buttons .frm_icon_font::before {
-	color:<?php echo esc_html( $defaults['repeat_icon_color'] . $important ); ?>;
-	color:var(--repeat-icon-color)<?php echo esc_html( $important ); ?>;
-}
-
 .with_frm_style .frm_combo_inputs_container > .frm_form_subfield-first,
 .with_frm_style .frm_combo_inputs_container > .frm_form_subfield-middle,
 .with_frm_style .frm_combo_inputs_container > .frm_form_subfield-last {
 	margin-bottom: 0 !important;
 }
 
-<?php
-FrmStylesHelper::maybe_include_font_icon_css();
 
+<?php
 /**
  * Call action so other plugins can add additional CSS.
  *
@@ -1683,7 +1661,6 @@ do_action( 'frm_include_front_css', compact( 'defaults' ) );
 		border-right:1px solid #d3d3d3;
 		border-radius:4px;
 		box-shadow:2px 0px 4px -1px rgba(0,0,0,.08);
-		-moz-box-shadow:2px 0px 4px -1px rgba(0,0,0,.08);
 	}
 
 	.with_frm_style .g-recaptcha iframe,

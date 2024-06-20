@@ -1,13 +1,25 @@
 <?php
 namespace SiteGround_Optimizer\Supercacher;
 
+use SiteGround_Optimizer\File_Cacher\File_Cacher;
 use SiteGround_Optimizer\Front_End_Optimization\Front_End_Optimization;
-use SiteGround_Optimizer\DNS\Cloudflare;
 use SiteGround_Optimizer\Options\Options;
+use SiteGround_Helper\Helper_Service;
+use SiteGround_Optimizer\CDN\Cdn;
+use SiteGround_Optimizer\Site_Tools_Client\Site_Tools_Client;
+
 /**
  * SG CachePress main plugin class
  */
 class Supercacher {
+	/**
+	 * Local variables
+	 *
+	 * @var mixed
+	 */
+	public $supercacher_comments;
+	public $supercacher_posts;
+	public $supercacher_terms;
 
 	/**
 	 * The children classes and their hooks and options.
@@ -17,7 +29,7 @@ class Supercacher {
 	public $children = array(
 		'supercacher_posts'    => array(
 			array(
-				'option'   => 'purge_post_save',
+				'option'   => 'purge_all_post_cache',
 				'hook'     => 'save_post',
 				'priority' => 1,
 			),
@@ -29,6 +41,11 @@ class Supercacher {
 			array(
 				'option'   => 'purge_all_post_cache',
 				'hook'     => 'wp_trash_post',
+				'priority' => 1,
+			),
+			array(
+				'option'   => 'purge_all_post_cache',
+				'hook'     => 'publish_post',
 				'priority' => 1,
 			),
 		),
@@ -140,7 +157,7 @@ class Supercacher {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function purge_cache() {
-		return Supercacher::get_instance()->purge_everything();
+		return self::get_instance()->purge_everything();
 	}
 
 	/**
@@ -191,6 +208,15 @@ class Supercacher {
 	 * @return bool True if the cache is deleted, false otherwise.
 	 */
 	public static function purge_cache_request( $url, $include_child_paths = true ) {
+		// Check if the user has file cache enabled, clear the file cache and bail if the user is not hosted on SiteGround.
+		if ( Options::is_enabled( 'siteground_optimizer_file_caching' ) ) {
+			File_Cacher::get_instance()->purge_cache_request( $url, $include_child_paths );
+		}
+
+		if ( ! Helper_Service::is_siteground() ) {
+			return true;
+		}
+
 		// Bail if the url is empty.
 		if ( empty( $url ) ) {
 			return;
@@ -218,24 +244,46 @@ class Supercacher {
 			$main_path .= '(.*)';
 		}
 
-		// Flush the cache.
-		exec(
-			sprintf(
-				"site-tools-client domain-all update id=%s flush_cache=1 path='%s'",
-				$hostname,
-				$main_path
+		// Flush the cache for the URL.
+		return self::flush_dynamic_cache( $hostname, $main_path, $url );
+	}
+
+	/**
+	 * Call site tools client to purge the cache.
+	 *
+	 * @param      string $hostname  The domain which cache will be flushed.
+	 * @param      string $main_path The path to be flushed.
+	 * @param      string $main_path The URL to be flushed.
+	 *
+	 * @return     bool              True if the cache is purged successfully, false otherwise.
+	 */
+	public static function flush_dynamic_cache( $hostname, $main_path, $url ) {
+		// Build the request params.
+		$args = array(
+			'api'      => 'domain-all',
+			'cmd'      => 'update',
+			'settings' => array( 'json' => 1 ),
+			'params'   => array(
+				'flush_cache' => '1',
+				'id'          => $hostname,
+				'path'        => $main_path,
 			),
-			$output,
-			$status
 		);
+
+		$site_tools_result = Site_Tools_Client::call_site_tools_client( $args, true );
 
 		do_action( 'siteground_optimizer_flush_cache', $url );
 
-		if ( 0 === $status ) {
-			return true;
+		if ( false === $site_tools_result ) {
+			return false;
 		}
 
-		return false;
+		if ( isset( $site_tools_result['err_code'] ) ) {
+			error_log( 'There was an issue purging the cache for this URL: ' . $url . '. Error code: ' . $site_tools_result['err_code'] . '. Message: ' . $site_tools_result['message'] . '.' );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -253,31 +301,40 @@ class Supercacher {
 	 * @since  5.0.0
 	 */
 	public function purge_on_options_save() {
+		// Bail if option page is not set.
+		if ( empty( $_POST['option_page'] ) ) {
+			return;
+		}
+
+		// Bail if no nonce is present.
+		if ( empty( $_POST['_wpnonce'] ) )  {
+			return;
+		}
+
+		// Require pluggable.php in order to check_admin_referer.
+		require_once ABSPATH . '/wp-includes/pluggable.php';
+
+		// Bail if we do not have option page and nonce is invalid.
+		if ( false === \wp_verify_nonce( $_POST['_wpnonce'], $_POST['option_page'] . '-options' ) ) {
+			return;
+		}
 
 		if (
-			isset( $_POST['action'] ) && // WPCS: CSRF ok.
-			isset( $_POST['option_page'] ) && // WPCS: CSRF ok.
-			'update' === $_POST['action'] // WPCS: CSRF ok.
+			isset( $_POST['action'] ) &&
+			'update' === $_POST['action']
 		) {
-			$this->purge_everything();
+			$this->authorize_purge_request();
 		}
 	}
 
 	/**
-	 * Purge the cache for other events.
+	 * Method is used to authorize users before performing purge_everything request.
 	 *
-	 * @since  5.0.0
+	 * @since 7.5.0
 	 */
-	public function purge_on_other_events() {
-		if (
-			isset( $_POST['save-header-options'] ) || // WPCS: CSRF ok.
-			isset( $_POST['removeheader'] ) || // WPCS: CSRF ok.
-			isset( $_POST['skip-cropping'] ) || // WPCS: CSRF ok.
-			isset( $_POST['remove-background'] ) || // WPCS: CSRF ok.
-			isset( $_POST['save-background-options'] ) || // WPCS: CSRF ok.
-			( isset( $_POST['submit'] ) && 'Crop and Publish' == $_POST['submit'] ) || // WPCS: CSRF ok.
-			( isset( $_POST['submit'] ) && 'Upload' == $_POST['submit'] ) // WPCS: CSRF ok.
-		) {
+	public function authorize_purge_request() {
+		// Check if user with roles higher than contributor can purge the cache.
+		if ( \current_user_can( 'publish_posts' ) ) {
 			$this->purge_everything();
 		}
 	}
@@ -289,29 +346,51 @@ class Supercacher {
 	 *
 	 * @param  string $url           The url to test.
 	 * @param  bool   $maybe_dynamic Wheather to make additional request to check the cache again.
-	 * @param  bool   $is_cloudflare_check If we should check if url is excluded for dynamic checks only.
 	 *
 	 * @return bool                  True if the cache is enabled, false otherwise.
 	 */
-	public static function test_cache( $url, $maybe_dynamic = true, $is_cloudflare_check = false ) {
+	public static function test_cache( $url, $maybe_dynamic = true ) {
 		// Bail if the url is empty.
 		if ( empty( $url ) ) {
 			return;
 		}
 
-		// Add slash at the end of the url.
-		$url = trailingslashit( $url );
+		// Add slash at the end of the url if it does not have get parameters.
+		if ( ! strpos( $url, '?' ) ) {
+			$url = trailingslashit( $url );
+		}
 
-		// Check if the url is excluded for dynamic checks only.
-		if ( false === $is_cloudflare_check ) {
-			// Bail if the url is excluded.
-			if ( SuperCacher_Helper::is_url_excluded( $url ) ) {
-				return false;
-			}
+		// Bail if the url is excluded.
+		if ( SuperCacher_Helper::is_url_excluded( $url ) ) {
+			return false;
+		}
+
+		// Define the arguments. No arguments necessary by default.
+		$args = array();
+
+		// Check if SiteGround CDN is active.
+		if (
+			Cdn::is_siteground_cdn() &&
+			! Cdn::is_siteground_cdn_premium() ||
+			Cdn::is_siteground_cdn_premium_pending()
+		) {
+			// Get the proper domain.
+			$matches = Site_Tools_Client::get_site_tools_matching_domain();
+
+			// Set the Host header so we can test the cache status locally from the server.
+			$args['headers'] = array(
+				'Host' => $matches[1],
+			);
+
+			// Store the original url.
+			$initial_url = $url;
+
+			// Set the url to be the one of the host.
+			$url = 'https://' . \gethostname() . str_replace( $matches[0], '', $url );
 		}
 
 		// Make the request.
-		$response = wp_remote_get( $url );
+		$response = wp_remote_get( $url, $args );
 
 		// Check for errors.
 		if ( is_wp_error( $response ) ) {
@@ -325,17 +404,17 @@ class Supercacher {
 			return false;
 		}
 
-		$cache_header = false === $is_cloudflare_check ? 'x-proxy-cache' : 'cf-cache-status';
-
 		// Check if the url has a cache header.
 		if (
-			isset( $headers[ $cache_header ] ) &&
-			'HIT' === strtoupper( $headers[ $cache_header ] )
+			isset( $headers['x-proxy-cache'] ) &&
+			'HIT' === strtoupper( $headers['x-proxy-cache'] )
 		) {
 			return true;
 		}
 
 		if ( $maybe_dynamic ) {
+			// Restore the url in cases of CDN check's second attempt to get the proper caching status.
+			$url = isset( $initial_url ) ? $initial_url : $url;
 			return self::test_cache( $url, false );
 		}
 
@@ -409,11 +488,6 @@ class Supercacher {
 			}
 		} else {
 			$this->purge_everything();
-		}
-
-		// Flush the Cloudflare cache if the optimization is enabled.
-		if ( 1 === intval( get_option( 'siteground_optimizer_cloudflare_optimization_status', 0 ) ) ) {
-			Cloudflare::get_instance()->purge_cache();
 		}
 
 		// Empty the purge queue after cache is cleared.

@@ -488,8 +488,8 @@ $option8['sfsi_plus_responsive_icons_end_post']  = (isset($option8['sfsi_plus_re
 									</li>
 									<li>
 										<div class="radio_section tb_4_ck"><input name="sfsi_plus_recttwtr" <?php echo ($option8['sfsi_plus_recttwtr'] == 'yes') ?  'checked="true"' : ''; ?> id="sfsi_plus_recttwtr" type="checkbox" value="yes" class="styled" /></div>
-										<a href="#" title="twitter" class="cstmdspltwtr">
-											<img src="<?php echo SFSI_PLUS_PLUGURL; ?>images/twiiter.png" alt="Twitter like" /><span style="display: none;">18k</span>
+										<a href="#" title="X (Twitter)" class="cstmdspltwtr">
+											<img src="<?php echo SFSI_PLUS_PLUGURL; ?>images/twiiter.png" alt="X (Twitter)" /><span style="display: none;">18k</span>
 										</a>
 									</li>
 									<li>
@@ -563,10 +563,13 @@ $option8['sfsi_plus_responsive_icons_end_post']  = (isset($option8['sfsi_plus_re
 										<div class="sfsi_plus_responsive_icon_item_container sfsi_plus_responsive_icon_<?php echo strtolower($icon); ?>_container" style="word-break:break-all;padding-left:0">
 											<div style="display: inline-block;height: 40px;width: 40px;text-align: center;vertical-align: middle!important;float: left;">
 												<img style="float:none" src="<?php echo SFSI_PLUS_PLUGURL; ?>images/responsive-icon/<?php echo $icon; ?><?php echo 'Follow' === $icon ? '.png' : '.svg'; ?>"></div>
-											<span> <?php echo $icon_config["text"];  ?> </span>
+                                            <?php
+                                            $icon1 = $icon_config['text'] == 'Tweet' ? 'Post on X' : $icon_config["text"];
+                                            ?>
+											<span> <?php echo $icon1;  ?> </span>
 										</div>
 									</span>
-									<input type="text" class="sfsi_plus_responsive_input" name="sfsi_plus_responsive_<?php echo $icon ?>_input" value="<?php echo $icon_config["text"]; ?>" />
+									<input type="text" class="sfsi_plus_responsive_input" name="sfsi_plus_responsive_<?php echo $icon ?>_input" value="<?php echo $icon1; ?>" />
 									<a href="#" class="sfsi_plus_responsive_default_url_toggler" style="text-decoration: none;"><?php _e('Define URL*', 'ultimate-social-media-plus'); ?></a>
 									<input style="display:none" class="sfsi_plus_responsive_url_input" type="text" placeholder="Enter url" name="sfsi_plus_responsive_<?php echo $icon ?>_url_input" value="<?php echo $icon_config["url"]; ?>" />
 									<a href="#" class="sfsi_plus_responsive_default_url_hide" style="display:none"><span class="sfsi_plus_cancel_text"><?php _e('Cancel', 'ultimate-social-media-plus'); ?></span><span class="sfsi_plus_cancel_icon">&times;</span></a>

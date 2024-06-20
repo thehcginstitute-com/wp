@@ -33,6 +33,16 @@
 					dt.hide();
 				});
 			}
+			else {
+				if (this.options.autoClose) {
+					if (this.showEvent) {
+						clearTimeout(dt.showEvent);
+					}
+					dt.showEvent = setTimeout(function(){
+						dt.tooltip.hide();
+					}, this.options.autoCloseDuration);
+				}
+			}
 		},
 
 		hide: function(){
@@ -74,8 +84,8 @@
 			//Get tooltip content
 			if(this.options.content){
 				this.content = this.options.content;
-			}else if(this.bearer.attr("data-tooltip")){
-				this.content = this.bearer.attr("data-tooltip");
+			}else if(this.bearer.attr("data-darktooltip")){
+				this.content = this.bearer.attr("data-darktooltip");
 			}else{
 				// console.log("No content for tooltip: " + this.bearer.selector);
 				return;
@@ -165,7 +175,7 @@
 					clearTimeout(setTimeoutConst );
 					dt.hide();
 				});
-			}else if(this.options.trigger == "click" || this.options.trigger == "onclik"){
+			}else if(this.options.trigger == "click" || this.options.trigger == "onclick"){
 				this.tooltip.click( function(e){
 					e.stopPropagation();
 				});
@@ -178,7 +188,21 @@
 				$('html').click(function(){
 					dt.hide();
 				})
+			} else if(this.options.trigger == "show") {
+				dt.setPositions();
+				dt.toggle();
 			}
+
+			//$(document).bind("DOMNodeRemoved", function(e)
+			//{
+				if(dt.options.autoPosition) {
+					const intervalID = setInterval(myCallback, 300);
+
+					function myCallback() {
+						dt.setPositions()
+					}
+				}
+			//});
 		},
 
 		activate: function(){
@@ -222,7 +246,7 @@
 		},
 
 		onYes: function(){
-			this.options.onYes(this.bearer);
+			this.options.onYes(this.bearer, this);
 			this.finalMessage();
 		},
 
@@ -259,6 +283,9 @@
 		yes: 'Yes',
 		autoTop: true,
 		autoLeft: true,
+		autoClose: false,
+		autoCloseDuration: 3000,
+		autoPosition: false,
 		onClose: function(){}
 	};
 

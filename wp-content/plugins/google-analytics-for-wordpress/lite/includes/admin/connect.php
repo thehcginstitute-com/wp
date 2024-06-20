@@ -74,6 +74,7 @@ class MonsterInsights_Connect {
 
 		// Redirect.
 		$oth = hash( 'sha512', wp_rand() );
+		$hashed_oth = hash_hmac( 'sha512', $oth, wp_salt() );
 		update_option( 'monsterinsights_connect', array(
 			'key'     => $key,
 			'time'    => time(),
@@ -87,7 +88,7 @@ class MonsterInsights_Connect {
 
 		$url = add_query_arg( array(
 			'key'      => $key,
-			'oth'      => $oth,
+			'oth'      => $hashed_oth,
 			'endpoint' => $endpoint,
 			'version'  => $version,
 			'siteurl'  => $siteurl,
@@ -125,7 +126,7 @@ class MonsterInsights_Connect {
 		if ( empty( $oth ) ) {
 			wp_send_json_error( $error );
 		}
-		if ( ! hash_equals( $oth, $post_oth ) ) {
+		if ( hash_hmac( 'sha512', $oth, wp_salt() ) !== $post_oth ) {
 			wp_send_json_error( $error );
 		}
 		// Delete so cannot replay.

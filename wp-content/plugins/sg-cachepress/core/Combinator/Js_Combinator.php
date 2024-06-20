@@ -1,9 +1,11 @@
 <?php
 namespace SiteGround_Optimizer\Combinator;
 
-use SiteGround_Optimizer\Helper\Helper;
 use SiteGround_Optimizer\Options\Options;
 use SiteGround_Optimizer\Front_End_Optimization\Front_End_Optimization;
+use SiteGround_Helper\Helper_Service;
+use SiteGround_Optimizer\Helper\Helper;
+
 /**
  * SG JS_Combinator main plugin class
  */
@@ -246,6 +248,9 @@ class Js_Combinator extends Abstract_Combinator {
 		'script_memory_usage',
 		'var jetReviewsWidget',
 		'var wpa_hidden_field',
+		'snaptr',
+		'function awbMapInit',
+		'loginform .user-pass-wrap\').attr(\'id\', \'lable_password_input', //Admin Custom Login Plugin.
 	);
 
 	/**
@@ -364,7 +369,7 @@ class Js_Combinator extends Abstract_Combinator {
 		'var dateNow',
 		'platform.stumbleupon.com',
 		'berocket_aapf_time_to_fix_products_style',
-  			'$("#myCarousel',
+		'$("#myCarousel',
 		'fbq(\'trackCustom\'',
 		'fusetag.setTargeting',
 		'dfd-button-hover-in',
@@ -430,7 +435,7 @@ class Js_Combinator extends Abstract_Combinator {
 		'<script\b', // Opening script tag.
 			'([^>]*)', // Tag attributes.
 		'>', // Closing script tag.
-			'(?:\/\*\s*<!\[CDATA\[\s*\*\/)?\s*', //  Match CDATA.
+			'(?:\/\*\s*<!\[CDATA\[\s*\*\/)?\s*', // Match CDATA.
 			'([\s\S]*?)', // The script content, if any.
 			'\s*(?:\/\*\s*\]\]>\s*\*\/)?', // Anything else until closing tag.
 		'<\/script>', // Closing script tag.
@@ -450,7 +455,7 @@ class Js_Combinator extends Abstract_Combinator {
 		'<script\s+',
 		'([^>]+[\s\'"])?',
 		'src\s*=\s*[\'"]\s*?',
-		'([^\'"]+\.js(?:\?[^\'"]*)?)\s*?',
+		'([^\'"]+\.js(?:[^\'"]*)?)\s*?',
 		'[\'"]',
 		'([^>]+)?',
 		'\/?>',
@@ -498,6 +503,18 @@ class Js_Combinator extends Abstract_Combinator {
 		'wp-polyfill',
 		'wp-url',
 		'wp-hooks',
+		'wc-square',
+	);
+
+	/**
+	 * Array containing all script handle regex' that should be excluded.
+	 *
+	 * @since 7.1.0
+	 *
+	 * @var   array Array containing all script handle regex' that should be excluded.
+	 */
+	private $combined_scripts_exclude_regex = array(
+		'sv-wc-payment-gateway-payment-form-', // Authorize.NET payment gateway payment form script.
 	);
 
 	/**
@@ -609,6 +626,11 @@ class Js_Combinator extends Abstract_Combinator {
 		$registered = array_keys( $wp_scripts->registered );
 		$excluded   = array();
 
+		// Remove excluded script handles using regex.
+		foreach ( $this->combined_scripts_exclude_regex as $regex ) {
+			$excluded_handles = array_merge( $excluded_handles, Helper::get_script_handle_regex( $regex, $registered ) );
+		}
+
 		// Loop through all excluded handles and get their src.
 		foreach ( $excluded_handles as $handle ) {
 			// Bail if handle is now found.
@@ -617,7 +639,7 @@ class Js_Combinator extends Abstract_Combinator {
 			}
 
 			// Replace the site url and get the src.
-			$excluded[] = trim( str_replace( Helper::get_site_url(), '', strtok( wp_scripts()->registered[ $handle ]->src, '?' ) ), '/\\' );
+			$excluded[] = trim( str_replace( Helper_Service::get_site_url(), '', strtok( wp_scripts()->registered[ $handle ]->src, '?' ) ), '/\\' );
 		}
 
 		// Set the excluded urls.
@@ -705,7 +727,7 @@ class Js_Combinator extends Abstract_Combinator {
 		$is_external = false;
 
 		if (
-			@strpos( Helper::get_home_url(), parse_url( $src, PHP_URL_HOST ) ) === false &&
+			@strpos( Helper_Service::get_home_url(), parse_url( $src, PHP_URL_HOST ) ) === false &&
 			! @strpos( $src, 'wp-includes' )
 		) {
 			$is_external = true;
@@ -728,6 +750,19 @@ class Js_Combinator extends Abstract_Combinator {
 	 * @return string         Script content.
 	 */
 	public function try_to_process_inline_script( $script ) {
+		// Check if all inline scripts are excluded from combination via filter.
+		if ( true === apply_filters( 'sgo_javascript_combine_exclude_all_inline', false ) ) {
+			return;
+		}
+
+		// Check if all inline module scripts are excluded from combination via filter.
+		if (
+			preg_match( '~script type=["\']module["\']~', $script ) &&
+			true === apply_filters( 'sgo_javascript_combine_exclude_all_inline_modules', false )
+		) {
+			return;
+		}
+
 		preg_match(
 			/**
 			Build the regular expression.
@@ -824,7 +859,7 @@ class Js_Combinator extends Abstract_Combinator {
 		} else {
 			$src = Front_End_Optimization::remove_query_strings( $src );
 
-			if ( in_array( str_replace( trailingslashit( Helper::get_site_url() ), '', $src ), $this->excluded_urls ) ) {
+			if ( in_array( str_replace( trailingslashit( Helper_Service::get_site_url() ), '', $src ), $this->excluded_urls ) ) {
 				return true;
 			}
 

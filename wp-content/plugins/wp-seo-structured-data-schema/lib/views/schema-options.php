@@ -239,7 +239,7 @@ $schemaModel = new KcSeoSchemaModel;
                             <th><?php esc_html_e("Job Title", "wp-seo-structured-data-schema") ?></th>
                             <td align="left" scope="row">
                                 <input type="text" class="regular-text" name="person[jobTitle]"
-                                       value="<?php echo(@$settings['person']['jobTitle'] ? @$settings['person']['jobTitle'] : null); ?>"/>
+                                       value="<?php echo( $settings['person']['jobTitle'] ?? null ); ?>"/>
 
                             </td>
                         </tr>
@@ -472,7 +472,7 @@ $schemaModel = new KcSeoSchemaModel;
                                         echo($cPtOpt == "TollFree" ? "selected" : null); ?>><?php esc_html_e("TollFree", "wp-seo-structured-data-schema") ?>
                                         </option>
                                         <option
-                                                value="HearingImpairedSupported" <?php echo($settings['contact']['contactOption'] == "HearingImpairedSupported" ? "selected" : null); ?>>
+                                                value="HearingImpairedSupported" <?php echo ! empty( $settings['contact']['contactOption'] ) && $settings['contact']['contactOption'] == "HearingImpairedSupported" ? "selected" : null; ?>>
                                             <?php esc_html_e("HearingImpairedSupported", "wp-seo-structured-data-schema") ?>
                                         </option>
                                     </select>

@@ -3,7 +3,7 @@
  * Plugin Name: WP SEO Structured Data Schema
  * Plugin URI: https://wpsemplugins.com/
  * Description: Comprehensive JSON-LD based Structured Data solution for WordPress for adding schema for organizations, businesses, blog posts, ratings & more.
- * Version: 2.7.8
+ * Version: 2.7.10
  * Author: WPSEMPlugins
  * Author URI: https://wpsemplugins.com/
  * Text Domain: wp-seo-structured-data-schema
@@ -24,7 +24,7 @@ if (! defined('JSON_UNESCAPED_UNICODE')) {
 	define('JSON_UNESCAPED_UNICODE', 256);
 }
 
-define('KCSEO_WP_SCHEMA_VERSION', '2.7.8');
+define('KCSEO_WP_SCHEMA_VERSION', '2.7.10');
 define('KCSEO_WP_SCHEMA_SLUG', 'wp-seo-structured-data-schema');
 define('KCSEO_WP_SCHEMA_PATH', dirname(__FILE__));
 define('KCSEO_WP_SCHEMA_PLUGIN_ACTIVE_FILE_NAME', plugin_basename(__FILE__));

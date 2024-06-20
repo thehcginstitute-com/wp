@@ -27,7 +27,7 @@
 	$option2['sfsi_plus_facebookShare_option'] 	=	(isset($option2['sfsi_plus_facebookShare_option']))
 														? sanitize_text_field($option2['sfsi_plus_facebookShare_option'])
 														: '';
-	
+
 	$option2['sfsi_plus_twitter_followme'] 		=	(isset($option2['sfsi_plus_twitter_followme']))
 														? sanitize_text_field($option2['sfsi_plus_twitter_followme'])
 														: '';
@@ -58,7 +58,7 @@
 	$option2['sfsi_plus_ytube_user'] 			=	(isset($option2['sfsi_plus_ytube_user']))
 														? sanitize_text_field($option2['sfsi_plus_ytube_user'])
 														: '';
-	
+
 	$option2['sfsi_plus_pinterest_page'] 		=	(isset($option2['sfsi_plus_pinterest_page']))
 														? sanitize_text_field($option2['sfsi_plus_pinterest_page'])
 														: '';
@@ -68,11 +68,11 @@
 	$option2['sfsi_plus_pinterest_pingBlog'] 	=	(isset($option2['sfsi_plus_pinterest_pingBlog']))
 														? sanitize_text_field($option2['sfsi_plus_pinterest_pingBlog'])
 														: '';
-	
+
 	$option2['sfsi_plus_instagram_pageUrl']		=	(isset($option2['sfsi_plus_instagram_pageUrl']))
 														? esc_url($option2['sfsi_plus_instagram_pageUrl'])
 														: '';
-	
+
 	$option2['sfsi_plus_linkedin_page'] 		=	(isset($option2['sfsi_plus_linkedin_page']))
 														? sanitize_text_field($option2['sfsi_plus_linkedin_page'])
 														: '';
@@ -97,25 +97,25 @@
 	$option2['sfsi_plus_linkedin_recommendProductId'] 	= 	(isset($option2['sfsi_plus_linkedin_recommendProductId']))
 																? intval($option2['sfsi_plus_linkedin_recommendProductId'])
 																: '';
-	
+
 	$option2['sfsi_plus_houzz_pageUrl'] 		= 	(isset($option2['sfsi_plus_houzz_pageUrl']))
 														? esc_url($option2['sfsi_plus_houzz_pageUrl'])
 														: '';
-	$option4['sfsi_plus_youtubeusernameorid'] 	= 	(isset($option4['sfsi_plus_youtubeusernameorid'])) 
+	$option4['sfsi_plus_youtubeusernameorid'] 	= 	(isset($option4['sfsi_plus_youtubeusernameorid']))
 														? sanitize_text_field($option4['sfsi_plus_youtubeusernameorid'])
 														: '';
 	$option4['sfsi_plus_ytube_chnlid'] 			= 	(isset($option4['sfsi_plus_ytube_chnlid']))
 														? strip_tags(trim($option4['sfsi_plus_ytube_chnlid']))
 														: '';
-	$option2['sfsi_plus_premium_email_box'] 	= 	(isset($option2['sfsi_plus_premium_email_box'])) 
+	$option2['sfsi_plus_premium_email_box'] 	= 	(isset($option2['sfsi_plus_premium_email_box']))
 														? sanitize_text_field($option2['sfsi_plus_premium_email_box'])
 														: 'yes';
-	$option2['sfsi_plus_premium_facebook_box'] 	= 	(isset($option2['sfsi_plus_premium_facebook_box'])) 
+	$option2['sfsi_plus_premium_facebook_box'] 	= 	(isset($option2['sfsi_plus_premium_facebook_box']))
 														? sanitize_text_field($option2['sfsi_plus_premium_facebook_box'])
 														: 'yes';
-	$option2['sfsi_plus_premium_twitter_box'] 	= 	(isset($option2['sfsi_plus_premium_twitter_box'])) 
+	$option2['sfsi_plus_premium_twitter_box'] 	= 	(isset($option2['sfsi_plus_premium_twitter_box']))
 														? sanitize_text_field($option2['sfsi_plus_premium_twitter_box'])
-														: 'yes';							
+														: 'yes';
 	$option2['sfsi_plus_okLike_option'] 	=	(isset($option2['sfsi_plus_okLike_option']))
 														? sanitize_text_field($option2['sfsi_plus_okLike_option'])
 														: 'no';
@@ -125,7 +125,7 @@
 
 	$option2['sfsi_plus_okVisit_url'] 	=	(isset($option2['sfsi_plus_okVisit_url']))
 														? sanitize_text_field($option2['sfsi_plus_okVisit_url'])
-														: '';	
+														: '';
 
 	$option2['sfsi_plus_okSubscribe_option'] 	=	(isset($option2['sfsi_plus_okSubscribe_option']))
 														? sanitize_text_field($option2['sfsi_plus_okSubscribe_option'])
@@ -148,7 +148,7 @@
 
 	$option2['sfsi_plus_telegram_message'] 	=	(isset($option2['sfsi_plus_telegram_message']))
 														? sanitize_text_field($option2['sfsi_plus_telegram_message'])
-														: '';		
+														: '';
 
 	$option2['sfsi_plus_vkShare_option'] 	=	(isset($option2['sfsi_plus_vkShare_option']))
 														? sanitize_text_field($option2['sfsi_plus_vkShare_option'])
@@ -166,7 +166,7 @@
 
 	$option2['sfsi_plus_vkFollow_url'] 	=	(isset($option2['sfsi_plus_vkFollow_url']))
 														? sanitize_text_field($option2['sfsi_plus_vkFollow_url'])
-														: '';	
+														: '';
 
 	$option2['sfsi_plus_vkVisit_url'] 	=	(isset($option2['sfsi_plus_vkVisit_url']))
 														? sanitize_text_field($option2['sfsi_plus_vkVisit_url'])
@@ -177,7 +177,7 @@
 														: 'no';
 	$option2['sfsi_plus_weiboVisit_url'] 	=	(isset($option2['sfsi_plus_weiboVisit_url']))
 														? sanitize_text_field($option2['sfsi_plus_weiboVisit_url'])
-														: '';	
+														: '';
 	$option2['sfsi_plus_weiboShare_option'] 	=	(isset($option2['sfsi_plus_weiboShare_option']))
 														? sanitize_text_field($option2['sfsi_plus_weiboShare_option'])
 														: 'no';
@@ -193,6 +193,22 @@
 	$option2['sfsi_plus_mastodonVisit_option'] 	=	(isset($option2['sfsi_plus_mastodonVisit_option']))
 														? sanitize_text_field($option2['sfsi_plus_mastodonVisit_option'])
 														: 'no';
+
+    $option2['sfsi_plus_ria_pageUrl'] = (isset($option2['sfsi_plus_ria_pageUrl']))
+        ? sanitize_text_field($option2['sfsi_plus_ria_pageUrl'])
+        : '';
+
+    $option2['sfsi_plus_riaVisit_option'] = (isset($option2['sfsi_plus_riaVisit_option']))
+        ? sanitize_text_field($option2['sfsi_plus_riaVisit_option'])
+        : 'no';
+
+    $option2['sfsi_plus_inha_pageUrl'] = (isset($option2['sfsi_plus_inha_pageUrl']))
+        ? sanitize_text_field($option2['sfsi_plus_inha_pageUrl'])
+        : '';
+
+    $option2['sfsi_plus_inhaVisit_option'] = (isset($option2['sfsi_plus_inhaVisit_option']))
+        ? sanitize_text_field($option2['sfsi_plus_inhaVisit_option'])
+        : 'no';
 ?>
 <!-- Section 2 "What do you want the icons to do?" main div Start -->
 <div class="tab2">
@@ -211,13 +227,13 @@
                 </label>
                 <input name="sfsi_plus_rss_url" style="float: none;margin-left:20px;" id="sfsi_plus_rss_url" class="add" type="url" value="<?php echo ($option2['sfsi_plus_rss_url']!='') ? $option2['sfsi_plus_rss_url'] : '' ;?>" placeholder="E.g http://www.yoursite.com/feed" />
                 <span class="sfrsTxt" >
-                	<?php _e( 'For most blogs it’s http://blogname.com/feed', 'ultimate-social-media-plus' ); ?>  
+                	<?php _e( 'For most blogs it’s http://blogname.com/feed', 'ultimate-social-media-plus' ); ?>
                 </span>
             </p>
-        </div>    
+        </div>
     </div>
     <!-- END RSS ICON -->
-    
+
     <!-- EMAIL ICON -->
     <?php
 		$feedId 		= sanitize_text_field(get_option('sfsi_plus_feed_id',false));
@@ -247,7 +263,7 @@
 					</div>
 					<label>
                     	<?php _e( 'Email + follow text', 'ultimate-social-media-plus' ); ?>
-                    	<span class="sfplsdesc"> 
+                    	<span class="sfplsdesc">
                     	</span>
                     </label>
                 </li>
@@ -257,19 +273,19 @@
 					</div>
 					<label>
                     	<?php _e( 'follow.it icon', 'ultimate-social-media-plus' ); ?>
-                    	<span class="sfplsdesc"> 
+                    	<span class="sfplsdesc">
                     		(<?php _e( 'provider of the service', 'ultimate-social-media-plus' ); ?>)
                     	</span>
                     </label>
                 </li>
             </ul>
-            <p><?php _e( 'The service offers many (more) advantages:', 'ultimate-social-media-plus' ); ?></p>  
+            <p><?php _e( 'The service offers many (more) advantages:', 'ultimate-social-media-plus' ); ?></p>
             <div class='sfsi_plus_service_row'>
             	<div class='sfsi_plus_service_column'>
             		<ul>
             			<li><span><?php _e( 'More people come back', 'ultimate-social-media-plus' ); ?></span><?php _e( ' to your site', 'ultimate-social-media-plus' ); ?></li>
             			<li><?php _e( 'See your ', 'ultimate-social-media-plus' ); ?><span><?php _e( 'subscribers’ emails', 'ultimate-social-media-plus' ); ?></span><?php _e( ' & ', 'ultimate-social-media-plus' ); ?><span><?php _e( 'interesting statistics', 'ultimate-social-media-plus' ); ?></span></li>
-            			<li><?php _e( 'Automatically post on ', 'ultimate-social-media-plus' ); ?><span><?php _e( 'Facebook & Twitter', 'ultimate-social-media-plus' ); ?></span></li>
+            			<li><?php _e( 'Automatically post on ', 'ultimate-social-media-plus' ); ?><span><?php _e( 'Facebook & X (Twitter)', 'ultimate-social-media-plus' ); ?></span></li>
 	            	</ul>
             	</div>
                 <div class='sfsi_plus_service_column'>
@@ -277,9 +293,9 @@
 		                <li><span><?php _e( 'Get more traffic', 'ultimate-social-media-plus' ); ?></span><?php _e( ' by being listed in the follow.it directory', 'ultimate-social-media-plus' ); ?></li>
 		                <li><span><?php _e( 'Get alerts', 'ultimate-social-media-plus' ); ?></span><?php _e( ' when people subscribe or unsubscribe', 'ultimate-social-media-plus' ); ?></li>
 		                <li><span><?php _e( 'Tailor the sender name & subject line', 'ultimate-social-media-plus' ); ?></span><?php _e( ' of the emails', 'ultimate-social-media-plus' ); ?></li>
-	                </ul> 
-	            </div>   
-               
+	                </ul>
+	            </div>
+
             </div>
 
             <form id="calimingOptimizationForm" method="get" action="https://api.follow.it/wpclaimfeeds/getFullAccess" target="_blank">
@@ -290,7 +306,7 @@
 	           	<div class='sfsi_plus_more_services_link'>
 	                <a class="pop-up" href="javascript:" id="getMeFullAccess" class="sfsi_plus_getMeFullAccess_class" data-nonce-fetch-feed-id="<?php echo wp_create_nonce( 'sfsi_plus_get_feed_id' );?>" title="Give me access">
 						<?php _e( 'Click here to benefit from all advantages >', 'ultimate-social-media-plus' ); ?>
-					</a> 
+					</a>
 	            </div>
       		</form>
 
@@ -303,7 +319,7 @@
 			</p>
            <?php if($option2['sfsi_plus_premium_email_box'] =='yes') { ?>
             <div class ="sfsi_plus_new_prmium_follw">
-				<p>	
+				<p>
 					<b><?php _e( 'New:', 'ultimate-social-media-plus' ); ?></b><?php _e( ' In our Premium Plugin you can now give your email icon other functions too, e.g. contact you (email), share by email, and link to a certain page (e.g. your contact form or newsletter sign-up site). ', 'ultimate-social-media-plus' ); ?><a style="cursor:pointer" class="pop-up" data-id="sfsi_plus_quickpay-overlay" onclick="sfsi_plus_open_quick_checkout(event)"  target="_blank"><?php _e( 'Go premium now', 'ultimate-social-media-plus' ); ?></a><a href="https://www.ultimatelysocial.com/usm-premium/?utm_source=usmplus_settings_page&utm_campaign=more_functions_email_icon&utm_medium=banner" class="sfsi_plus_font_inherit" target="_blank"><?php _e( ' or learn more', 'ultimate-social-media-plus' ); ?></a>
 				</p>
             </div>
@@ -312,7 +328,7 @@
     </div>
 
     <!-- END EMAIL ICON -->
-    
+
     <!-- FACEBOOK ICON -->
     <div class="row sfsiplus_facebook_section">
     	<h2 class="sfsicls_facebook">
@@ -327,96 +343,96 @@
             </p>
             <p>
             	<?php _e( 'The Facebook icon should allow users to...', 'ultimate-social-media-plus' ); ?>
-            </p> 
-            
+            </p>
+
             <p class="radio_section fb_url" style="display: flow-root;padding-bottom: 4px;">
 			<input name="sfsi_plus_facebookPage_option" <?php echo ($option2['sfsi_plus_facebookPage_option']=='yes') ? 'checked="true"' : '' ;?>  type="checkbox" value="yes" class="styled"  />
-            
+
             <label>
             	<?php _e( 'Visit my Facebook page at:', 'ultimate-social-media-plus' ); ?>
             </label>
-            
+
             <input class="add" name="sfsi_plus_facebookPage_url" type="url" value="<?php echo ($option2['sfsi_plus_facebookPage_url']!='') ? $option2['sfsi_plus_facebookPage_url'] : '' ;?>" placeholder="E.g https://www.facebook.com/your_page_name" /></p>
-            
+
             <p class="radio_section fb_url extra_sp" style="display: flow-root;padding-bottom: 6px;">
             	<input name="sfsi_plus_facebookLike_option" <?php echo ($option2['sfsi_plus_facebookLike_option']=='yes') ? 'checked="true"' : '' ;?>  type="checkbox" value="yes" class="styled"  />
             	<label>
             		<?php _e( 'Like my blog on Facebook (+1)', 'ultimate-social-media-plus' ); ?>
             	</label>
             </p>
-            
+
             <p class="radio_section fb_url extra_sp" style="display: flow-root;padding-top: 8px;">
             	<input name="sfsi_plus_facebookShare_option" <?php echo ($option2['sfsi_plus_facebookShare_option']=='yes') ? 'checked="true"' : '' ;?>  type="checkbox" value="yes" class="styled"  />
-                
+
                 <label class="sfsi_fb_label_3">
-            		<?php _e( 'Share my blog with friends (on Facebook)', 'ultimate-social-media-plus' ); ?> 
+            		<?php _e( 'Share my blog with friends (on Facebook)', 'ultimate-social-media-plus' ); ?>
             	</label>
             </p>
             <?php if($option2['sfsi_plus_premium_facebook_box'] =='yes') { ?>
             <div class="sfsi_plus_new_prmium_follw">
 				<p>
-					<b><?php _e( 'New:', 'ultimate-social-media-plus' ); ?></b>	<?php _e( ' In our Premium Plugin you can also allow users to follow you on Facebook directly from your site (without leaving your page, increasing followers). ', 'ultimate-social-media-plus' ); ?><a style="cursor:pointer" class="pop-up" data-id="sfsi_plus_quickpay-overlay" onclick="sfsi_plus_open_quick_checkout(event)"  target="_blank"><?php _e( 'Go premium now', 'ultimate-social-media-plus' ); ?></a><a href="https://www.ultimatelysocial.com/usm-premium/?utm_source=usmplus_settings_page&utm_campaign=direct_follow_facebook&utm_medium=banner" class="sfsi_plus_font_inherit" target="_blank"><?php _e( ' or learn more', 'ultimate-social-media-plus' ); ?></a>					
+					<b><?php _e( 'New:', 'ultimate-social-media-plus' ); ?></b>	<?php _e( ' In our Premium Plugin you can also allow users to follow you on Facebook directly from your site (without leaving your page, increasing followers). ', 'ultimate-social-media-plus' ); ?><a style="cursor:pointer" class="pop-up" data-id="sfsi_plus_quickpay-overlay" onclick="sfsi_plus_open_quick_checkout(event)"  target="_blank"><?php _e( 'Go premium now', 'ultimate-social-media-plus' ); ?></a><a href="https://www.ultimatelysocial.com/usm-premium/?utm_source=usmplus_settings_page&utm_campaign=direct_follow_facebook&utm_medium=banner" class="sfsi_plus_font_inherit" target="_blank"><?php _e( ' or learn more', 'ultimate-social-media-plus' ); ?></a>
 				</p>
             </div>
             <?php } ?>
-            
+
         </div>
     </div>
     <!-- END FACEBOOK ICON -->
-    
+
     <!-- TWITTER ICON -->
     <div class="row sfsiplus_twitter_section">
     	<h2 class="sfsicls_twt">
-        	<?php _e( 'Twitter', 'ultimate-social-media-plus' ); ?>
+        	<?php _e( 'X (Twitter)', 'ultimate-social-media-plus' ); ?>
         </h2>
         <div class="inr_cont twt_tab_2">
              <p>
               <?php
-              	_e( 'The Twitter icon can perform several actions. Pick below which ones it should perform. If you select several options, then users can select what they want to do', 'ultimate-social-media-plus' );
+              	_e( 'The X (Twitter) icon can perform several actions. Pick below which ones it should perform. If you select several options, then users can select what they want to do', 'ultimate-social-media-plus' );
 				?>
              	<a class="rit_link pop-up" href="javascript:;"  data-id="twex-s2">
              		(<?php _e( 'see an example', 'ultimate-social-media-plus' ); ?>).
              	</a>
-             </p> 
+             </p>
              <p>
-             	<?php _e( 'The Twitter icon should allow users to...', 'ultimate-social-media-plus' ); ?>
-             </p> 
+             	<?php _e( 'The X (Twitter) icon should allow users to...', 'ultimate-social-media-plus' ); ?>
+             </p>
          	 <p class="radio_section fb_url twt_fld">
              	<input name="sfsi_plus_twitter_page" <?php echo ($option2['sfsi_plus_twitter_page']=='yes') ? 'checked="true"' : '' ;?> type="checkbox" value="yes" class="styled"  />
             	<label>
-            		<?php _e( 'Visit me on Twitter:', 'ultimate-social-media-plus' ); ?> 
+            		<?php _e( 'Visit me on X (Twitter):', 'ultimate-social-media-plus' ); ?>
             	</label>
                 <input name="sfsi_plus_twitter_pageURL" type="url" placeholder="http://" value="<?php echo ($option2['sfsi_plus_twitter_pageURL']!='') ? $option2['sfsi_plus_twitter_pageURL'] : '' ;?>" class="add" />
              </p>
-             
+
              <div class="radio_section fb_url twt_fld">
              	<input name="sfsi_plus_twitter_followme"  <?php echo ($option2['sfsi_plus_twitter_followme']=='yes') ? 'checked="true"' : '' ;?> type="checkbox" value="yes" class="styled"  />
-             	
+
                 <label>
-              		<?php _e( 'Follow me on Twitter:', 'ultimate-social-media-plus' ); ?> 
+              		<?php _e( 'Follow me on X (Twitter):', 'ultimate-social-media-plus' ); ?>
              	</label>
-                
-                <input name="sfsi_plus_twitter_followUserName" type="text" value="<?php echo ($option2['sfsi_plus_twitter_followUserName']!='') ? $option2['sfsi_plus_twitter_followUserName'] : '' ;?>" placeholder="my_twitter_name" class="add" />
+
+                <input name="sfsi_plus_twitter_followUserName" type="text" value="<?php echo ($option2['sfsi_plus_twitter_followUserName']!='') ? $option2['sfsi_plus_twitter_followUserName'] : '' ;?>" placeholder="my_x_twitter_name" class="add" />
              </div>
              <div class="radio_section fb_url twt_fld_2">
              	<input name="sfsi_plus_twitter_aboutPage" <?php echo ($option2['sfsi_plus_twitter_aboutPage']=='yes') ? 'checked="true"' : '' ;?> type="checkbox" value="yes" class="styled"  />
              	<label>
-             		<?php _e( 'Tweet about my page:', 'ultimate-social-media-plus' ); ?>
+             		<?php _e( 'X Post about my page:', 'ultimate-social-media-plus' ); ?>
              	</label>
-                <textarea name="sfsi_plus_twitter_aboutPageText" id="sfsi_plus_twitter_aboutPageText" type="text" class="add_txt" placeholder="<?php _e( 'Hey check out this cool site I found', 'ultimate-social-media-plus' ) ;?>: www.yourname.com #Topic via@my_twitter_name" /><?php echo ($option2['sfsi_plus_twitter_aboutPageText']!='') ? stripslashes($option2['sfsi_plus_twitter_aboutPageText']) : _e( 'Hey check out this cool site I found', 'ultimate-social-media-plus' ) ;?></textarea>
+                <textarea name="sfsi_plus_twitter_aboutPageText" id="sfsi_plus_twitter_aboutPageText" type="text" class="add_txt" placeholder="<?php _e( 'Hey check out this cool site I found', 'ultimate-social-media-plus' ) ;?>: www.yourname.com #Topic via@my_x_twitter_name" /><?php echo ($option2['sfsi_plus_twitter_aboutPageText']!='') ? stripslashes($option2['sfsi_plus_twitter_aboutPageText']) : _e( 'Hey check out this cool site I found', 'ultimate-social-media-plus' ) ;?></textarea>
              </div>
             <?php if($option2['sfsi_plus_premium_twitter_box'] =='yes') { ?>
             <div class= "sfsi_plus_new_prmium_follw">
 				<p>
-					<b><?php _e( 'New: ', 'ultimate-social-media-plus' ); ?></b><?php _e(  "Tweeting becomes really fun in the Premium Plugin – you can insert tags to automatically pull the title of the story & link to the story, attach pictures & snippets to the Tweets (Twitter cards) and use url-shorteners, all leading to more Tweets and traffic for your site! ", 'ultimate-social-media-plus' ); ?><a style="cursor:pointer" class="pop-up" data-id="sfsi_plus_quickpay-overlay" onclick="sfsi_plus_open_quick_checkout(event)"  target="_blank"><?php _e( 'Go premium now', 'ultimate-social-media-plus' ); ?></a><a href="https://www.ultimatelysocial.com/usm-premium/?utm_source=usmplus_settings_page&utm_campaign=better_tweets&utm_medium=banner" class="sfsi_plus_font_inherit" target="_blank"><?php _e( ' or learn more', 'ultimate-social-media-plus' ); ?></a>
+					<b><?php _e( 'New: ', 'ultimate-social-media-plus' ); ?></b><?php _e(  "Posting on X becomes really fun in the Premium Plugin – you can insert tags to automatically pull the title of the story & link to the story, attach pictures & snippets to the X Posts (X (Twitter) cards) and use url-shorteners, all leading to more X Posts and traffic for your site! ", 'ultimate-social-media-plus' ); ?><a style="cursor:pointer" class="pop-up" data-id="sfsi_plus_quickpay-overlay" onclick="sfsi_plus_open_quick_checkout(event)"  target="_blank"><?php _e( 'Go premium now', 'ultimate-social-media-plus' ); ?></a><a href="https://www.ultimatelysocial.com/usm-premium/?utm_source=usmplus_settings_page&utm_campaign=better_tweets&utm_medium=banner" class="sfsi_plus_font_inherit" target="_blank"><?php _e( ' or learn more', 'ultimate-social-media-plus' ); ?></a>
 			    </p>
 			</div>
             <?php } ?>
         </div>
     </div>
     <!-- END TWITTER ICON -->
-   
-    
+
+
     <!-- YOUTUBE ICON -->
     <div class="row sfsiplus_youtube_section">
     	<h2 class="sfsicls_utube">
@@ -428,10 +444,10 @@
             	<a class="rit_link pop-up" href="javascript:;"  data-id="ytex-s2">
             		(<?php _e( 'see an example', 'ultimate-social-media-plus' ); ?>).
             	</a>
-            </p> 
+            </p>
             <p>
             	<?php _e( 'The Youtube icon should allow users to...', 'ultimate-social-media-plus' ); ?>
-            </p> 
+            </p>
             <p class="radio_section fb_url"><input name="sfsi_plus_youtube_page" <?php echo ($option2['sfsi_plus_youtube_page']=='yes') ? 'checked="true"' : '' ;?> type="checkbox" value="yes" class="styled"  />
             	<label class="sfsi_label_utube">
             		<?php _e( 'Visit my Youtube page at:', 'ultimate-social-media-plus' ); ?>
@@ -457,7 +473,7 @@
 					$sfsi_plus_youtubeusernameorid = $option2['sfsi_plus_youtubeusernameorid'];
 				}
 			?>
-       	 
+
          <div class="cstmutbewpr">
             <ul class="enough_waffling">
                <li onclick="showhideutube(this);"><input name="sfsi_plus_youtubeusernameorid" <?php echo ($sfsi_plus_youtubeusernameorid=='name') ? 'checked="true"' : '' ;?> type="radio" value="name" class="styled"  />
@@ -493,11 +509,11 @@
                 </div>
             </div>
         </div>
-        
+
         </div>
     </div>
     <!-- END YOUTUBE ICON -->
-    
+
     <!-- PINTEREST ICON -->
     <div class="row sfsiplus_pinterest_section">
     	<h2 class="sfsicls_pinterest"><?php _e( 'Pinterest', 'ultimate-social-media-plus' ); ?></h2>
@@ -507,10 +523,10 @@
 				<a class="rit_link pop-up" href="javascript:;"  data-id="pinex-s2">
             		(<?php _e( 'see an example', 'ultimate-social-media-plus' ); ?>).
             	</a>
-            </p> 
+            </p>
             <p>
             	<?php _e( 'The Pinterest icon should allow users to...', 'ultimate-social-media-plus' ); ?>
-            </p> 
+            </p>
             <p class="radio_section fb_url">
             	<input name="sfsi_plus_pinterest_page" <?php echo ($option2['sfsi_plus_pinterest_page']=='yes') ? 'checked="true"' : '' ;?>  type="checkbox" value="yes" class="styled"  />
                 <label>
@@ -532,10 +548,10 @@
 		    </p>
 		</div>
 		</div>
-		
+
     </div>
     <!-- END PINTEREST ICON -->
-    
+
     <!-- INSTAGRAM ICON -->
     <div class="row sfsiplus_instagram_section">
     	<h2 class="sfsicls_instagram">
@@ -544,7 +560,7 @@
         <div class="inr_cont">
             <p>
             	<?php _e( 'When clicked on, users will get directed to your Instagram page', 'ultimate-social-media-plus' ); ?>.
-            </p> 
+            </p>
             <p class="radio_section fb_url  cus_link instagram_space" >
             	<label class="sfsiLabel">
             		<?php _e( 'URL:', 'ultimate-social-media-plus' ); ?>
@@ -554,7 +570,49 @@
         </div>
     </div>
     <!-- END INSTAGRAM ICON -->
-    
+
+    <!-- ria ICON -->
+    <div class="row sfsiplus_ria_section">
+
+        <h2 class="sfsicls_ria">
+            <?php _e( 'RateItAll', 'ultimate-social-media-plus' ); ?>
+        </h2>
+        <div class="inr_cont">
+            <p><?php _e('When clicked on it, users will get directed to your page on ', 'ultimate-social-media-plus');
+                echo '<a href="https://rateitall.com/">RateItAll.</a>' ?>
+            </p>
+            <div class="radio_section fb_url ">
+                <label class="sfsiLabel">
+                    URL:            	</label>
+                <input name="sfsi_plus_ria_pageUrl" type="url" placeholder="http://" value="<?php echo $option2['sfsi_plus_ria_pageUrl'];?>" class="add" />
+            </div>
+        </div>
+
+    </div>
+
+    <!--ria END-->
+
+    <!-- inha ICON -->
+    <div class="row sfsiplus_inha_section">
+
+        <h2 class="sfsicls_inha">
+            <?php _e( 'IncreasingHappiness', 'ultimate-social-media-plus' ); ?>
+        </h2>
+        <div class="inr_cont">
+            <p><?php _e('When clicked on it, users get taken to your profile page on ', 'ultimate-social-media-plus');
+                echo '<a href="https://increasinghappiness.org/">IncreasingHappiness.org.</a>' ?>
+            </p>
+            <div class="radio_section fb_url ">
+                <label class="sfsiLabel">
+                    URL:            	</label>
+                <input name="sfsi_plus_inha_pageUrl" type="url" placeholder="http://" value="<?php echo $option2['sfsi_plus_inha_pageUrl'];?>" class="add" />
+            </div>
+        </div>
+
+    </div>
+
+    <!--Inha END-->
+
     <!-- LINKEDIN ICON -->
     <div class="row sfsiplus_linkedin_section">
     	<h2 class="sfsicls_linkdin">
@@ -566,13 +624,13 @@
             	<a class="rit_link pop-up" href="javascript:;"  data-id="linkex-s2">
 	            	(<?php _e( 'see an example', 'ultimate-social-media-plus' ); ?>).
             	</a>
-            </p> 
+            </p>
             <p>
             	<?php _e( 'You can find your ID in the link of your profile page, e.g. https://www.linkedin.com/profile/view?id=<b>8539887</b>&trk=nav_responsive_tab_profile_pic', 'ultimate-social-media-plus' ); ?>
            </p>
             <p>
             	 <?php _e( 'The LinkedIn icon should allow users to...', 'ultimate-social-media-plus' ); ?>
-            </p> 
+            </p>
             <div class="radio_section fb_url link_1">
             	<input name="sfsi_plus_linkedin_page" <?php echo ($option2['sfsi_plus_linkedin_page']=='yes') ? 'checked="true"' : '' ;?> type="checkbox" value="yes" class="styled"  />
             	<label>
@@ -580,24 +638,24 @@
             	</label>
                 <input name="sfsi_plus_linkedin_pageURL" type="text" placeholder="http://" value="<?php echo ($option2['sfsi_plus_linkedin_pageURL']!='') ? $option2['sfsi_plus_linkedin_pageURL'] : '' ;?>" class="add" />
             </div>
-            
+
             <div class="radio_section fb_url link_2">
             	<input name="sfsi_plus_linkedin_follow" <?php echo ($option2['sfsi_plus_linkedin_follow']=='yes') ? 'checked="true"' : '' ;?> type="checkbox" value="yes" class="styled"  />
-            	
+
                 <label>
            			<?php _e( 'Follow me on Linkedin:', 'ultimate-social-media-plus' ); ?>
             	</label>
-                
+
                 <input name="sfsi_plus_linkedin_followCompany" type="text" value="<?php echo ($option2['sfsi_plus_linkedin_followCompany']!='') ? $option2['sfsi_plus_linkedin_followCompany'] : '' ;?>" class="add" placeholder="Enter company ID, e.g. 123456" />
             </div>
-            
+
             <div class="radio_section fb_url link_3">
             	<input name="sfsi_plus_linkedin_SharePage" <?php echo ($option2['sfsi_plus_linkedin_SharePage']=='yes') ? 'checked="true"' : '' ;?> type="checkbox" value="yes" class="styled"  />
             	<label>
             		<?php _e( 'Share my page on LinkedIn', 'ultimate-social-media-plus' ); ?>
             	</label>
             </div>
-            
+
             <div class="radio_section fb_url link_4">
             	<input name="sfsi_plus_linkedin_recommendBusines" <?php echo ($option2['sfsi_plus_linkedin_recommendBusines']=='yes') ? 'checked="true"' : '' ;?> type="checkbox" value="yes" class="styled"  />
                 <label class="anthr_labl">
@@ -615,7 +673,7 @@
         </div>
     </div>
     <!-- END LINKEDIN ICON -->
-    
+
     <!-- HOUZZ ICON -->
     <div class="row sfsiplus_houzz_section">
     	<h2 class="sfsicls_houzz">
@@ -623,8 +681,8 @@
         </h2>
         <div class="inr_cont">
             <p>
-            	<?php _e( 'Please provide the url to your Houzz profile (e.g. http://www.houzz.com/user/your_username).', 'ultimate-social-media-plus' ); ?>  
-			</p> 
+            	<?php _e( 'Please provide the url to your Houzz profile (e.g. http://www.houzz.com/user/your_username).', 'ultimate-social-media-plus' ); ?>
+			</p>
 			<div class="fb_url link_2">
 				<label class="sfsiLabel" style="min-width: 0px;">
 		        	<?php _e( 'URL:', 'ultimate-social-media-plus' ); ?>
@@ -632,12 +690,12 @@
 
 				<input style="float:none;margin-top:0" name="sfsi_plus_houzz_pageUrl" type="text" value="<?php echo (isset($option2['sfsi_plus_houzz_pageUrl']) && $option2['sfsi_plus_houzz_pageUrl']!='') ? $option2['sfsi_plus_houzz_pageUrl'] : '' ;?>" placeholder="http://" class="add" />
             </div>
-                  
+
         </div>
     </div>
 	<!-- HOUZZ INSTAGRAM ICON -->
-	
-<!--MZ CODE START-->	 
+
+<!--MZ CODE START-->
 
 	<!-- Ok ICON -->
     <div class="row sfsiplus_ok_section">
@@ -655,7 +713,7 @@
 					<?php _e( 'Visit my OK page at:', 'ultimate-social-media-plus' ); ?>
 				</label>
 
-				<input name="sfsi_plus_okVisit_url" type="url" placeholder="" value="<?php echo $option2['sfsi_plus_okVisit_url'];?>" class="add" style="margin-top:10px" />	        	
+				<input name="sfsi_plus_okVisit_url" type="url" placeholder="" value="<?php echo $option2['sfsi_plus_okVisit_url'];?>" class="add" style="margin-top:10px" />
 			</div>
 			<div class= "sfsi_plus_new_prmium_follw">
 			<p>
@@ -678,7 +736,7 @@
 
 			<div class="radio_section fb_url ">
 				<input type="checkbox" name="sfsi_plus_telegramShare_option" value="yes" checked="checked" style="display:none" />
-                
+
 				<label class="sfsiLabel1 sfsiLabel" >
 					<?php _e("Pre-filled message:", 'ultimate-social-media-plus' );?>
 				</label>
@@ -690,7 +748,7 @@
 				<label class="sfsiLabel1 sfsiLabel" >
 					<?php _e("My Telegram username:", 'ultimate-social-media-plus' );?>
 				</label>
-				
+
 				<input name="sfsi_plus_telegram_username" type="text" value="<?php echo (isset($option2['sfsi_plus_telegram_username']) && $option2['sfsi_plus_telegram_username']!='') ? $option2['sfsi_plus_telegram_username'] : '' ;?>" placeholder="" class="add"  />
 			</div>
 			<div class= "sfsi_plus_new_prmium_follw">
@@ -700,7 +758,7 @@
 		</div>
 		</div>
 
-    	
+
     </div>
     <!-- Telegram ICON -->
 
@@ -714,15 +772,15 @@
 			<p>
 				<?php _e( 'When clicked on, users will get directed to your VK page.', 'ultimate-social-media-plus' ); ?>
 			</p>
-	
+
 			<div class="radio_section fb_url ">
 				<input type="checkbox" name="sfsi_plus_vkVisit_option" value="yes" checked="checked" style="display:none">
-                
+
 				<label class="sfsiLabel">
 					<?php _e( 'Visit my VK page at:', 'ultimate-social-media-plus' ); ?>
 				</label>
 
-				<input name="sfsi_plus_vkVisit_url" type="url" placeholder="http://" value="<?php echo $option2['sfsi_plus_vkVisit_url'];?>" class="add" />	        	
+				<input name="sfsi_plus_vkVisit_url" type="url" placeholder="http://" value="<?php echo $option2['sfsi_plus_vkVisit_url'];?>" class="add" />
 			</div>
 			<div class= "sfsi_plus_new_prmium_follw">
 				<p>
@@ -797,7 +855,7 @@
 	        		<?php _e( 'Visit my Sina Weibo page at:', 'ultimate-social-media-plus' ); ?>
 	        	</label>
 
-	            <input name="sfsi_plus_weiboVisit_url" type="url" placeholder="" value="<?php echo $option2['sfsi_plus_weiboVisit_url'];?>" class="add" />	        	
+	            <input name="sfsi_plus_weiboVisit_url" type="url" placeholder="" value="<?php echo $option2['sfsi_plus_weiboVisit_url'];?>" class="add" />
 			</div>
 			<div class= "sfsi_plus_new_prmium_follw">
 			<p>
@@ -823,7 +881,7 @@
 			<div class="radio_section fb_url ">
                 <label class="sfsiLabel">
                     URL:            	</label>
-	            <input name="sfsi_plus_mastodon_pageUrl" type="url" placeholder="http://" value="<?php echo $option2['sfsi_plus_mastodon_pageUrl'];?>" class="add" />	        	
+	            <input name="sfsi_plus_mastodon_pageUrl" type="url" placeholder="http://" value="<?php echo $option2['sfsi_plus_mastodon_pageUrl'];?>" class="add" />
 			</div>
 			<div class= "sfsi_plus_new_prmium_follw">
 			<p>
@@ -834,7 +892,7 @@
 		</div>
 
 	</div>
-	
+
 	<!--MZ CODE END-->
 
 	<!-- COPY LINK ICON -->
@@ -843,17 +901,17 @@
         <label class="sfsiLabel infoLabel"><?php _e('Copies the link of the webpage to clipboard.', 'ultimate-social-media-plus'); ?></label>
     </div>
     <!-- COPY LINK ICON -->
-    
+
 	    <!-- Custom icon section start here -->
 	    <div class="plus_custom-links sfsiplus_custom_section">
-		<?php 
+		<?php
 		  	$costom_links = maybe_unserialize($option2['sfsi_plus_CustomIcon_links']);
 
 		  	$bannerDisplay= "display:none;";
 		  	$count = 1;
 			for($i = $first_key; $i <= $endkey; $i++) :
 			if(!empty( $icons[$i])) :
-				
+
 				$bannerDisplay = "display:block;";
 				?>
 	           	<div class="row  sfsiICON_<?php echo $i; ?> cm_lnk">
@@ -869,7 +927,7 @@
 	               	<div class="inr_cont ">
 	                   	<p>
 	                	   <?php _e( 'Where do you want this icon to link to?', 'ultimate-social-media-plus' ); ?>
-	                   	</p> 
+	                   	</p>
 	                   	<p class="radio_section fb_url sfsiplus_custom_section cus_link " >
 	                   		<label>
 	                   			<?php _e( 'Link:', 'ultimate-social-media-plus' ); ?>
@@ -890,15 +948,15 @@
     	</div>
 
     <!-- END Custom icon section here -->
-	
+
 	<?php sfsi_plus_ask_for_help(2); ?>
 
-    <!-- SAVE BUTTON SECTION   --> 
+    <!-- SAVE BUTTON SECTION   -->
     <div class="save_button tab_2_sav">
         <img src="<?php echo SFSI_PLUS_PLUGURL; ?>images/ajax-loader.gif" class="loader-img" alt="" />
-        
+
 		<?php  $nonce = wp_create_nonce("update_plus_step2"); ?>
-        
+
         <a href="javascript:;" id="sfsi_plus_save2" title="Save" data-nonce="<?php echo $nonce;?>">
         	<?php _e( 'Save', 'ultimate-social-media-plus' ); ?>
         </a>
@@ -907,9 +965,9 @@
     <a class="sfsiColbtn closeSec" href="javascript:;">
     	<?php _e( 'Collapse area', 'ultimate-social-media-plus' ); ?>
     </a>
-    
+
     <label class="closeSec"></label>
-    
+
     <!-- ERROR AND SUCCESS MESSAGE AREA-->
     <p class="red_txt errorMsg" style="display:none"> </p>
     <p class="green_txt sucMsg" style="display:none"> </p>

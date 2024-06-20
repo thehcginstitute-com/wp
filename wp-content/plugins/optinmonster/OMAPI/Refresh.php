@@ -162,16 +162,12 @@ class OMAPI_Refresh {
 	 * @since  1.9.10
 	 *
 	 * @param  string $campaign_id The campaign id (slug).
-	 * @param  mixed  $is_legacy   Whether campaign is legacy.
 	 *
 	 * @return WP_Error|bool True if successful.
 	 */
-	public function sync( $campaign_id, $is_legacy = false ) {
+	public function sync( $campaign_id ) {
 		$time = time();
 		$path = "for-wp/{$campaign_id}?t={$time}";
-		if ( $is_legacy ) {
-			$path .= '&legacy=true';
-		}
 
 		$this->api = OMAPI_Api::build( 'v1', $path, 'GET' );
 

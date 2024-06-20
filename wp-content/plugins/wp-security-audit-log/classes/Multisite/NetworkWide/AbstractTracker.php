@@ -7,7 +7,7 @@
  * executed directly (CPTs or taxonomies for example).
  *
  * @since   3.5.2
- * @package Wsal
+ * @package wsal
  */
 
 namespace WSAL\Multisite\NetworkWide;
@@ -32,7 +32,7 @@ abstract class AbstractTracker implements TrackerInterface {
 	/**
 	 * The key used to store data under.
 	 *
-	 * You should always redine this in extended classes.
+	 * You should always redefine this in extended classes.
 	 *
 	 * @since 3.5.2
 	 * @var   string
@@ -48,15 +48,6 @@ abstract class AbstractTracker implements TrackerInterface {
 	public $ttl = 30;
 
 	/**
-	 * An instance of the main plugin class that can be used to get options or
-	 * settings.
-	 *
-	 * @since 3.5.2
-	 * @var   \WpSecurityAuditLog
-	 */
-	public $plugin;
-
-	/**
 	 * The data to be stored.
 	 *
 	 * @since 3.5.2
@@ -70,10 +61,9 @@ abstract class AbstractTracker implements TrackerInterface {
 	 *
 	 * @method __construct
 	 * @since  3.5.2
-	 * @param  \WpSecurityAuditLog $plugin An istance of the main plugin class.
+	 * @since 5.0.0 - The WSAL main class parameter is removed.
 	 */
-	public function __construct( \WpSecurityAuditLog $plugin ) {
-		$this->plugin = $plugin;
+	public function __construct() {
 		$this->data   = array();
 	}
 

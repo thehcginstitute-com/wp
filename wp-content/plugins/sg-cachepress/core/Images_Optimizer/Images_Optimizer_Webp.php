@@ -3,7 +3,7 @@ namespace SiteGround_Optimizer\Images_Optimizer;
 
 use SiteGround_Optimizer\Supercacher\Supercacher;
 use SiteGround_Optimizer\Options\Options;
-use SiteGround_Optimizer\Helper\Helper;
+use SiteGround_Helper\Helper_Service;
 
 /**
  * SG Images_Optimizer main plugin class
@@ -195,7 +195,7 @@ class Images_Optimizer_Webp extends Abstract_Images_Optimizer {
 	 * @return bool True on success, false on failure.
 	 */
 	public function delete_webp_files() {
-		$basedir = Helper::get_uploads_dir();
+		$basedir = Helper_Service::get_uploads_dir();
 		exec( "find $basedir -name '*.webp' -type f -print0 | xargs -L 500 -0 rm", $output, $result );
 
 		$this->reset_image_optimization_status();
@@ -211,22 +211,20 @@ class Images_Optimizer_Webp extends Abstract_Images_Optimizer {
 	 * @param  int $id The attachment ID.
 	 */
 	public function delete_webp_copy( $id ) {
+		global $wp_filesystem;
 		$main_image = get_attached_file( $id );
 		$metadata   = wp_get_attachment_metadata( $id );
+		$basename   = basename( $main_image );
 
-		$files    = array( $main_image . '.webp' );
-		$basename = basename( $main_image );
+		$wp_filesystem->delete( $main_image . '.webp' );
 
 		if ( ! empty( $metadata['sizes'] ) ) {
 			// Loop through all image sizes and optimize them as well.
 			foreach ( $metadata['sizes'] as $size ) {
-				$files[] = str_replace( $basename, $size['file'], $main_image ) . '.webp';
+				$wp_filesystem->delete( str_replace( $basename, $size['file'], $main_image ) . '.webp' );
 			}
 		}
 
-		if ( ! empty( $files ) ) {
-			exec( 'rm ' . implode( ' ', $files ) );
-		}
 	}
 
 	/**

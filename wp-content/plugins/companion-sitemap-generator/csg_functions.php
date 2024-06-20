@@ -2,89 +2,70 @@
 
 // Donate url
 function csg_donateUrl() {
-	return 'https://www.paypal.me/dakel/5/';
+	return 'https://www.paypal.me/dakel/10/';
+}
+
+// Get true or false
+function csg_true_or_false( $check_value ) {
+
+	global $wpdb;
+
+	$table_name = $wpdb->prefix . "csg_sitemap"; 
+	$configs 	= $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s", $check_value ) );
+
+	foreach ( $configs as $config ) {
+		$tof = $config->onoroff;
+	}
+
+	return ( $tof == 'on' ) ? true : false;
+
+}
+
+// Show XML in HTML?
+function csg_xml_in_html() {
+	return csg_true_or_false( 'xml_in_html' );
 }
 
 // The XML stylesheet
 function csg_use_XMLstylesheet() {
-
-	global $wpdb;
-	$table_name = $wpdb->prefix . "csg_sitemap"; 
-
-	$configs = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s", "use_sitemap_stylesheet" ) );
-	foreach ( $configs as $config ) {
-		$stylesheet = $config->onoroff;
-	}
-
-	switch ( $stylesheet ) {
-		case 'on':
-			$return = true;
-			break;
-		default:
-			$return = false;
-			break;
-	}
-
-	return $return;
-
+	return csg_true_or_false( 'use_sitemap_stylesheet' );
 }
+
 function csg_XMLstylesheet() {
 
 	global $wpdb;
-	$table_name = $wpdb->prefix . "csg_sitemap"; 
 
-	$configs = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s", "sitemap_stylesheet" ) );
+	$table_name = $wpdb->prefix . "csg_sitemap"; 
+	$configs 	= $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s", "sitemap_stylesheet" ) );
+
 	foreach ( $configs as $config ) {
 		$stylesheet = $config->onoroff;
 	}
 
-	if( $stylesheet == '' ) {
-		$stylesheet = plugin_dir_url( __FILE__ ) . 'sitemap.xsl';
-	}
-	
-	return $stylesheet;
+	return ( $stylesheet != '' ) ? $stylesheet : plugin_dir_url( __FILE__ ) . 'sitemap.xsl';
 
 }
 
-// Temp check
+// Temporary check for main site in multisite
 function csg_mainSiteOnly() {
-
-	if( is_multisite() ) {
-		if( is_main_site() ) {
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		return true;
-	}
-
+	return ( is_multisite() && !is_main_site() ) ? false : true;
 }
 
 // The url of the sitemap
 function csg_sitemap_url() {
-
-	if( is_multisite() ) {
-		return network_site_url() . csg_sitemap_file( true, get_current_blog_id() );
-	} else {
-		return site_url() . '/' . csg_sitemap_file();
-	}
-
+	return is_multisite() ? network_site_url() . csg_sitemap_file( true, get_current_blog_id() ) : site_url() . '/' . csg_sitemap_file();
 }
 
 // Get the correct sitemap file
 function csg_sitemap_file( $multisite = false, $blogid = '1' ) {
+	return ( !$multisite OR $blogid == '1' ) ? 'sitemap.xml' : 'sitemap-'.$blogid.'.xml';
+}
 
-	if( $multisite ) {
-		if( $blogid == '1' ) {
-			return 'sitemap.xml';
-		} else {
-			return 'sitemap-'.$blogid.'.xml';
-		}
-	} else {
-		return 'sitemap.xml';
-	}
-
+// Get post types
+function csg_get_posttypes() {
+	$post_types = get_post_types( array( 'public' => true ), 'names', 'and' ); // Get all post types
+	unset( $post_types["attachment"] ); // Remove attachment
+	return $post_types;
 }
 
 // Get taxonomies
@@ -93,17 +74,20 @@ function csg_get_taxonomies() {
 	// Global array
 	$taxes = array();
 
-	// Built in
-	$csg_term_args = array( 'public' => true, '_builtin' => true ); // Arguments
-	if( csg_is_multilingual() )  $csg_term_args['lang'] = csg_default_language(); // If is multilingual add language filter
-	$taxonomies = get_taxonomies( $csg_term_args, 'names', 'and' ); // Get taxonomies
-	foreach( $taxonomies as $taxonomie ) array_push( $taxes, $taxonomie ); // Push to global array
+	foreach( array( true, false ) as $builtin ) {
 
-	// Not builtin
-	$csg_term_args = array( 'public' => true, '_builtin' => false ); // Arguments
-	if( csg_is_multilingual() )  $csg_term_args['lang'] = csg_default_language(); // If is multilingual add language filter
-	$taxonomies = get_taxonomies( $csg_term_args, 'names', 'and' ); // Get taxonomies
-	foreach( $taxonomies as $taxonomie ) array_push( $taxes, $taxonomie ); // Push to global array
+		// Base arguments
+		$csg_term_args = array( 'public' => true, '_builtin' => $builtin );
+
+		// If needed add multilingual
+		if( csg_is_multilingual() ) {
+			$csg_term_args['lang'] = csg_default_language();
+		}
+
+		// Push them to an array
+		foreach( get_taxonomies( $csg_term_args, 'names', 'and' ) as $taxonomie ) $taxes[] = $taxonomie;
+
+	}
 
 	// Return global array
 	return $taxes;
@@ -112,11 +96,8 @@ function csg_get_taxonomies() {
 // Creates the sitemap
 function csg_sitemap() {
 
-	if( is_multisite() ) {
-		$csg_sitemap_file = get_home_path() . csg_sitemap_file( true, get_current_blog_id() );
-	} else {
-		$csg_sitemap_file = get_home_path() . csg_sitemap_file();
-	}
+	$csg_stm_file 		= is_multisite() ? csg_sitemap_file( true, get_current_blog_id() ) :  csg_sitemap_file();
+	$csg_sitemap_file 	= ABSPATH . $csg_stm_file;
 
 	if ( file_exists( $csg_sitemap_file ) ) {
 
@@ -134,33 +115,22 @@ function csg_sitemap() {
 		} else {
 
 			// Error when sitemap.xml is not writable
-		    errorMSG( __( 'Your sitemap file is not writable', 'companion-sitemap-generator').'</p></div>' );
-
-			$subject = __('Sitemap Error', 'companion-sitemap-generator');
-			$message = __( 'Something went wrong while updating your sitemap: ', 'companion-sitemap-generator' );
-			$message .= __( 'Your sitemap file is not writable.', 'companion-sitemap-generator' );
-
-			wp_mail( get_option('admin_email') , $subject, $message );
+		    errorMSG( __( 'Your sitemap file is not writable', 'companion-sitemap-generator') );
 
 		}
 
 	} else {
 
-		// Error if sitemap.xml doesn't exist
-		errorMSG('<p>'.__( 'We weren\'t able to locate a sitemap file in your website\'s root folder. ', 'companion-sitemap-generator' ).'</p>');
-
-		$subject = __( 'Sitemap Error', 'companion-sitemap-generator' );
-		$message = __( 'Something went wrong while updating your sitemap: ', 'companion-sitemap-generator' );
-		$message .= __( 'We weren\'t able to locate a sitemap file in your website\'s root folder.', 'companion-sitemap-generator' );
-
-		wp_mail( get_option('admin_email') , $subject, $message );
+		// Create the sitemap file
+		fopen( $csg_sitemap_file, 'w+' );
+		errorMSG( __( 'We had to create a file first, please update the sitemap again.', 'companion-sitemap-generator' ) );
 
 	}
 
 }
 
 function csg_proper_url_format( $url ) {
-	return str_replace('&', '%26', $url );
+	return str_replace( '&', '%26', $url );
 }
 
 // Get addition pages
@@ -168,23 +138,22 @@ function csg_get_additionalpages() {
 
 	global $wpdb;
 	$table_name = $wpdb->prefix . "csg_sitemap"; 
+	$pages 		= array();
 
 	// Enable for major updates
 	$configs = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s", "additionalpages" ) );
-	foreach ( $configs as $config ) {
-		$pages = $config->onoroff;
+	foreach( $configs as $config ) {
+		if( isset( $config->onoroff ) ) $pages[] = $config->onoroff;
 	}
-
-	if( $pages != '' ) $pages = explode( " ", $pages );
 
 	return $pages;
 
 }
 function csg_get_additionalpages__textarea() {
 	$pages = csg_get_additionalpages();
-	if( $pages != '' ) {
+	if( !empty( $pages ) ) {
 		foreach( $pages as $page ) { 
-			echo $page; echo "\n"; 
+			echo $page."\n"; 
 		}
 	}
 }
@@ -203,29 +172,29 @@ function changeFreq() {
 
 }
 
-function csg_sitemap_line() {
+function csg_sitemap_line( $id ) {
 
 	$csg_sitemap_content = '<url>
-		<loc>'. csg_proper_url_format( get_the_permalink() ) .'</loc>';
+		<loc>'. csg_proper_url_format( get_the_permalink( $id ) ) .'</loc>';
 	    if( csg_is_multilingual() ) {
 		    foreach ( csg_languages() as $key => $lang ) {
 		    	if( $lang != csg_default_language() ) {
-		    		if( csg_post_translation_id( get_the_ID(), $lang ) != '' && get_post_status( csg_post_translation_id( get_the_ID(), $lang ) ) == 'publish' ) {
+		    		if( csg_post_translation_id( $id, $lang ) != '' ) {
 			    		$csg_sitemap_content .= '
 		<xhtml:link 
 			rel="alternate" 
 			hreflang="'.$lang.'" 
-			href="'.csg_proper_url_format( get_the_permalink( csg_post_translation_id( get_the_ID(), $lang ) ) ).'"
+			href="'.csg_proper_url_format( get_the_permalink( csg_post_translation_id( $id, $lang ) ) ).'"
 			/>';
 			    	}
 		    	}
 		    }
 	    }
 		$csg_sitemap_content .= '
-		<lastmod>'.get_the_modified_date( 'Y-m-d' ).'</lastmod>
-	    <changefreq>'.changeFreq().'</changefreq>
-	</url>
-	';
+		<lastmod>'.get_the_modified_date( 'Y-m-d', $id ).'</lastmod>';
+	    if( changeFreq() != 'hide' ) $csg_sitemap_content .= '<changefreq>'.changeFreq().'</changefreq>';
+	    $csg_sitemap_content .= csg_sitemap_line_images( $id );
+	$csg_sitemap_content .= '</url>';
 
 	return $csg_sitemap_content;
 
@@ -239,7 +208,7 @@ function csg_sitemap_line_additionalpages( $link ) {
 	    if( csg_is_multilingual() ) {
 		    foreach ( csg_languages() as $key => $lang ) {
 		    	if( $lang != csg_default_language() ) {
-		    		if( csg_post_translation_id( get_the_ID(), $lang ) != '' && get_post_status( csg_post_translation_id( get_the_ID(), $lang ) ) == 'publish' ) {
+		    		if( csg_post_translation_id( get_the_ID(), $lang ) != '' ) {
 			    		$csg_sitemap_content .= '
 		<xhtml:link 
 			rel="alternate" 
@@ -251,10 +220,9 @@ function csg_sitemap_line_additionalpages( $link ) {
 		    }
 	    }
 		$csg_sitemap_content .= '
-		<lastmod>'.get_the_modified_date( 'Y-m-d' ).'</lastmod>
-	    <changefreq>'.changeFreq().'</changefreq>
-	</url>
-	';
+		<lastmod>'.get_the_modified_date( 'Y-m-d' ).'</lastmod>';
+	    if( changeFreq() != 'hide' ) $csg_sitemap_content .= '<changefreq>'.changeFreq().'</changefreq>';
+	$csg_sitemap_content .= '</url>';
 
 	return $csg_sitemap_content;
 
@@ -278,12 +246,41 @@ function csg_sitemap_line_terms( $id ) {
 		    	}
 		    }
 	    }
-		$csg_sitemap_content .= '
-	    <changefreq>'.changeFreq().'</changefreq>
-	</url>
-	';
+	    if( changeFreq() != 'hide' ) $csg_sitemap_content .= '<changefreq>'.changeFreq().'</changefreq>';
+	$csg_sitemap_content .= '</url>';
 
 	return $csg_sitemap_content;
+
+}
+
+// Get all images by a post
+function csg_sitemap_line_images( $post_id ) { 
+
+	$csg_line = '';
+
+	if( !in_array( 'media', csg_exclude_posttypes() ) ) {
+
+		$images 		= array();
+		$attachments 	= get_children( array(
+				'post_parent' 		=> $post_id,
+	            'post_status' 		=> 'inherit',
+	            'post_type' 		=> 'attachment',
+	            'post_mime_type' 	=> 'image',
+	            'posts_per_page' 	=> '1000' // Sitemaps can only have up to a 1000 images per page (do you need more really?)
+	        )
+		);
+
+		foreach( $attachments as $att_id => $attachment ) {
+			$csg_line .= '
+			<image:image>
+		    	<image:loc>'.csg_proper_url_format( wp_get_attachment_url( $attachment->ID ) ).'</image:loc>
+		    </image:image>';
+
+		}
+
+	}
+
+	return $csg_line;
 
 }
 
@@ -293,143 +290,45 @@ function csg_sitemap_content() {
 	// Basic XML output
 	$csg_sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>';
 
+	// Use stylesheet?
 	if( csg_use_XMLstylesheet() ) {
 		$csg_sitemap_content .= '<?xml-stylesheet type="text/xsl" href="'.csg_XMLstylesheet().'"?>';
 	}
 
-	$csg_sitemap_content .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">';
-
-	// Basic query arguments
-	$csg_sitemap_args = array( 
-		'order' 			=> 'asc', 
-		'posts_per_page' 	=> '-1', 
-		'post_status' 		=> 'publish', 
-		'post__not_in' 		=> csg_exclude()
-	);
-
-	// Term arguments
-	$csg_term_args = array(
-		'hide_empty' => true
-	);
-
-	// If is multilingual add language filter
-	if( csg_is_multilingual() ) {
-		$csg_sitemap_args['lang'] 	= csg_default_language();
-		$csg_term_args['lang'] 		= csg_default_language();
-	}
+	// Urlset
+	$csg_sitemap_content .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
 	// Add post types
-	$post_types = get_post_types( array( 'public' => true ), 'names', 'and' );
-
-	foreach ( $post_types  as $post_type ) {
-
-		if( !in_array( $post_type, csg_exclude_posttypes() ) && $post_type != 'attachment' ) {
-
-			$csg_sitemap_args['post_type'] = $post_type;
-
-			query_posts( $csg_sitemap_args );
-
-			if( have_posts() ) {
-
-				while( have_posts() ) {
-
-					the_post();
-					$csg_sitemap_content .= csg_sitemap_line();
-
-				}
-
-			}
-
-			wp_reset_query();
-
+	$limit 	= 5000; // Had to limit it to 5000 because it kept crashing in some cases, will try and improve performance to be able to increase this number
+	$posts 	= get_posts( array( 'order' => 'asc', 'orderby' => 'name','posts_per_page' => $limit, 'post_status' => 'publish', 'post__not_in' => csg_exclude(),'post_type' => array_diff( csg_get_posttypes(), csg_exclude_posttypes() ) ) );
+	if( $posts ) {
+		foreach( $posts as $post ) {
+			$csg_sitemap_content .= csg_sitemap_line( $post->ID );
 		}
-
+		wp_reset_postdata();
 	}
 
 	// Add taxonomies 
-	$taxonomies = csg_get_taxonomies();
-
-	// If there are any taxonomies
+	$taxonomies = array_diff( csg_get_taxonomies(), csg_exclude_posttypes() );
 	if ( $taxonomies ) {
-
-		// Loop trough all
 		foreach( $taxonomies as $taxonomie ) {
-
-			// Get information of current one
-			$thisTaxonomie = get_taxonomy( $taxonomie );
-
-			// Check if it's not hidden
-			if( !in_array( $taxonomie, csg_exclude_posttypes() ) ) {
-
-				// Get all terms by taxonomy
-				global $wp_version;
-				if ( version_compare( $wp_version, '4.5.0', '>=' ) ) {
-					$terms = get_terms( array( 'taxonomy' => $taxonomie, 'hide_empty' => true ) );
-				} else {
-					$terms = get_terms( $taxonomie, array( 'hide_empty' => true ) );
-				}
-
-				// Loop through them
-				foreach( $terms as $tax ) {
-					if( !in_array( $tax->term_id, csg_exclude_ctam() ) ) {
-						$csg_sitemap_content .= csg_sitemap_line_terms( $tax->term_id );
-					}
-				}
-
+			$get_terms = get_terms( array( 'taxonomy' => $taxonomie, 'orderby' => 'name', 'order' => 'asc', 'hide_empty' => true, 'exclude' => csg_exclude_ctam() ) );
+			foreach( $get_terms as $tax ) {
+				$csg_sitemap_content .= csg_sitemap_line_terms( $tax->term_id );
 			}
-
 		}
-
 	}
 
 	// Add Additional pages
 	if ( !empty( csg_get_additionalpages() ) ) {
 		foreach( csg_get_additionalpages() as $additionalpage ) {
-			$csg_sitemap_content .= csg_sitemap_line_additionalpages( $additionalpage );
+			if( $additionalpage != '' ) $csg_sitemap_content .= csg_sitemap_line_additionalpages( sanitize_text_field( $additionalpage ) );
 		}
 	}
 
-	$csg_sitemap_content .= '
-	</urlset>';
+	$csg_sitemap_content .= '</urlset>';
 
-	// Return sitemap-string but first filter any text containing illegal named entities
 	return ent2ncr( $csg_sitemap_content );
-
-}
-
-// Get all post types without filtered once
-function csg_get_filtered_post_types() {
-
-	$pttArray = csg_get_post_types();
-
-	foreach ( $pttArray as $postType ) {
-
-		if( in_array( $postType, csg_exclude_posttypes() ) ) {
-
-			if( ( $key = array_search( $postType, $pttArray ) ) !== false ) {
-			    unset( $pttArray[ $key ] );
-			}
-
-		}
-
-	}
-
-}
-
-// Get all post types
-function csg_get_post_types() {
-
-	// Get all exisiting post types
-	$post_types 		= get_post_types( array( 'public' => true ), 'names', 'and' );
-	$post_type_array 	= array();
-
-	foreach ( $post_types  as $post_type ) {
-		if( $post_type != 'attachment' ) {
-			array_push( $post_type_array , $post_type );
-		}
-	}
-
-	return $post_type_array;
 
 }
 
@@ -442,87 +341,48 @@ function errorMSG( $content ) {
 }
 
 // Get all post types for html sitemap
-function html_posttypes( $sort, $orderby, $numOfColumns ) {
+function html_posttypes( $sort, $orderby, $numberofcolumns, $limit ) {
 
-	$post_types = get_post_types( array( 'public' => true ), 'names', 'and' ); 
-	$posts 		= '';
+	$posts 			= '';
+	$columns 		= esc_attr( $numberofcolumns );
+	$post_types 	= array_diff( csg_get_posttypes(), csg_exclude_posttypes() );
 
-	foreach ( $post_types  as $post_type ) {
+	foreach( $post_types  as $post_type ) {
 
-		if( !in_array( $post_type, csg_exclude_posttypes() ) ) {
+		$csg_sitemap_args = array( 
+			'order' 			=> $sort, 
+			'post_type' 		=> $post_type, 
+			'posts_per_page' 	=> $limit, 
+			'post_status' 		=> 'publish', 
+			'post__not_in' 		=> csg_exclude(),
+			'orderby'			=> $orderby,
+			'post_parent' 		=> 0,
+		);
 			
-			$csg_sitemap_args = array( 
-				'order' 			=> $sort, 
-				'post_type' 		=> $post_type, 
-				'posts_per_page' 	=> '-1', 
-				'post_status' 		=> 'publish', 
-				'post__not_in' 		=> csg_exclude(),
-				'orderby'			=> $orderby,
-				'post_parent' 		=> 0,
-			);
+		$csg_sitemap_posts = get_posts( $csg_sitemap_args );
 
-			// Get name of post type
-			$post_typeO = get_post_type_object( $post_type ); 
+		if ( $csg_sitemap_posts ) {
 
-			query_posts( $csg_sitemap_args );
+			$get_post_type = get_post_type_object( $post_type ); 
 
-			if( have_posts() ) {
+			$posts .= "<div class='sitemap-column sitemap-columns-{$columns} sitemap-posttypes'><div class='html-sitemap-column'><h2>{$get_post_type->label}</h2><ul>";
 
-				$posts .= '<div class="sitemap-column sitemap-columns-'.$numOfColumns.' sitemap-posttypes sitemap-posttype-'.$post_typeO->name.'"><div class="html-sitemap-column"><h2>'.$post_typeO->label.'</h2>
-				<ul class="html-sitemap-list">';
+			if( is_post_type_hierarchical( $post_type ) ) {
+				$csg_sitemap_args['echo'] 		= false;
+				$csg_sitemap_args['title_li'] 	= false;
+				$posts .= wp_list_pages( $csg_sitemap_args );
 
-				while ( have_posts() ) {
-
-					the_post(); 
-
-					$posts .= '<li class="html-sitemap-list-item html-sitemap-post-'.get_the_ID().'"><a href="'. get_the_permalink() .'" title="'. get_the_title() .'">'. get_the_title() .'</a>';
-
-					// Get children
-					$args = array(
-						'post_parent' 		=> get_the_ID(),
-						'post_type'   		=> $post_type, 
-						'posts_per_page' 	=> '-1', 
-						'post_status' 		=> 'publish',
-						'post__not_in' 		=> csg_exclude(),
-					);
-					$children = get_children( $args );
-
-					if( !empty( $children ) ) $posts .= '<ul class="html-sitemap-sub-list">';
-
-					foreach ( $children as $child ) {
-						$posts .= '<li class="html-sitemap-list-item html-sitemap-post-'.$child->ID.'"><a href="'. get_the_permalink( $child->ID ) .'" title="'. get_the_title( $child->ID ) .'">'. get_the_title( $child->ID ) .'</a></li>';
-
-						$args = array(
-							'post_parent' 		=> $child->ID,
-							'post_type'   		=> $post_type, 
-							'posts_per_page' 	=> '-1', 
-							'post_status' 		=> 'publish',
-							'post__not_in' 		=> csg_exclude(),
-						);
-						$childrens_children = get_children( $args );
-
-						if( !empty( $childrens_children ) ) {
-							$posts .= '<ul class="html-sitemap-sub-list">';
-						}
-						foreach ( $childrens_children as $child ) {
-							$posts .= '<li class="html-sitemap-list-item html-sitemap-post-'.$child->ID.'"><a href="'. get_the_permalink( $child->ID ) .'" title="'. get_the_title( $child->ID ) .'">'. get_the_title( $child->ID ) .'</a></li>';
-						}
-						if( !empty( $childrens_children ) ) {
-							$posts .= '</ul>';
-						}
-
-					}
-
-					if( !empty( $children ) ) $posts .= '</ul>';
-
-					$posts .= '</li>';
+			} else {
+				foreach( $csg_sitemap_posts as $post ) {
+					$id 		= $post->ID;
+					$title 		= get_the_title( $id );
+					$permalink 	= get_the_permalink( $id );
+					$posts .= "<li class='{$post_type}_item {$post_type}-item-{$id}'><a href='{$permalink}'>{$title}</a></li>";
 				}
-
-				$posts .= '</ul></div></div>';
-
+				wp_reset_postdata();
 			}
+			$posts .= "</ul></div></div>";
 
-			wp_reset_query();
 
 		}
 
@@ -533,43 +393,32 @@ function html_posttypes( $sort, $orderby, $numOfColumns ) {
 }
 
 // Taxonomies
-function html_taxonomies( $sort, $orderby, $numOfColumns ) {
+function html_taxonomies( $sort, $orderby, $numberofcolumns ) {
 
-	$taxonomiesReturn = '';
-
-	// Get al taxonomies
-	$taxonomies = csg_get_taxonomies();
+	$return 		= '';
+	$columns 		= esc_attr( $numberofcolumns );
+	$taxonomies 	= array_diff( csg_get_taxonomies(), csg_exclude_posttypes() );
 
 	if ( $taxonomies ) {
 
 		foreach( $taxonomies as $taxonomie ) {
 
-			$thisTaxonomie = get_taxonomy( $taxonomie );
+			$thisTaxonomie 	= get_taxonomy( $taxonomie );
+			$terms 			= get_terms( array( 'taxonomy' => $taxonomie, 'orderby' => $orderby, 'order' => $sort, 'hide_empty' => true, 'exclude' => csg_exclude_ctam() ) );
 
-			if( !in_array( $taxonomie, csg_exclude_posttypes() ) ) {
+			if( !empty( $terms ) ) {
 
-				// Get all terms by taxonomy
-				global $wp_version;
-				if ( version_compare( $wp_version, '4.5.0', '>=' ) ) {
-					$terms = get_terms( array( 'taxonomy' => $taxonomie, 'orderby' => $orderby, 'order' => $sort, 'hide_empty' => true ) );
-				} else {
-					$terms = get_terms( $taxonomie, array(  'orderby' => $orderby, 'order' => $sort, 'hide_empty' => true ) );
+				$return .= "<div class='sitemap-column sitemap-columns-{$columns} sitemap-posttypes'><div class='html-sitemap-column'><h2>{$thisTaxonomie->label}</h2><ul>";
+
+				foreach( $terms as $tax ) {
+					$id 		= $tax->term_id;
+					$title 		= $tax->name;
+					$permalink 	= get_term_link( $id );
+					$return 	.= "<li class='{$post_type}_item {$post_type}-item-{$id}'><a href='{$permalink}'>{$title}</a></li>";
 				}
 
-				if( !empty( $terms ) ) {
+				$return .= "</ul></div></div>";
 
-					$taxonomiesReturn .= '<div class="sitemap-column sitemap-columns-'.$numOfColumns.' sitemap-taxonomies sitemap-taxonomy-'.$thisTaxonomie->name.'"><div class="html-sitemap-column"><h2>'.$thisTaxonomie->label.'</h2>
-					<ul class="html-sitemap-list">';
-
-					foreach( $terms as $tax ) {
-						if( !in_array( $tax->term_id, csg_exclude_ctam() ) ) {
-							$taxonomiesReturn .= '<li class="html-sitemap-list-item html-sitemap-post-'.$tax->term_id.'"><a href="'. get_term_link( $tax->term_id ) .'" title="'. $tax->name .'">'. $tax->name .'</a></li>';
-						}
-					}
-
-					$taxonomiesReturn .= '</ul></div></div>';
-
-				}
 
 			}
 
@@ -577,35 +426,33 @@ function html_taxonomies( $sort, $orderby, $numOfColumns ) {
 
 	}
 
-	return $taxonomiesReturn;
+	return $return;
 
 }
 
 // Aditional pages
-function html_additionalpages( $sort, $orderby, $numOfColumns ) {
+function html_additionalpages( $sort, $orderby, $numberofcolumns ) {
 
-	$additionalpagesreturn = '';
+	$return 				= '';
+	$columns 				= esc_attr( $numberofcolumns );
+	$additionalpages 		= csg_get_additionalpages();
+	if( csg_xml_in_html() ) $additionalpages[] = csg_sitemap_url();
 
-	// Get al additional pages
-	$additionalpages = csg_get_additionalpages();
+	if ( !empty( $additionalpages ) && $additionalpages[0] != '' ) {
 
-	if ( !empty( $additionalpages ) ) {
-
-		$additionalpagesreturn .= '<div class="sitemap-column sitemap-columns-'.$numOfColumns.' sitemap-additionalpages"><div class="html-sitemap-column">
-		<h2>'.__( 'Additional pages', 'companion-sitemap-generator' ).'</h2>
-		<ul class="html-sitemap-list">';
+		$additionalpages_label = __( 'Additional pages', 'companion-sitemap-generator' );
+		$return .= "<div class='sitemap-column sitemap-columns-{$columns} sitemap-posttypes'><div class='html-sitemap-column'><h2>{$additionalpages_label}</h2><ul>";
 
 		foreach( $additionalpages as $additionalpage ) {
-			$additionalpagesreturn .= '<li class="html-sitemap-list-item">
-				<a href="'.sanitize_text_field( $additionalpage ).'">'.sanitize_text_field( $additionalpage ).'</a>
-			</li>';
+			$page = sanitize_text_field( $additionalpage );
+			$return .= "<li class='additional_item'><a href='{$page}'>{$page}</a></li>";
 		}
 
-		$additionalpagesreturn .= '</ul></div></div>';
+		$return .= "</ul></div></div>";
 
 	}
 
-	return $additionalpagesreturn;
+	return $return;
 
 }
 
@@ -616,29 +463,22 @@ function htmlsitemap_handler( $attributes ) {
 		'columns' 		=> '1',
 		'orderby'		=> 'date',
 		'sort'			=> 'asc',
+		'limit'			=> '-1',
 	], $attributes, 'html-sitemap' );
 
-	return htmlsitemap( $conf['columns'], $conf['orderby'], $conf['sort'] );
+	return htmlsitemap( sanitize_text_field( $conf['columns'] ), sanitize_text_field( $conf['orderby'] ), sanitize_text_field( $conf['sort'] ), sanitize_text_field( $conf['limit'] ) );
 }
 
-function htmlsitemap( $numOfColumns, $orderby, $sort ) {
+function htmlsitemap( $numberofcolumns, $orderby, $sort, $limit ) {
 
-	// Enqueue styling
 	wp_enqueue_style( 'csg-styling' );
 
-	// The code
-	if( $numOfColumns != '1' ) {
-		$classes = 'has-multiple-columns';
-	} else {
-		$classes = 'single-column';
-	}
+	$classes 				= ( $numberofcolumns != '1' ) ? 'has-multiple-columns' : 'single-column';
 
 	$csg_sitemap_content 	= '<div id="html_sitemap" class="'.$classes.'">';
-
-	$csg_sitemap_content 	.= html_posttypes( $sort, $orderby, sanitize_text_field( $numOfColumns ) );
-	$csg_sitemap_content 	.= html_taxonomies( $sort, $orderby, sanitize_text_field( $numOfColumns ) );
-	$csg_sitemap_content 	.= html_additionalpages( $sort, $orderby, sanitize_text_field( $numOfColumns ) );
-
+	$csg_sitemap_content 	.= html_posttypes( $sort, $orderby, sanitize_text_field( $numberofcolumns ), $limit );
+	$csg_sitemap_content 	.= html_taxonomies( $sort, $orderby, sanitize_text_field( $numberofcolumns ) );
+	$csg_sitemap_content 	.= html_additionalpages( $sort, $orderby, sanitize_text_field( $numberofcolumns ) );
 	$csg_sitemap_content 	.= '</div>';
 
 	return $csg_sitemap_content;
@@ -699,11 +539,7 @@ function csg_exclude_ctam() {
 // Get active tab
 function csg_active_tab( $page ) {
 
-	if( !isset( $_GET['tabbed'] ) ) {
-		$cur_page = '';
-	} else {
-		$cur_page = $_GET['tabbed'];
-	}
+	$cur_page = !isset( $_GET['tabbed'] ) ? '' : $_GET['tabbed'];
 
 	if( $page == $cur_page ) {
 		echo 'nav-tab-active';
@@ -714,12 +550,10 @@ function csg_active_tab( $page ) {
 // Read sitemap.xml file
 function csg_read_sitemap() {
 
-	$return = '';
-	if( is_multisite() ) {
-		$sitemapFile = get_home_path().csg_sitemap_file( true, get_current_blog_id() );
-	} else {
-		$sitemapFile = get_home_path().csg_sitemap_file();
-	}
+	$return 			= '';
+	$csg_stm_file 		= is_multisite() ? csg_sitemap_file( true, get_current_blog_id() ) :  csg_sitemap_file();
+	$sitemapFile 		= ABSPATH . $csg_stm_file;
+
 	$sitemapLines 		= array();
 	$readSitemap 		= fopen( $sitemapFile, "r" );
 
@@ -737,19 +571,9 @@ function csg_read_sitemap() {
 	return $return;
 }
 
-// Are changes made to the sitemap?
+// Have changes been made to the sitemap?
 function csg_changes_made() {
-
-	// Two files
-	$current_content 	= csg_read_sitemap();
-	$new_content 		= csg_sitemap_content();
-
-	// Are they the same?
-	if( $current_content != $new_content ) {
-		return true;
-	} else {
-		return false;
-	}
+	return ( csg_read_sitemap() != csg_sitemap_content() ) ? true : false;
 }
 
 // Submit sitemap to search engines
@@ -761,11 +585,7 @@ function csg_notify_engine( $engine ) {
 	$config 		= $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE name = %s", $getEngine ) );
 	$val 			= $config[0]->onoroff;
 
-	if( $val != '' ) {
-		return true;
-	} else {
-		return false;
-	}
+	return ( $val != '' ) ? true : false;
 
 }
 function csg_notify_engines() {
@@ -797,19 +617,26 @@ function csg_notify_engines() {
 
 		}
 
+		// Notify Yandex
+		if( csg_notify_engine( 'yandex' ) ) {
+
+			$url 	= "http://webmaster.yandex.com/site/map.xml?host=".csg_sitemap_url();
+			$ch 	= curl_init();
+			Curl_setopt( $ch, CURLOPT_URL, $url );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		  	$result = curl_exec($ch);
+		  	Curl_close( $ch );
+
+		}
+
+
 	}
 
 }
 
 // Is multilingual 
 function csg_is_multilingual() {
-
-	if ( in_array( 'polylang/polylang.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-		return true;
-	} else {
-		return false;
-	}
-
+	return ( in_array( 'polylang/polylang.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) ? true : false;
 }
 
 // List of all languages

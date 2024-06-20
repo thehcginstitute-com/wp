@@ -262,12 +262,12 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 
 				<?php $this->print_messages(); ?>
 
-				<h3 class='first'><?php esc_html_e( 'Menu Locations', 'megamenu' ); ?></h3>
+				<h3 class='first'><span class='dashicons dashicons-location'></span><?php esc_html_e( 'Menu Locations', 'megamenu' ); ?></h3>
 
 				<table>
 					<tr>
 						<td class='mega-name'>
-							<?php esc_html_e( 'Registered Menu Locations', 'megamenu' ); ?>
+							<?php esc_html_e( 'Menu Location Settings', 'megamenu' ); ?>
 							<div class='mega-description'>
 								<p><?php esc_html_e( 'This is an overview of the menu locations supported by your theme.', 'megamenu' ); ?></p>
 								<p><?php esc_html_e( 'Use these options to enable Max Mega Menu and define the behaviour of each menu location.', 'megamenu' ); ?></p>
@@ -278,7 +278,7 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 
 							if ( ! count( $enabled_locations + $disabled_locations ) ) {
 								echo '<p>';
-								esc_html_e( 'Your theme does not natively support menus, but you can add a new menu location using Max Mega Menu and display the menu using the Max Mega Menu widget or shortcode.', 'megamenu' );
+								esc_html_e( 'Add a new menu location below, then display the menu using the Max Mega Menu block, widget or shortcode.', 'megamenu' );
 								echo '</p>';
 							}
 
@@ -360,7 +360,6 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 
 			<div class='mega-location <?php echo esc_attr( $is_enabled_class ); ?><?php echo esc_attr( $has_active_location_class ); ?>'>
 				<div class='mega-accordion-title<?php echo esc_attr( $open_class ); ?>'>
-					<span class='dashicons dashicons-location'></span>
 					<h4><?php echo esc_html( $description ); ?></h4>
 					<?php
 
@@ -380,8 +379,11 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 						</svg>
 						<ul class='mega-ellipsis-content'>
 							<li><?php echo $this->assigned_menu_link( $location ); ?></li>
-							<li><?php echo $this->sandbox_link( $location ); ?></li>
 							<?php
+							if ( max_mega_menu_is_enabled( $location ) ) {
+								echo '<li>' . $this->sandbox_link( $location ) . '</li>';
+							}
+
 							if ( strpos( $location, 'max_mega_menu_' ) !== false ) {
 								echo '<li>' . $this->delete_location_link( $location ) . '</li>';
 							}
@@ -488,7 +490,17 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 		 * @since 2.8
 		 */
 		public function sandbox_link( $location ) {
-			return "<a target='megamenu_sandbox' href='" . admin_url( "admin-post.php?action=megamenu_sandbox&location={$location}" ) . "'><span class='dashicons dashicons-external'></span>" . esc_html__( 'View in Sandbox', 'megamenu' ) . '</a>';
+			$sandbox_url = esc_url(
+				add_query_arg(
+					array(
+						'action'   => 'megamenu_sandbox',
+						'location' => $location,
+					),
+					wp_nonce_url( admin_url( 'admin-post.php' ), "megamenu_sandbox_" . $location )
+				)
+			);
+
+			return "<a target='megamenu_sandbox' href='{$sandbox_url}'><span class='dashicons dashicons-external'></span>" . esc_html__( 'View in Sandbox', 'megamenu' ) . '</a>';
 		}
 
 
@@ -551,56 +563,72 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 		 * @since 2.9
 		 */
 		public function sandbox() {
-			remove_action( 'wp_footer', 'wp_admin_bar_render', 1000 );
-			remove_action( 'wp_head', '_admin_bar_bump_cb' );
+
+			$location = "";
 
 			if ( isset( $_GET['location'] ) ) {
 				$location = esc_attr( $_GET['location'] );
-
-				?>
-				<!DOCTYPE html>
-				<html>
-					<head>
-						<title>Sandbox: <?php echo $location; ?></title>
-						<style type='text/css'>
-							body, html {
-								margin: 0;
-								padding: 0;
-								min-height: 200vh;
-							}
-							body {
-								font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-								background-image:
-									linear-gradient(45deg, #eee 25%, transparent 25%), 
-									linear-gradient(135deg, #eee 25%, transparent 25%),
-									linear-gradient(45deg, transparent 75%, #eee 75%),
-									linear-gradient(135deg, transparent 75%, #eee 75%);
-								background-size:25px 25px;
-								background-position:0 0, 12.5px 0, 12.5px -12.5px, 0px 12.5px;
-							}
-							#query-monitor-main {
-								display: none;
-							}
-							.menu_wrapper {
-								max-width: 1280px; 
-								margin: 0 auto;
-								margin-top: 20px;
-							}
-						</style>
-						<?php wp_head(); ?>
-					</head>
-					<body>
-						<div class='menu_wrapper'>
-							<?php echo do_shortcode( "[maxmegamenu location={$location}]" ); ?>
-						</div>
-						<?php wp_footer(); ?>
-					</body>
-				</html>
-				<?php
+			} else {
+				die();
 			}
+
+			check_admin_referer( 'megamenu_sandbox_' . $location );
+
+			if ( ! has_nav_menu( $location ) ) {
+				die();
+			}
+
+			if ( ! max_mega_menu_is_enabled( $location ) ) {
+				die();
+			}
+
+			remove_action( 'wp_footer', 'wp_admin_bar_render', 1000 );
+			remove_action( 'wp_head', '_admin_bar_bump_cb' );
+
+			?>
+			<!DOCTYPE html>
+			<html>
+				<head>
+					<title>Sandbox</title>
+					<style type='text/css'>
+						body, html {
+							margin: 0;
+							padding: 0;
+							min-height: 200vh;
+						}
+						body {
+							font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+							background-image:
+								linear-gradient(45deg, #eee 25%, transparent 25%), 
+								linear-gradient(135deg, #eee 25%, transparent 25%),
+								linear-gradient(45deg, transparent 75%, #eee 75%),
+								linear-gradient(135deg, transparent 75%, #eee 75%);
+							background-size:25px 25px;
+							background-position:0 0, 12.5px 0, 12.5px -12.5px, 0px 12.5px;
+						}
+						#query-monitor-main {
+							display: none;
+						}
+						.menu_wrapper {
+							max-width: 1280px; 
+							margin: 0 auto;
+							margin-top: 20px;
+						}
+					</style>
+					<?php wp_head(); ?>
+				</head>
+				<body>
+					<div class='menu_wrapper'>
+						<?php wp_nav_menu( array( 'theme_location' => $location ) ); ?>
+					</div>
+					<?php wp_footer(); ?>
+				</body>
+			</html>
+			<?php
 
 			die();
 		}
+
 
 		/**
 		 * Content for Menu Location options
@@ -663,13 +691,13 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 												'type'  => 'effect',
 												'key'   => 'effect',
 												'value' => isset( $location_settings['effect'] ) ? $location_settings['effect'] : 'fade_up',
-												'title' => __( 'Animation' ),
+												'title' => __( 'Animation', 'megamenu' ),
 											),
 											array(
 												'type'  => 'effect_speed',
 												'key'   => 'effect_speed',
 												'value' => isset( $location_settings['effect_speed'] ) ? $location_settings['effect_speed'] : '200',
-												'title' => __( 'Speed' ),
+												'title' => __( 'Speed', 'megamenu' ),
 											),
 										),
 									),
@@ -682,13 +710,13 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 												'type'  => 'effect_mobile',
 												'key'   => 'effect_mobile',
 												'value' => isset( $location_settings['effect_mobile'] ) ? $location_settings['effect_mobile'] : 'none',
-												'title' => __( 'Style' ),
+												'title' => __( 'Style', 'megamenu' ),
 											),
 											array(
 												'type'  => 'effect_speed_mobile',
 												'key'   => 'effect_speed_mobile',
 												'value' => isset( $location_settings['effect_speed_mobile'] ) ? $location_settings['effect_speed_mobile'] : '200',
-												'title' => __( 'Speed' ),
+												'title' => __( 'Speed', 'megamenu' ),
 											),
 										),
 									),
@@ -813,10 +841,22 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 								'priority' => 30,
 								'title'    => __( 'Display Options', 'megamenu' ),
 								'settings' => array(
+									'location_block' => array(
+										'priority'    => 10,
+										'title'       => __( 'Block (Gutenberg)', 'megamenu' ),
+										'description' => __( 'Display this menu location in any block supported area.', 'megamenu' ),
+										'settings'    => array(
+											array(
+												'type'  => 'location_block',
+												'key'   => 'location_block',
+												'value' => $location,
+											),
+										),
+									),
 									'location_php_function' => array(
 										'priority'    => 10,
 										'title'       => __( 'PHP Function', 'megamenu' ),
-										'description' => __( 'For use in a theme template (usually header.php)', 'megamenu' ),
+										'description' => __( 'Display this menu location in a theme template (usually header.php).', 'megamenu' ),
 										'settings'    => array(
 											array(
 												'type'  => 'location_php_function',
@@ -828,7 +868,7 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 									'location_shortcode' => array(
 										'priority'    => 20,
 										'title'       => __( 'Shortcode', 'megamenu' ),
-										'description' => __( 'For use in a post or page.', 'megamenu' ),
+										'description' => __( 'Display this menu location in a post or page.', 'megamenu' ),
 										'settings'    => array(
 											array(
 												'type'  => 'location_shortcode',
@@ -840,7 +880,7 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 									'location_widget'    => array(
 										'priority'    => 30,
 										'title'       => __( 'Widget', 'megamenu' ),
-										'description' => __( 'For use in a widget area.', 'megamenu' ),
+										'description' => __( 'Display this menu location in a widget area.', 'megamenu' ),
 										'settings'    => array(
 											array(
 												'type'  => 'location_widget',
@@ -979,6 +1019,9 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 										break;
 									case 'checkbox':
 										$this->print_location_checkbox_option( $location, $setting['key'], $setting['value'] );
+										break;
+									case 'location_block':
+										$this->print_location_block_option( $location, $setting['key'], $setting['value'] );
 										break;
 									case 'location_php_function':
 										$this->print_location_php_function_option( $location, $setting['value'] );
@@ -1241,8 +1284,9 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 
 			?>
 				<select name='megamenu_meta[<?php echo esc_attr( $location ); ?>][second_click]'>
-					<option value='close' <?php echo selected( $second_click == 'close' ); ?>><?php _e( 'First click will open a sub menu, second click will close the sub menu.', 'megamenu' ); ?></option>
-					<option value='go' <?php echo selected( $second_click == 'go' ); ?>><?php _e( 'First click will open a sub menu, second click will follow the link.', 'megamenu' ); ?></option>
+					<option value='close' <?php echo selected( $second_click == 'close' ); ?>><?php _e( 'First click will open the sub menu, second click will close the sub menu.', 'megamenu' ); ?></option>
+					<option value='go' <?php echo selected( $second_click == 'go' ); ?>><?php _e( 'First click will open the sub menu, second click will follow the link.', 'megamenu' ); ?></option>
+					<option value='disabled' <?php echo selected( $second_click == 'disabled' ); ?>><?php _e( 'First click will follow the link (the arrow must be used to toggle sub menu visiblity).', 'megamenu' ); ?></option>
 				<select>
 			<?php
 		}
@@ -1665,6 +1709,19 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 			<?php
 		}
 
+		/**
+		 * Print the textbox containing instructions on how to display this menu location using a widget
+		 *
+		 * @since 2.8
+		 * @param string $key
+		 * @param string $value
+		 */
+		public function print_location_block_option( $location, $value ) {
+			?>
+			<textarea readonly="readonly"><?php _e( "Add the 'Max Mega Menu' block to any block enabled area.", 'megamenu' ); ?></textarea>
+			<?php
+		}
+
 
 		/**
 		 * Print a standard text input box
@@ -1699,7 +1756,11 @@ if ( ! class_exists( 'Mega_Menu_Locations' ) ) :
 		 * @return bool
 		 */
 		private function compare_elems( $elem1, $elem2 ) {
-			return $elem1['priority'] > $elem2['priority'];
+			if ( $elem1['priority'] > $elem2['priority'] ) {
+				return 1;
+			}
+
+			return 0;
 		}
 	}
 
