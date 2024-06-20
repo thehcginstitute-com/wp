@@ -42,7 +42,7 @@ function list_core_update( $update ) {
 
 	if ( 'en_US' === $update->locale && 'en_US' === get_locale() ) {
 		$version_string = $update->current;
-	} elseif ( 'en_US' === $update->locale && $update->packages->partial && $wp_version == $update->partial_version ) {
+	} elseif ( 'en_US' === $update->locale && $update->packages->partial && $wp_version === $update->partial_version ) {
 		$updates = get_core_updates();
 		if ( $updates && 1 === count( $updates ) ) {
 			// If the only available update is a partial builds, it doesn't need a language-specific version string.
@@ -179,9 +179,9 @@ function list_core_update( $update ) {
 	}
 	echo '</p>';
 
-	if ( 'en_US' !== $update->locale && ( ! isset( $wp_local_package ) || $wp_local_package != $update->locale ) ) {
+	if ( 'en_US' !== $update->locale && ( ! isset( $wp_local_package ) || $wp_local_package !== $update->locale ) ) {
 		echo '<p class="hint">' . __( 'This localized version contains both the translation and various other localization fixes.' ) . '</p>';
-	} elseif ( 'en_US' === $update->locale && 'en_US' !== get_locale() && ( ! $update->packages->partial && $wp_version == $update->partial_version ) ) {
+	} elseif ( 'en_US' === $update->locale && 'en_US' !== get_locale() && ( ! $update->packages->partial && $wp_version === $update->partial_version ) ) {
 		// Partial builds don't need language-specific warnings.
 		echo '<p class="hint">' . sprintf(
 			/* translators: %s: WordPress version. */
@@ -406,10 +406,10 @@ function core_auto_updates_settings() {
 
 	<p class="auto-update-status">
 		<?php
-		# 2024-02-28 Dmitrii Fediuk https://upwork.com/fl/mage2pro
-		# "Skip the «This site appears to be under version control. Automatic updates are disabled» check":
-		# https://github.com/thehcginstitute-com/wp/issues/19
-		if ( $upgrade_major ) {
+
+		if ( $updater->is_vcs_checkout( ABSPATH ) ) {
+			_e( 'This site appears to be under version control. Automatic updates are disabled.' );
+		} elseif ( $upgrade_major ) {
 			_e( 'This site is automatically kept up to date with each new version of WordPress.' );
 
 			if ( $can_set_update_option ) {
@@ -1105,8 +1105,15 @@ if ( 'upgrade-core' === $action ) {
 	echo '</h2>';
 
 	echo '<p class="update-last-checked">';
-	/* translators: 1: Date, 2: Time. */
-	printf( __( 'Last checked on %1$s at %2$s.' ), date_i18n( __( 'F j, Y' ), $last_update_check ), date_i18n( __( 'g:i a T' ), $last_update_check ) );
+
+	printf(
+		/* translators: 1: Date, 2: Time. */
+		__( 'Last checked on %1$s at %2$s.' ),
+		/* translators: Last update date format. See https://www.php.net/manual/datetime.format.php */
+		date_i18n( __( 'F j, Y' ), $last_update_check ),
+		/* translators: Last update time format. See https://www.php.net/manual/datetime.format.php */
+		date_i18n( __( 'g:i a T' ), $last_update_check )
+	);
 	echo ' <a href="' . esc_url( self_admin_url( 'update-core.php?force-check=1' ) ) . '">' . __( 'Check again.' ) . '</a>';
 	echo '</p>';
 
