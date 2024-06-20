@@ -407,9 +407,10 @@ function core_auto_updates_settings() {
 	<p class="auto-update-status">
 		<?php
 
-		if ( $updater->is_vcs_checkout( ABSPATH ) ) {
-			_e( 'This site appears to be under version control. Automatic updates are disabled.' );
-		} elseif ( $upgrade_major ) {
+		# 2024-02-28 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+		# "Skip the «This site appears to be under version control. Automatic updates are disabled» check":
+		# https://github.com/thehcginstitute-com/wp/issues/19
+		if ( $upgrade_major ) {
 			_e( 'This site is automatically kept up to date with each new version of WordPress.' );
 
 			if ( $can_set_update_option ) {
