@@ -207,9 +207,9 @@ class WP_Automatic_Updater {
 		}
 
 		// If we can't do an auto core update, we may still be able to email the user.
-		if ( ! $skin->request_filesystem_credentials( false, $context, $allow_relaxed_file_ownership )
-			|| $this->is_vcs_checkout( $context )
-		) {
+		# 2024-06-20 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+		# "Remove `->is_vcs_checkout(` checks":  https://github.com/thehcginstitute-com/wp/issues/27
+		if ( ! $skin->request_filesystem_credentials( false, $context, $allow_relaxed_file_ownership)) {
 			if ( 'core' === $type ) {
 				$this->send_core_update_notification_email( $item );
 			}
