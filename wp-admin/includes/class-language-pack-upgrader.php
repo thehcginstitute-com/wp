@@ -58,14 +58,8 @@ class Language_Pack_Upgrader extends WP_Upgrader {
 			return;
 		}
 
-		/*
-		 * Avoid messing with VCS installations, at least for now.
-		 * Noted: this is not the ideal way to accomplish this.
-		 */
-		$check_vcs = new WP_Automatic_Updater();
-		if ( $check_vcs->is_vcs_checkout( WP_CONTENT_DIR ) ) {
-			return;
-		}
+		# 2024-06-20 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+		# "Remove `->is_vcs_checkout(` checks":  https://github.com/thehcginstitute-com/wp/issues/27
 
 		foreach ( $language_updates as $key => $language_update ) {
 			$update = ! empty( $language_update->autoupdate );
