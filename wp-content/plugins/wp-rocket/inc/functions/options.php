@@ -408,36 +408,13 @@ function get_rocket_cache_query_string() { // phpcs:ignore WordPress.NamingConve
 
 /**
  * Determine if the key is valid
- *
  * @since 2.9 use hash_equals() to compare the hash values
  * @since 1.0
- *
+ * 2024-06-26 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+ * https://github.com/thehcginstitute-com/wp/blob/2024-02-28-2/wp-content/plugins/wp-rocket/inc/functions/options.php#L432
  * @return bool true if everything is ok, false otherwise
  */
-function rocket_valid_key() {
-	$rocket_secret_key = (string) get_rocket_option( 'secret_key', '' );
-	if ( ! $rocket_secret_key ) {
-		return false;
-	}
-
-	$valid_details = 8 === strlen( (string) get_rocket_option( 'consumer_key', '' ) ) && hash_equals( $rocket_secret_key, hash( 'crc32', get_rocket_option( 'consumer_email', '' ) ) );
-
-	if ( ! $valid_details ) {
-		set_transient(
-			'rocket_check_key_errors',
-			[
-				__( 'The provided license data are not valid.', 'rocket' ) .
-				' <br>' .
-				// Translators: %1$s = opening link tag, %2$s = closing link tag.
-				sprintf( __( 'To resolve, please %1$scontact support%2$s.', 'rocket' ), '<a href="https://wp-rocket.me/support/" rel="noopener noreferrer" target=_"blank">', '</a>' ),
-			]
-		);
-
-		return $valid_details;
-	}
-
-	return $valid_details;
-}
+function rocket_valid_key() {return true;}
 
 /**
  * Determine if the key is valid.
