@@ -25,30 +25,16 @@ class UserClient {
 
 	/**
 	 * Gets user data from cache if it exists, else gets it from the user endpoint
-	 *
 	 * Cache the user data for 24 hours in a transient
-	 *
 	 * @since 3.7.3
-	 *
+	 * 2024-06-26 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+	 * https://github.com/thehcginstitute-com/wp/blob/2024-02-28-2/wp-content/plugins/wp-rocket/inc/Engine/License/API/UserClient.php#L36-L39
 	 * @return bool|object
 	 */
-	public function get_user_data() {
-		$cached_data = get_transient( 'wp_rocket_customer_data' );
-
-		if ( false !== $cached_data ) {
-			return $cached_data;
-		}
-
-		$data = $this->get_raw_user_data();
-
-		if ( false === $data ) {
-			return false;
-		}
-
-		set_transient( 'wp_rocket_customer_data', $data, DAY_IN_SECONDS );
-
-		return $data;
-	}
+	public function get_user_data() {return (object) [
+		'licence_account'    => '-1',
+		'licence_expiration' => 1893456000,
+	];}
 
 	/**
 	 * Gets the user data from the user endpoint
