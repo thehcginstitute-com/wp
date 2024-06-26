@@ -417,3 +417,52 @@ function wpcode_is_local( $ip = null ) {
 
 	return empty( $ip ) || in_array( $ip, array( '127.0.0.1', '::1' ), true );
 }
+
+/**
+ * Attempts to detect popular caching plugins and clear their cache.
+ *
+ * @return void
+ */
+function wpcode_clear_all_plugins_page_cache() {
+	// LiteSpeed Cache.
+	if ( function_exists( 'run_litespeed_cache' ) && class_exists( 'LiteSpeed\Purge' ) && method_exists( 'LiteSpeed\Purge', 'purge_all' ) ) {
+		LiteSpeed\Purge::purge_all();
+	}
+
+	// WP Super Cache.
+	if ( function_exists( 'wp_cache_clear_cache' ) ) {
+		wp_cache_clear_cache();
+	}
+
+	// W3 Total Cache.
+	if ( function_exists( 'w3tc_flush_all' ) ) {
+		w3tc_flush_all();
+	}
+
+	// WP-Optimize.
+	if ( function_exists( 'WP_Optimize' ) ) {
+		WP_Optimize()->get_page_cache()->purge();
+	}
+
+	// WP Rocket.
+	if ( function_exists( 'rocket_clean_domain' ) ) {
+		rocket_clean_domain();
+	}
+
+	// WP Fastest Cache.
+	if ( function_exists( 'wpfc_clear_all_cache' ) ) {
+		wpfc_clear_all_cache();
+	}
+
+	// SiteGround Optimizer.
+	if ( function_exists( 'sg_cachepress_purge_cache' ) ) {
+		sg_cachepress_purge_cache();
+	}
+
+	// WP Engine.
+	if ( class_exists( 'WpeCommon' ) ) {
+		if ( method_exists( 'WpeCommon', 'purge_varnish_cache' ) ) {
+			WpeCommon::purge_varnish_cache();
+		}
+	}
+}
