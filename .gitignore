@@ -60,6 +60,9 @@
 # The file is regenerated on `wp rocket clean` and it contains global (not portable) filesystem paths.
 /wp-content/autoptimize_404_handler.php
 /wp-content/cache
+# 2024-06-26 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+# https://github.com/thehcginstitute-com/wp/issues/38#issuecomment-2192244975
+/wp-content/plugins/wp-rocket/vendor
 /wp-content/uploads
 /wp-content/wp-rocket-config
 !/wp-includes/**/*
