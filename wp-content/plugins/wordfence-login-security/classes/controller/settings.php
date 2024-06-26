@@ -385,12 +385,17 @@ class Controller_Settings {
 	
 	/**
 	 * Returns a cleaned array containing the whitelist entries.
-	 * 
-	 * @return array
 	 */
-	public function whitelisted_ips() {
-		return array_filter(array_map(function($s) { return trim($s); }, preg_split('/[\r\n]/', $this->get(self::OPTION_2FA_WHITELISTED, ''))));
-	}
+	function whitelisted_ips():array {return array_merge(
+		# 2024-06-26 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+		# «Wordfence Login Security» should not require Two-factor authentication on `localhost`":
+		# https://github.com/thehcginstitute-com/wp/issues/36
+		['127.0.0.1']
+		,array_filter(array_map(
+			function(string $s):string {return trim($s);}
+			,preg_split('/[\r\n]/', $this->get(self::OPTION_2FA_WHITELISTED, ''))
+		))
+	);}
 	
 	/**
 	 * Returns a cleaned array containing the trusted proxy entries.
