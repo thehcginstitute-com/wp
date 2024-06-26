@@ -54,7 +54,7 @@ class Subscriber implements Subscriber_Interface {
 	public static function get_subscribed_events() {
 		return [
 			'wp_resource_hints' => [ 'preconnect', 10, 2 ],
-			'rocket_buffer'     => [ 'process', 18 ],
+			'rocket_buffer'     => [ 'process', 1001 ],
 		];
 	}
 
@@ -101,7 +101,13 @@ class Subscriber implements Subscriber_Interface {
 		// Combine Google Font API V2.
 		$html = $this->combine_v2->optimize( $html );
 		// Combine Google Font API V1.
-		return $this->combine->optimize( $html );
+		$html = $this->combine->optimize( $html );
+
+		if ( ! $this->combine->has_google_fonts() && ! $this->combine_v2->has_google_fonts() ) {
+			$html = preg_replace( '/<link\s+(?:[^>]+[\s"\'])?href\s*=\s*[\'"]https:\/\/fonts\.gstatic\.com[\'"](?:[^>]+[\s"\'])?\s?\/?>/', '', $html );
+		}
+
+		return $html;
 	}
 
 	/**
@@ -114,6 +120,10 @@ class Subscriber implements Subscriber_Interface {
 			return false;
 		}
 
-		return (bool) $this->options->get( 'minify_google_fonts', 0 );
+		if ( ! $this->options->get( 'minify_google_fonts', 0 ) ) {
+			return false;
+		}
+
+		return ! is_user_logged_in() || (bool) $this->options->get( 'cache_logged_user', 0 );
 	}
 }

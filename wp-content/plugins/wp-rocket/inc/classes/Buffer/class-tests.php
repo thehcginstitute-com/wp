@@ -22,7 +22,6 @@ class Tests {
 	 *
 	 * @var    array
 	 * @since  3.3
-	 * @access private
 	 * @author Grégory Viguier
 	 */
 	private static $cookies;
@@ -32,7 +31,6 @@ class Tests {
 	 *
 	 * @var    array
 	 * @since  3.3
-	 * @access private
 	 * @author Grégory Viguier
 	 */
 	private static $post;
@@ -42,7 +40,6 @@ class Tests {
 	 *
 	 * @var    array
 	 * @since  3.3
-	 * @access private
 	 * @author Grégory Viguier
 	 */
 	private static $get;
@@ -52,7 +49,6 @@ class Tests {
 	 *
 	 * @var    array Tests are listed as array keys.
 	 * @since  3.3
-	 * @access private
 	 * @author Grégory Viguier
 	 */
 	private $tests = [
@@ -66,6 +62,7 @@ class Tests {
 		'donotcachepage'   => 1,
 		'wp_404'           => 1,
 		'search'           => 1,
+		'is_html'          => 1,
 	];
 
 	/**
@@ -77,7 +74,6 @@ class Tests {
 	 *     @type array  $data    Related data.
 	 * }
 	 * @since  3.3
-	 * @access private
 	 * @author Grégory Viguier
 	 */
 	private $last_error = [];
@@ -86,7 +82,6 @@ class Tests {
 	 * Constructor.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @param Config $config Config instance.
@@ -138,15 +133,11 @@ class Tests {
 	/** ----------------------------------------------------------------------------------------- */
 
 	/**
-	 * Tell if the process should be initiated.
-	 *
-	 * @since  3.3
-	 * @access public
-	 * @author Grégory Viguier
+	 * Tell if any buffer process should be initiated.
 	 *
 	 * @return bool
 	 */
-	public function can_init_process() {
+	public function can_process_any_buffer() {
 		$this->last_error = [];
 
 		// Don't process robots.txt && .htaccess files (it has happened sometimes with weird server configuration).
@@ -184,6 +175,22 @@ class Tests {
 			return false;
 		}
 
+		return true;
+	}
+
+	/**
+	 * Tell if the process should be initiated.
+	 *
+	 * @since  3.3
+	 * @author Grégory Viguier
+	 *
+	 * @return bool
+	 */
+	public function can_init_process() {
+		if ( ! $this->can_process_any_buffer() ) {
+			return false;
+		}
+
 		if ( ! $this->has_test() ) {
 			$this->last_error = [];
 			return true;
@@ -203,7 +210,7 @@ class Tests {
 
 		// Don’t process with query strings parameters, but the processed content is served if the visitor comes from an RSS feed, a Facebook action or Google Adsense tracking.
 		if ( $this->has_test( 'query_string' ) && ! $this->can_process_query_string() ) {
-			$this->set_error( 'Query string URL is excluded.' );
+			$this->set_error( 'Query string URL is excluded.' . PHP_EOL . print_r( $_GET, true ) );// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r, WordPress.Security.NonceVerification.Recommended
 			return false;
 		}
 
@@ -272,7 +279,6 @@ class Tests {
 	 * Tell if a test should be performed.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @param  string $test_name Identifier of the test.
@@ -291,7 +297,6 @@ class Tests {
 	 * Set the list of tests to perform.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @param array $tests An array of test names.
@@ -306,7 +311,6 @@ class Tests {
 	 * Tell if the buffer should be processed.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @param  string $buffer The buffer content.
@@ -327,7 +331,7 @@ class Tests {
 			return false;
 		}
 
-		if ( http_response_code() !== 200 ) {
+		if ( $this->get_http_response_code() !== 200 ) {
 			// Only cache 200.
 			$this->set_error( 'Page is not a 200 HTTP response and cannot be cached.' );
 			return false;
@@ -351,9 +355,34 @@ class Tests {
 			return false;
 		}
 
+		if ( $this->has_test( 'is_html' ) ) {
+			if ( $this->is_feed_uri() || defined( 'REST_REQUEST' ) ) {
+				unset( $this->tests['is_html'] );
+			}
+		}
+
+		if (
+			$this->has_test( 'is_html' )
+			&&
+			! $this->is_html( $buffer )
+		) {
+			// Don't process if there isn't a closing </html>.
+			$this->set_error( 'No closing </html> was found.' );
+			return false;
+		}
+
 		$this->last_error = [];
 
 		return true;
+	}
+
+	/**
+	 * Return http response to prevent a bug while testing.
+	 *
+	 * @return bool|int
+	 */
+	public function get_http_response_code() {
+		return http_response_code();
 	}
 
 	/** ----------------------------------------------------------------------------------------- */
@@ -364,7 +393,6 @@ class Tests {
 	 * Tell if the current URI corresponds to a file that must not be processed.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -398,7 +426,6 @@ class Tests {
 	 * Tell if the current URI corresponds to a file extension that must not be processed.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -432,11 +459,21 @@ class Tests {
 	}
 
 	/**
+	 * Tell if the current url is a feed.
+	 *
+	 * @return bool
+	 */
+	public function is_feed_uri() {
+		global $wp_rewrite;
+		$feed_uri = '/(?:.+/)?' . $wp_rewrite->feed_base . '(?:/(?:.+/?)?)?$';
+		return (bool) preg_match( '#^(' . $feed_uri . ')$#i', $this->get_clean_request_uri() );
+	}
+
+	/**
 	 * Tell if we're in the admin area (or ajax) or not.
 	 * Test against ajax added in 2e3c0fa74246aa13b36835f132dfd55b90d4bf9e for whatever reason.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -450,7 +487,6 @@ class Tests {
 	 * Test added in 769c7377e764a6a8decb4015a167b34043b4b462 for whatever reason.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -463,7 +499,6 @@ class Tests {
 	 * Tell if the request method is allowed to be cached.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -489,7 +524,6 @@ class Tests {
 	 * Don't process with query string parameters, some parameters are allowed though.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -534,7 +568,6 @@ class Tests {
 	 * Process SSL only if set in the plugin settings.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -547,7 +580,6 @@ class Tests {
 	 * Some URIs set in the plugin settings must not be processed.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -564,7 +596,7 @@ class Tests {
 			return self::memoize( __FUNCTION__, [], true );
 		}
 
-		$can = ! preg_match( '#^(' . $uri_pattern . ')$#i', $this->get_clean_request_uri() );
+		$can = ! preg_match( '#^(' . $uri_pattern . ')$#i', $this->get_request_uri_base() );
 
 		return self::memoize( __FUNCTION__, [], $can );
 	}
@@ -573,7 +605,6 @@ class Tests {
 	 * Don't process if some cookies are present.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool|array
@@ -612,7 +643,6 @@ class Tests {
 	 * Don't process if some cookies are NOT present.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool|array
@@ -651,7 +681,6 @@ class Tests {
 	 * Don't process if the user agent is in the forbidden list.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -680,7 +709,6 @@ class Tests {
 	 * Don't process if the user agent is in the forbidden list.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -722,7 +750,6 @@ class Tests {
 	 * When defined, the page must not be cached.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -748,7 +775,6 @@ class Tests {
 	 * Tell if we're in the WP’s 404 page.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -761,7 +787,6 @@ class Tests {
 	 * Tell if we're in the WP’s search page.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -782,6 +807,18 @@ class Tests {
 		return ! apply_filters( 'rocket_cache_search', false );
 	}
 
+	/**
+	 * Tell if the page content has a closing </html>.
+	 *
+	 * @since 3.9
+	 *
+	 * @param  string $buffer The buffer content.
+	 * @return bool
+	 */
+	public function is_html( $buffer ) {
+		return (bool) preg_match( '/<\s*\/\s*html\s*>/i', $buffer );
+	}
+
 	/** ----------------------------------------------------------------------------------------- */
 	/** $_SERVER ================================================================================ */
 	/** ----------------------------------------------------------------------------------------- */
@@ -790,7 +827,6 @@ class Tests {
 	 * Get the IP address from which the user is viewing the current page.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 */
 	public function get_ip() {
@@ -830,7 +866,6 @@ class Tests {
 	 * Tell if the request comes from a speed test tool.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool
@@ -841,34 +876,71 @@ class Tests {
 		}
 
 		$ips = [
-			'208.70.247.157' => '', // GT Metrix - Vancouver 1.
-			'204.187.14.70'  => '', // GT Metrix - Vancouver 2.
-			'204.187.14.71'  => '', // GT Metrix - Vancouver 3.
-			'204.187.14.72'  => '', // GT Metrix - Vancouver 4.
-			'204.187.14.73'  => '', // GT Metrix - Vancouver 5.
-			'204.187.14.74'  => '', // GT Metrix - Vancouver 6.
-			'204.187.14.75'  => '', // GT Metrix - Vancouver 7.
-			'204.187.14.76'  => '', // GT Metrix - Vancouver 8.
-			'204.187.14.77'  => '', // GT Metrix - Vancouver 9.
-			'204.187.14.78'  => '', // GT Metrix - Vancouver 10.
-			'199.10.31.194'  => '', // GT Metrix - Vancouver 11.
-			'13.85.80.124'   => '', // GT Metrix - Dallas 1.
-			'13.84.146.132'  => '', // GT Metrix - Dallas 2.
-			'13.84.146.226'  => '', // GT Metrix - Dallas 3.
-			'40.74.254.217'  => '', // GT Metrix - Dallas 4.
-			'13.84.43.227'   => '', // GT Metrix - Dallas 5.
-			'172.255.61.34'  => '', // GT Metrix - London 1.
-			'172.255.61.35'  => '', // GT Metrix - London 2.
-			'172.255.61.36'  => '', // GT Metrix - London 3.
-			'172.255.61.37'  => '', // GT Metrix - London 4.
-			'172.255.61.38'  => '', // GT Metrix - London 5.
-			'172.255.61.39'  => '', // GT Metrix - London 6.
-			'172.255.61.40'  => '', // GT Metrix - London 7.
-			'13.70.66.20'    => '', // GT Metrix - Sydney.
-			'191.235.85.154' => '', // GT Metrix - São Paulo 1.
-			'191.235.86.0'   => '', // GT Metrix - São Paulo 2.
-			'52.66.75.147'   => '', // GT Metrix - Mumbai.
-			'52.175.28.116'  => '', // GT Metrix - Hong Kong.
+			'208.70.247.157'  => '',   // GT Metrix - Vancouver 1.
+			'172.255.48.130'  => '',   // GT Metrix - Vancouver 2.
+			'172.255.48.131'  => '',   // GT Metrix - Vancouver 3.
+			'172.255.48.132'  => '',   // GT Metrix - Vancouver 4.
+			'172.255.48.133'  => '',   // GT Metrix - Vancouver 5.
+			'172.255.48.134'  => '',   // GT Metrix - Vancouver 6.
+			'172.255.48.135'  => '',   // GT Metrix - Vancouver 7.
+			'172.255.48.136'  => '',   // GT Metrix - Vancouver 8.
+			'172.255.48.137'  => '',   // GT Metrix - Vancouver 9.
+			'172.255.48.138'  => '',   // GT Metrix - Vancouver 10.
+			'172.255.48.139'  => '',   // GT Metrix - Vancouver 11.
+			'172.255.48.140'  => '',   // GT Metrix - Vancouver 12.
+			'172.255.48.141'  => '',   // GT Metrix - Vancouver 13.
+			'172.255.48.142'  => '',   // GT Metrix - Vancouver 14.
+			'172.255.48.143'  => '',   // GT Metrix - Vancouver 15.
+			'172.255.48.144'  => '',   // GT Metrix - Vancouver 16.
+			'172.255.48.145'  => '',   // GT Metrix - Vancouver 17.
+			'172.255.48.146'  => '',   // GT Metrix - Vancouver 18.
+			'172.255.48.147'  => '',   // GT Metrix - Vancouver 19.
+			'52.229.122.240'  => '',   // GT Metrix - Quebec City.
+			'104.214.72.101'  => '',   // GT Metrix - San Antonio, TX 1.
+			'13.66.7.11'      => '',   // GT Metrix - San Antonio, TX 2.
+			'13.85.24.83'     => '',   // GT Metrix - San Antonio, TX 3.
+			'13.85.24.90'     => '',   // GT Metrix - San Antonio, TX 4.
+			'13.85.82.26'     => '',   // GT Metrix - San Antonio, TX 5.
+			'40.74.242.253'   => '',   // GT Metrix - San Antonio, TX 6.
+			'40.74.243.13'    => '',   // GT Metrix - San Antonio, TX 7.
+			'40.74.243.176'   => '',   // GT Metrix - San Antonio, TX 8.
+			'104.214.48.247'  => '',   // GT Metrix - San Antonio, TX 9.
+			'157.55.189.189'  => '',   // GT Metrix - San Antonio, TX 10.
+			'104.214.110.135' => '',   // GT Metrix - San Antonio, TX 11.
+			'70.37.83.240'    => '',   // GT Metrix - San Antonio, TX 12.
+			'65.52.36.250'    => '',   // GT Metrix - San Antonio, TX 13.
+			'13.78.216.56'    => '',   // GT Metrix - Cheyenne, WY.
+			'52.162.212.163'  => '',   // GT Metrix - Chicago, IL.
+			'23.96.34.105'    => '',   // GT Metrix - Danville, VA.
+			'65.52.113.236'   => '',   // GT Metrix - San Francisco, CA.
+			'172.255.61.34'   => '',   // GT Metrix - London 1.
+			'172.255.61.35'   => '',   // GT Metrix - London 2.
+			'172.255.61.36'   => '',   // GT Metrix - London 3.
+			'172.255.61.37'   => '',   // GT Metrix - London 4.
+			'172.255.61.38'   => '',   // GT Metrix - London 5.
+			'172.255.61.39'   => '',   // GT Metrix - London 6.
+			'172.255.61.40'   => '',   // GT Metrix - London 7.
+			'52.237.235.185'  => '',   // GT Metrix - Sydney 1.
+			'52.237.250.73'   => '',   // GT Metrix - Sydney 2.
+			'52.237.236.145'  => '',   // GT Metrix - Sydney 3.
+			'104.41.2.19'     => '',   // GT Metrix - São Paulo 1.
+			'191.235.98.164'  => '',   // GT Metrix - São Paulo 2.
+			'191.235.99.221'  => '',   // GT Metrix - São Paulo 3.
+			'191.232.194.51'  => '',   // GT Metrix - São Paulo 4.
+			'104.211.143.8'   => '',   // GT Metrix - Mumbai 1.
+			'104.211.165.53'  => '',   // GT Metrix - Mumbai 2.
+			'52.172.14.87'    => '',   // GT Metrix - Chennai.
+			'40.83.89.214'    => '',   // GT Metrix - Hong Kong 1.
+			'52.175.57.81'    => '',   // GT Metrix - Hong Kong 2.
+			'20.188.63.151'   => '',   // GT Metrix - Paris.
+			'20.52.36.49'     => '',   // GT Metrix - Frankfurt.
+			'52.246.165.153'  => '',   // GT Metrix - Tokyo.
+			'51.144.102.233'  => '',   // GT Metrix - Amsterdam.
+			'13.76.97.224'    => '',   // GT Metrix - Singapore.
+			'102.133.169.66'  => '',   // GT Metrix - Johannesburg.
+			'52.231.199.170'  => '',   // GT Metrix - Busan.
+			'13.53.162.7'     => '',   // GT Metrix - Stockholm.
+			'40.123.218.94'   => '',   // GT Metrix - Dubai.
 		];
 
 		if ( isset( $ips[ $this->get_ip() ] ) ) {
@@ -889,7 +961,6 @@ class Tests {
 	 * This is basically a copy of the WP function, where $_SERVER is not used directly.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return bool True if SSL, otherwise false.
@@ -917,7 +988,6 @@ class Tests {
 	 * Get the request URI.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return string
@@ -934,7 +1004,6 @@ class Tests {
 	 * Get the request URI without the query strings.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return string
@@ -955,13 +1024,13 @@ class Tests {
 	 * Get the request URI. The query string is sorted and some parameters are removed.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return string
 	 */
 	public function get_clean_request_uri() {
 		$request_uri = $this->get_request_uri_base();
+		$request_uri = $this->remove_dot_segments( $request_uri );
 
 		if ( ! $request_uri ) {
 			return '';
@@ -980,7 +1049,6 @@ class Tests {
 	 * Get the request method.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return string
@@ -993,6 +1061,78 @@ class Tests {
 		return strtoupper( $this->config->get_server_input( 'REQUEST_METHOD' ) );
 	}
 
+	/**
+	 * Remove dot segments from a path
+	 *
+	 * @param string $input Path to process.
+	 *
+	 * @return string
+	 */
+	private function remove_dot_segments( string $input ) {
+		$output = '';
+
+		while ( strpos( $input, './' ) !== false || strpos( $input, '/.' ) !== false || '.' === $input || '..' === $input ) {
+			/**
+			 * A: If the input buffer begins with a prefix of "../" or "./",
+			 * then remove that prefix from the input buffer; otherwise,
+			 */
+			if ( strpos( $input, '../' ) === 0 ) {
+				$input = substr( $input, 3 );
+			}
+			elseif ( strpos( $input, './' ) === 0 ) {
+				$input = substr( $input, 2 );
+			}
+			/**
+			 * B: if the input buffer begins with a prefix of "/./" or "/.",
+			 * where "." is a complete path segment, then replace that prefix
+			 * with "/" in the input buffer; otherwise,
+			 */
+			elseif ( strpos( $input, '/./' ) === 0 ) {
+				$input = substr( $input, 2 );
+			}
+			elseif ( '/.' === $input ) {
+				$input = '/';
+			}
+			/**
+			 * C: if the input buffer begins with a prefix of "/../" or "/..",
+			 * where ".." is a complete path segment, then replace that prefix
+			 * with "/" in the input buffer and remove the last segment and its
+			 * preceding "/" (if any) from the output buffer; otherwise,
+			 */
+			elseif ( strpos( $input, '/../' ) === 0 ) {
+				$input  = substr( $input, 3 );
+				$output = substr_replace( $output, '', strrpos( $output, '/' ) );
+			}
+			elseif ( '/..' === $input ) {
+				$input  = '/';
+				$output = substr_replace( $output, '', strrpos( $output, '/' ) );
+			}
+			/**
+			 * D: if the input buffer consists only of "." or "..", then remove
+			 * that from the input buffer; otherwise,
+			 */
+			elseif ( '.' === $input || '..' === $input ) {
+				$input = '';
+			}
+			/**
+			 * E: move the first path segment in the input buffer to the end of
+			 * the output buffer, including the initial "/" character (if any)
+			 * and any subsequent characters up to, but not including, the next
+			 * "/" character or the end of the input buffer
+			 */
+			elseif ( strpos( $input, '/', 1 ) !== false ) {
+				$pos     = strpos( $input, '/', 1 );
+				$output .= substr( $input, 0, $pos );
+				$input   = substr_replace( $input, '', 0, $pos );
+			}
+			else {
+				$output .= $input;
+				$input   = '';
+			}
+		}
+		return $output . $input;
+	}
+
 	/** ----------------------------------------------------------------------------------------- */
 	/** QUERY STRING ============================================================================ */
 	/** ----------------------------------------------------------------------------------------- */
@@ -1001,7 +1141,6 @@ class Tests {
 	 * Get the query string as an array. Parameters are sorted and some are removed.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return array
@@ -1028,13 +1167,23 @@ class Tests {
 	 * Get the query string with sorted parameters, and some other removed.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return string
 	 */
 	public function get_query_string() {
 		return http_build_query( $this->get_query_params() );
+	}
+
+	/**
+	 * Get the original query string
+	 *
+	 * @since  3.11.4
+	 *
+	 * @return string
+	 */
+	public function get_original_query_string() {
+		return http_build_query( $this->get_get() );
 	}
 
 	/** ----------------------------------------------------------------------------------------- */
@@ -1045,7 +1194,6 @@ class Tests {
 	 * Get the `cookies` property.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return array
@@ -1058,7 +1206,6 @@ class Tests {
 	 * Get the `post` property.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return array
@@ -1071,7 +1218,6 @@ class Tests {
 	 * Get the `get` property.
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return array
@@ -1088,7 +1234,6 @@ class Tests {
 	 * Set an "error".
 	 *
 	 * @since  3.3
-	 * @access protected
 	 * @author Grégory Viguier
 	 *
 	 * @param string $message A message.
@@ -1105,7 +1250,6 @@ class Tests {
 	 * Get the last "error".
 	 *
 	 * @since  3.3
-	 * @access public
 	 * @author Grégory Viguier
 	 *
 	 * @return array

@@ -1,6 +1,7 @@
 <?php
 namespace WP_Rocket\Engine\Admin\Settings;
 
+use stdClass;
 use WP_Rocket\Abstract_Render;
 
 defined( 'ABSPATH' ) || exit;
@@ -83,7 +84,7 @@ class Render extends Abstract_render {
 		];
 
 		$navigation = array_map(
-			function( array $item ) use ( $default ) {
+			function ( array $item ) use ( $default ) {
 				$item = wp_parse_args( $item, $default );
 
 				if ( ! empty( $item['class'] ) ) {
@@ -129,7 +130,53 @@ class Render extends Abstract_render {
 	 * @since 3.2
 	 */
 	public function render_imagify_section() {
-		echo $this->generate( 'page-sections/imagify' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic content is properly escaped in the view.
+
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+
+		$plugin_data = get_transient( 'rocket_imagify_plugin_data' );
+
+		if ( ! $plugin_data ) {
+
+			$query_args = [
+				'slug'   => 'imagify',
+				'fields' => [
+					'icons'                  => true,
+					'active_installs'        => true,
+					'rating'                 => true,
+					'ratings'                => true,
+					'short_description'      => false,
+					'sections'               => false,
+					'last_updated'           => false,
+					'added'                  => false,
+					'tags'                   => false,
+					'homepage'               => false,
+					'donate_link'            => false,
+					'screenshots'            => false,
+					'versions'               => false,
+					'banners'                => false,
+					'contributors'           => false,
+					'requires'               => false,
+					'tested'                 => false,
+					'requires_php'           => false,
+					'support_url'            => false,
+					'upgrade_notice'         => false,
+					'business_model'         => false,
+					'repository_url'         => false,
+					'commercial_support_url' => false,
+					'preview_link'           => false,
+				],
+			];
+
+			$plugin_data = plugins_api( 'plugin_information', $query_args );
+
+			if ( is_wp_error( $plugin_data ) ) {
+				$plugin_data = [];
+			}
+
+			set_transient( 'rocket_imagify_plugin_data', $plugin_data, WEEK_IN_SECONDS );
+		}
+
+		echo $this->generate( 'page-sections/imagify', $plugin_data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic content is properly escaped in the view.
 	}
 
 	/**
@@ -197,59 +244,7 @@ class Render extends Abstract_render {
 		if ( ! isset( $this->settings[ $page ]['sections'][ $section ]['fields'] ) ) {
 			return;
 		}
-
-		foreach ( $this->settings[ $page ]['sections'][ $section ]['fields'] as $args ) {
-			$default = [
-				'type'              => 'text',
-				'label'             => '',
-				'description'       => '',
-				'class'             => '',
-				'container_class'   => '',
-				'default'           => '',
-				'helper'            => '',
-				'placeholder'       => '',
-				'parent'            => '',
-				'section'           => '',
-				'page'              => '',
-				'sanitize_callback' => 'sanitize_text_field',
-				'input_attr'        => '',
-				'warning'           => [],
-			];
-
-			$args = wp_parse_args( $args, $default );
-
-			if ( ! empty( $args['input_attr'] ) ) {
-				$input_attr = '';
-
-				foreach ( $args['input_attr'] as $key => $value ) {
-					if ( 'disabled' === $key ) {
-						if ( 1 === $value ) {
-							$input_attr .= ' disabled';
-						}
-
-						continue;
-					}
-
-					$input_attr .= ' ' . sanitize_key( $key ) . '="' . esc_attr( $value ) . '"';
-				}
-
-				$args['input_attr'] = $input_attr;
-			}
-
-			if ( ! empty( $args['parent'] ) ) {
-				$args['parent'] = ' data-parent="' . esc_attr( $args['parent'] ) . '"';
-			}
-
-			if ( ! empty( $args['class'] ) ) {
-				$args['class'] = implode( ' ', array_map( 'sanitize_html_class', $args['class'] ) );
-			}
-
-			if ( ! empty( $args['container_class'] ) ) {
-				$args['container_class'] = implode( ' ', array_map( 'sanitize_html_class', $args['container_class'] ) );
-			}
-
-			call_user_func_array( [ $this, $args['type'] ], [ $args ] );
-		}
+		$this->render_fields( $this->settings[ $page ]['sections'][ $section ]['fields'] );
 	}
 
 	/**
@@ -358,6 +353,18 @@ class Render extends Abstract_render {
 	 */
 	public function number( $args ) {
 		echo $this->generate( 'fields/number', $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic content is properly escaped in the view.
+	}
+
+	/**
+	 * Displays the multiselect field template.
+	 *
+	 * @param array $args Array of arguments to populate the template.
+	 */
+	public function categorized_multiselect( $args ) {
+		$args['items']    = empty( $args['items'] ) ? new stdClass() : $args['items'];
+		$args['selected'] = get_rocket_option( sanitize_key( $args['id'] ), [] );
+
+		echo $this->generate( 'fields/categorized_multiselect', $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic content is properly escaped in the view.
 	}
 
 	/**
@@ -472,5 +479,85 @@ class Render extends Abstract_render {
 	 */
 	public function render_part( $part ) {
 		echo $this->generate( 'partials/' . $part ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic content is properly escaped in the view.
+	}
+
+	/**
+	 * Displays the radio_buttons field template.
+	 *
+	 * @since 3.10
+	 *
+	 * @param array $args Array of arguments to populate the template.
+	 */
+	public function radio_buttons( $args ) {
+		echo $this->generate( 'fields/radio-buttons', $args ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic content is properly escaped in the view.
+	}
+
+	/**
+	 * Renders the fields.
+	 *
+	 * @since 3.10
+	 *
+	 * @param array $fields   fields to render.
+	 *
+	 * @return void
+	 */
+	public function render_fields( $fields ) {
+
+		foreach ( $fields as $id => $args ) {
+			$default = [
+				'type'              => 'text',
+				'label'             => '',
+				'description'       => '',
+				'class'             => '',
+				'container_class'   => '',
+				'default'           => '',
+				'helper'            => '',
+				'placeholder'       => '',
+				'parent'            => '',
+				'section'           => '',
+				'page'              => '',
+				'sanitize_callback' => 'sanitize_text_field',
+				'input_attr'        => '',
+				'warning'           => [],
+			];
+
+			$args = wp_parse_args( $args, $default );
+
+			if ( empty( $args['id'] ) ) {
+				$args['id'] = $id;
+			}
+
+			if ( ! empty( $args['input_attr'] ) ) {
+				$input_attr = '';
+
+				foreach ( $args['input_attr'] as $key => $value ) {
+					if ( 'disabled' === $key ) {
+						if ( 1 === $value ) {
+							$input_attr .= ' disabled';
+						}
+
+						continue;
+					}
+
+					$input_attr .= ' ' . sanitize_key( $key ) . '="' . esc_attr( $value ) . '"';
+				}
+
+				$args['input_attr'] = $input_attr;
+			}
+
+			if ( ! empty( $args['parent'] ) ) {
+				$args['parent'] = ' data-parent="' . esc_attr( $args['parent'] ) . '"';
+			}
+
+			if ( ! empty( $args['class'] ) ) {
+				$args['class'] = implode( ' ', array_map( 'sanitize_html_class', $args['class'] ) );
+			}
+
+			if ( ! empty( $args['container_class'] ) ) {
+				$args['container_class'] = implode( ' ', array_map( 'sanitize_html_class', $args['container_class'] ) );
+			}
+
+			call_user_func_array( [ $this, $args['type'] ], [ $args ] );
+		}
 	}
 }

@@ -2,21 +2,15 @@
 
 namespace WP_Rocket\Engine\CriticalPath;
 
-use WP_Rocket\Engine\Container\ServiceProvider\AbstractServiceProvider;
+use WP_Rocket\Dependencies\League\Container\ServiceProvider\AbstractServiceProvider;
+use WP_Rocket\Engine\CriticalPath\Admin\{Admin, Post, Settings, Subscriber};
 
 /**
  * Service provider for the Critical CSS classes
- *
- * @since 3.6
  */
 class ServiceProvider extends AbstractServiceProvider {
-
 	/**
-	 * The provides array is a way to let the container
-	 * know that a service is provided by this service
-	 * provider. Every service that is registered via
-	 * this service provider must have an alias added
-	 * to this array or it will be ignored.
+	 * Array of services provided by this service provider
 	 *
 	 * @var array
 	 */
@@ -36,66 +30,82 @@ class ServiceProvider extends AbstractServiceProvider {
 	];
 
 	/**
-	 * Registers the subscribers in the container.
+	 * Check if the service provider provides a specific service.
 	 *
-	 * @since 3.6
+	 * @param string $id The id of the service.
+	 *
+	 * @return bool
 	 */
-	public function register() {
+	public function provides( string $id ): bool {
+		return in_array( $id, $this->provides, true );
+	}
+
+	/**
+	 * Registers items with the container
+	 *
+	 * @return void
+	 */
+	public function register(): void {
 		$filesystem        = rocket_direct_filesystem();
 		$critical_css_path = rocket_get_constant( 'WP_ROCKET_CRITICAL_CSS_PATH' );
 		$options           = $this->getContainer()->get( 'options' );
 		$beacon            = $this->getContainer()->get( 'beacon' );
 		$template_path     = $this->getContainer()->get( 'template_path' ) . '/cpcss';
 
-		$this->getContainer()->share( 'cpcss_api_client', 'WP_Rocket\Engine\CriticalPath\APIClient' );
-		$this->getContainer()->share( 'cpcss_data_manager', 'WP_Rocket\Engine\CriticalPath\DataManager' )
-			->withArgument( $critical_css_path )
-			->withArgument( $filesystem );
-		$this->getContainer()->share( 'cpcss_service', 'WP_Rocket\Engine\CriticalPath\ProcessorService' )
-			->withArgument( $this->getContainer()->get( 'cpcss_data_manager' ) )
-			->withArgument( $this->getContainer()->get( 'cpcss_api_client' ) );
+		$this->getContainer()->addShared( 'cpcss_api_client', APIClient::class );
+		$this->getContainer()->addShared( 'cpcss_data_manager', DataManager::class )
+			->addArgument( $critical_css_path )
+			->addArgument( $filesystem );
+		$this->getContainer()->addShared( 'cpcss_service', ProcessorService::class )
+			->addArgument( $this->getContainer()->get( 'cpcss_data_manager' ) )
+			->addArgument( $this->getContainer()->get( 'cpcss_api_client' ) );
 
 		$processor_service = $this->getContainer()->get( 'cpcss_service' );
 
 		// REST CPCSS START.
-		$this->getContainer()->share( 'rest_cpcss_wp_post', 'WP_Rocket\Engine\CriticalPath\RESTWPPost' )
-			->withArgument( $processor_service )
-			->withArgument( $options );
-		$this->getContainer()->share( 'rest_cpcss_subscriber', 'WP_Rocket\Engine\CriticalPath\RESTCSSSubscriber' )
-			->withArgument( $this->getContainer()->get( 'rest_cpcss_wp_post' ) );
+		$this->getContainer()->addShared( 'rest_cpcss_wp_post', RESTWPPost::class )
+			->addArgument( $processor_service )
+			->addArgument( $options );
+		$this->getContainer()->addShared( 'rest_cpcss_subscriber', RESTCSSSubscriber::class )
+			->addArgument( $this->getContainer()->get( 'rest_cpcss_wp_post' ) )
+			->addTag( 'common_subscriber' );
 		// REST CPCSS END.
 
-		$this->getContainer()->add( 'critical_css_generation', 'WP_Rocket\Engine\CriticalPath\CriticalCSSGeneration' )
-			->withArgument( $processor_service );
-		$this->getContainer()->add( 'critical_css', 'WP_Rocket\Engine\CriticalPath\CriticalCSS' )
-			->withArgument( $this->getContainer()->get( 'critical_css_generation' ) )
-			->withArgument( $options )
-			->withArgument( $filesystem );
+		$this->getContainer()->add( 'critical_css_generation', CriticalCSSGeneration::class )
+			->addArgument( $processor_service );
+		$this->getContainer()->add( 'critical_css', CriticalCSS::class )
+			->addArgument( $this->getContainer()->get( 'critical_css_generation' ) )
+			->addArgument( $options )
+			->addArgument( $filesystem );
 
 		$critical_css = $this->getContainer()->get( 'critical_css' );
 
-		$this->getContainer()->share( 'critical_css_subscriber', 'WP_Rocket\Engine\CriticalPath\CriticalCSSSubscriber' )
-			->withArgument( $critical_css )
-			->withArgument( $processor_service )
-			->withArgument( $options )
-			->withArgument( $filesystem );
+		$this->getContainer()->addShared( 'critical_css_subscriber', CriticalCSSSubscriber::class )
+			->addArgument( $critical_css )
+			->addArgument( $processor_service )
+			->addArgument( $options )
+			->addArgument( $this->getContainer()->get( 'options_api' ) )
+			->addArgument( $this->getContainer()->get( 'user' ) )
+			->addArgument( $filesystem )
+			->addTag( 'common_subscriber' );
 
-		$this->getContainer()->add( 'cpcss_post', 'WP_Rocket\Engine\CriticalPath\Admin\Post' )
-			->withArgument( $options )
-			->withArgument( $beacon )
-			->withArgument( $critical_css_path )
-			->withArgument( $template_path );
-		$this->getContainer()->add( 'cpcss_settings', 'WP_Rocket\Engine\CriticalPath\Admin\Settings' )
-			->withArgument( $options )
-			->withArgument( $beacon )
-			->withArgument( $critical_css )
-			->withArgument( $template_path );
-		$this->getContainer()->add( 'cpcss_admin', 'WP_Rocket\Engine\CriticalPath\Admin\Admin' )
-			->withArgument( $options )
-			->withArgument( $processor_service );
-		$this->getContainer()->share( 'critical_css_admin_subscriber', 'WP_Rocket\Engine\CriticalPath\Admin\Subscriber' )
-			->withArgument( $this->getContainer()->get( 'cpcss_post' ) )
-			->withArgument( $this->getContainer()->get( 'cpcss_settings' ) )
-			->withArgument( $this->getContainer()->get( 'cpcss_admin' ) );
+		$this->getContainer()->add( 'cpcss_post',  Post::class )
+			->addArgument( $options )
+			->addArgument( $beacon )
+			->addArgument( $critical_css_path )
+			->addArgument( $template_path );
+		$this->getContainer()->add( 'cpcss_settings', Settings::class )
+			->addArgument( $options )
+			->addArgument( $beacon )
+			->addArgument( $critical_css )
+			->addArgument( $template_path );
+		$this->getContainer()->add( 'cpcss_admin', Admin::class )
+			->addArgument( $options )
+			->addArgument( $processor_service );
+		$this->getContainer()->addShared( 'critical_css_admin_subscriber', Subscriber::class )
+			->addArgument( $this->getContainer()->get( 'cpcss_post' ) )
+			->addArgument( $this->getContainer()->get( 'cpcss_settings' ) )
+			->addArgument( $this->getContainer()->get( 'cpcss_admin' ) )
+			->addTag( 'admin_subscriber' );
 	}
 }

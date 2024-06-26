@@ -10,6 +10,7 @@ use WP_Rocket\Admin\Options_Data;
  * @author Remy Perona
  */
 abstract class AbstractOptimization {
+	use RegexTrait;
 
 	/**
 	 * Plugin options.
@@ -93,7 +94,7 @@ abstract class AbstractOptimization {
 
 		$wp_content = wp_parse_url( content_url() );
 
-		if ( empty( $wp_content['host'] ) || empty( $wp_content['path'] ) ) {
+		if ( empty( $wp_content['path'] ) ) {
 			return true;
 		}
 
@@ -106,9 +107,13 @@ abstract class AbstractOptimization {
 		 * @param array $hosts Allowed hosts.
 		 * @param array $zones Zones to check available hosts.
 		 */
-		$hosts   = (array) apply_filters( 'rocket_cdn_hosts', [], $this->get_zones() );
-		$hosts[] = $wp_content['host'];
-		$langs   = get_rocket_i18n_uri();
+		$hosts = (array) apply_filters( 'rocket_cdn_hosts', [], $this->get_zones() );
+
+		if ( ! empty( $wp_content['host'] ) ) {
+			$hosts[] = $wp_content['host'];
+		}
+
+		$langs = get_rocket_i18n_uri();
 
 		// Get host for all langs.
 		foreach ( $langs as $lang ) {
@@ -126,16 +131,20 @@ abstract class AbstractOptimization {
 		if ( empty( $hosts ) ) {
 			return true;
 		}
-
 		// URL has domain and domain is part of the internal domains.
 		if ( ! empty( $file['host'] ) ) {
 			foreach ( $hosts as $host ) {
-				if ( false !== strpos( $url, $host ) ) {
+				$check_url = strtok( $url, '?' );
+				if ( false !== strpos( $check_url, $host ) ) {
 					return false;
 				}
 			}
 
 			return true;
+		}
+
+		if ( empty( $file['host'] ) ) {
+			return false;
 		}
 
 		// URL has no domain and doesn't contain the WP_CONTENT path or wp-includes.
@@ -214,4 +223,29 @@ abstract class AbstractOptimization {
 
 		return $html;
 	}
+
+	/**
+	 * Get full minified url with ?ver query string.
+	 *
+	 * @param string $minified_path Path of minified file.
+	 * @param string $minified_url Url of minified file.
+	 *
+	 * @return string
+	 */
+	protected function get_full_minified_url( $minified_path, $minified_url ) {
+		$file_mtime = rocket_direct_filesystem()->mtime( $minified_path );
+
+		$version = $file_mtime ? $file_mtime : md5( $minified_url . $this->minify_key );
+
+		return add_query_arg( 'ver', $version, $minified_url );
+	}
+
+	/**
+	 * Gets the CDN zones.
+	 *
+	 * @since  3.1
+	 *
+	 * @return array
+	 */
+	abstract public function get_zones();
 }

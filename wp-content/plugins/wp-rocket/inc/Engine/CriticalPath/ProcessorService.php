@@ -81,7 +81,8 @@ class ProcessorService {
 	private function send_generation_request( $item_url, $item_path, $is_mobile = false, $item_type = 'custom' ) {
 		// call send generation request from APIClient for the first time.
 		$params        = [
-			'mobile' => (int) $is_mobile,
+			'mobile'     => (int) $is_mobile,
+			'nofontface' => false,
 		];
 		$generated_job = $this->api_client->send_generation_request( $item_url, $params, $item_type );
 
@@ -162,6 +163,8 @@ class ProcessorService {
 		) {
 			return $this->on_job_success( $item_path, $item_url, $job_details->data->critical_path, $is_mobile, $item_type );
 		}
+
+		return $this->on_job_error( $job_details, $item_url, $is_mobile, $item_type );
 	}
 
 	/**
@@ -334,5 +337,4 @@ class ProcessorService {
 			]
 		);
 	}
-
 }

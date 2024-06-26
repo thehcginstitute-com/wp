@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace WP_Rocket\Engine\CDN;
 
 use WP_Rocket\Admin\Options_Data;
@@ -41,14 +43,44 @@ class CDN {
 	 * @return string
 	 */
 	public function rewrite( $html ) {
-		$pattern = '#[("\']\s*(?<url>(?:(?:https?:|)' . preg_quote( $this->get_base_url(), '#' ) . ')\/(?:(?:(?:' . $this->get_allowed_paths() . ')[^"\',)]+))|\/[^/](?:[^"\')\s>]+\.[[:alnum:]]+))\s*["\')]#i';
-		return preg_replace_callback(
-			$pattern,
-			function( $matches ) {
-				return str_replace( $matches['url'], $this->rewrite_url( $matches['url'] ), $matches[0] );
-			},
-			$html
-		);
+		$relative_path_pattern = '';
+
+		$buffer = $html;
+
+		/**
+		 * Filters the exclusion of CDN rewritting inside inline scripts
+		 *
+		 * @since 3.10.5
+		 *
+		 * @param bool $enable True to exclude, false otherwise.
+		 */
+		if ( apply_filters( 'rocket_cdn_exclude_inline_scripts', true ) ) {
+			$buffer = $this->remove_inline_scripts( $html );
+		}
+
+		/**
+		 * Filters the CDN rewriting of relative paths
+		 *
+		 * @since 3.10.5
+		 *
+		 * @param bool $enable True to enable, false otherwise.
+		 */
+		if ( apply_filters( 'rocket_cdn_relative_paths', true ) ) {
+			$relative_path_pattern = '|\/[^/](?:[^"\')\s>]+\.[[:alnum:]]+)';
+		}
+
+		$pattern = '#[("\']\s*(?<url>(?:(?:https?:|)' . preg_quote( $this->get_base_url(), '#' ) . ')\/(?:(?:(?:' . $this->get_allowed_paths() . ')[^"\',)]+))' . $relative_path_pattern . ')\s*["\')]#i';
+
+		if ( ! preg_match_all( $pattern, $buffer, $matches, PREG_SET_ORDER ) ) {
+			return $html;
+		}
+
+		foreach ( $matches as $match ) {
+			$cdn_url = str_replace( $match['url'], $this->rewrite_url( $match['url'] ), $match[0] );
+			$html    = str_replace( $match[0], $cdn_url, $html );
+		}
+
+		return $html;
 	}
 
 	/**
@@ -60,7 +92,7 @@ class CDN {
 	 * @return string
 	 */
 	public function rewrite_srcset( $html ) {
-		$pattern = '#\s+(?:data-lazy-|data-)?srcset\s*=\s*["\']\s*(?<sources>[^"\',\s]+\.[^"\',\s]+(?:\s+\d+[wx])?(?:\s*,\s*[^"\',\s]+\.[^"\',\s]+\s+\d+[wx])*)\s*["\']#i';
+		$pattern = '#\s+(?:' . $this->get_srcset_attributes() . ')?srcset\s*=\s*["\']\s*(?<sources>[^"\',\s]+\.[^"\',\s]+(?:\s+\d+[wx])?(?:\s*,\s*[^"\',\s]+\.[^"\',\s]+(?:\s+\d+[wx])?)*)\s*["\']#i';
 
 		if ( ! preg_match_all( $pattern, $html, $srcsets, PREG_SET_ORDER ) ) {
 			return $html;
@@ -71,7 +103,8 @@ class CDN {
 			$cdn_srcset = $srcset['sources'];
 			foreach ( $sources as $source ) {
 				$url        = preg_split( '#\s+#', trim( $source ) );
-				$cdn_srcset = str_replace( $url[0], $this->rewrite_url( $url[0] ), $cdn_srcset );
+				$cdn_source = str_replace( $url[0], $this->rewrite_url( $url[0] ), $source );
+				$cdn_srcset = str_replace( $source, $cdn_source, $cdn_srcset );
 			}
 
 			$cdn_srcsets = str_replace( $srcset['sources'], $cdn_srcset, $srcset[0] );
@@ -206,7 +239,6 @@ class CDN {
 	 * Gets the base URL for the website
 	 *
 	 * @since 3.4
-	 * @author Remy Perona
 	 *
 	 * @return string
 	 */
@@ -218,7 +250,6 @@ class CDN {
 	 * Gets the allowed paths as a regex pattern for the CDN rewrite
 	 *
 	 * @since 3.4
-	 * @author Remy Perona
 	 *
 	 * @return string
 	 */
@@ -240,7 +271,6 @@ class CDN {
 	 * Checks if the provided URL can be rewritten with the CDN URL
 	 *
 	 * @since 3.4
-	 * @author Remy Perona
 	 *
 	 * @param string $url URL to check.
 	 * @return boolean
@@ -252,6 +282,7 @@ class CDN {
 			'php',
 			'html',
 			'htm',
+			'cfm',
 		];
 
 		if ( in_array( pathinfo( $path, PATHINFO_EXTENSION ), $excluded_extensions, true ) ) {
@@ -292,7 +323,6 @@ class CDN {
 	 * Gets the CDN zones for the provided URL
 	 *
 	 * @since 3.4
-	 * @author Remy Perona
 	 *
 	 * @param string $url URL to check.
 	 * @return array
@@ -367,5 +397,59 @@ class CDN {
 		);
 
 		return implode( '|', $files );
+	}
+
+	/**
+	 * Get srcset attributes to rewrite to the CDN.
+	 *
+	 * @since 3.8.7
+	 *
+	 * @return string A pipe-separated list of srcset attributes.
+	 */
+	private function get_srcset_attributes() {
+		/**
+		 * Filter the srcset attributes.
+		 *
+		 * @since 3.8.7
+		 *
+		 * @param array $srcset_attributes List of srcset attributes.
+		 */
+		$srcset_attributes = (array) apply_filters(
+			'rocket_cdn_srcset_attributes',
+			[
+				'data-lazy-',
+				'data-',
+			]
+		);
+		return implode( '|', $srcset_attributes );
+	}
+
+	/**
+	 * Removes inline scripts from the HTML
+	 *
+	 * @since 3.10.5
+	 *
+	 * @param string $html HTML content.
+	 *
+	 * @return string
+	 */
+	private function remove_inline_scripts( $html ): string {
+		if ( ! preg_match_all( '#<script(?:[^>]*)>(?<content>[\s\S]*?)</script>#msi', $html, $matches, PREG_SET_ORDER ) ) {
+			return $html;
+		}
+
+		if ( empty( $matches ) ) {
+			return $html;
+		}
+
+		foreach ( $matches as $inline_js ) {
+			if ( empty( $inline_js['content'] ) ) {
+				continue;
+			}
+
+			$html = str_replace( $inline_js[0], '', $html );
+		}
+
+		return $html;
 	}
 }
