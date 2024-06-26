@@ -881,6 +881,13 @@ function rocket_clean_domain( $lang = '', $filesystem = null ) {
 		 * @param string $url  The home url.
 		 */
 		do_action( 'after_rocket_clean_domain', $root, $lang, $url ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+		# 2023-12-28 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+		# 1) "«Error: No cache files are cleared» on `wp rocket clean`":
+		# https://github.com/thehcginstitute-com/wp/issues/15
+		# 2) "How did I fix «Error: No cache files are cleared» on `wp rocket clean`?": https://df.tips/t/2093
+		# 3) https://github.com/wp-media/wp-rocket-cli/blob/v1.3/command.php#L283-L295
+		# 4) https://github.com/wp-media/wp-rocket/blob/v3.15.5/inc/functions/files.php#L892-L892
+		return true;
 	}
 
 	/**
