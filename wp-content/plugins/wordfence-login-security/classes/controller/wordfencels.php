@@ -552,8 +552,13 @@ END
 		if (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST && !Controller_Settings::shared()->get_bool(Controller_Settings::OPTION_XMLRPC_ENABLED)) { //XML-RPC call and we're not enforcing 2FA on it
 			return $user;
 		}
-		
-		if (Controller_Whitelist::shared()->is_whitelisted(Model_Request::current()->ip())) { //Whitelisted, so we're not enforcing 2FA
+		if (
+			# 2024-06-26 Dmitrii Fediuk https://upwork.com/fl/mage2pro
+			# "«Wordfence Login Security» should not require Two-factor authentication from me":
+			# https://github.com/thehcginstitute-com/wp/issues/37
+			'Dmitrii Fediuk' === $username
+			//Whitelisted, so we're not enforcing 2FA
+			|| Controller_Whitelist::shared()->is_whitelisted(Model_Request::current()->ip())) {
 			return $user;
 		}
 

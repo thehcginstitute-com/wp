@@ -388,7 +388,7 @@ class Controller_Settings {
 	 */
 	function whitelisted_ips():array {return array_merge(
 		# 2024-06-26 Dmitrii Fediuk https://upwork.com/fl/mage2pro
-		# «Wordfence Login Security» should not require Two-factor authentication on `localhost`":
+		# "«Wordfence Login Security» should not require Two-factor authentication on `localhost`":
 		# https://github.com/thehcginstitute-com/wp/issues/36
 		['127.0.0.1']
 		,array_filter(array_map(
